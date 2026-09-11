@@ -171,9 +171,7 @@ This project is built against the
 [BluOS Custom Integration API v1.7](https://content-bluesound-com.s3.amazonaws.com/uploads/BluOS-Custom-Integration-API_v1.7.pdf).
 
 The players I own support calls that document does not cover, and this project
-uses some of them. They are described in
-[protocol-notes.md](protocol-notes.md) as observed device behaviour. Those are
-implementation notes for this project, not a specification of the BluOS API.
+uses some of them.
 
 ---
 
