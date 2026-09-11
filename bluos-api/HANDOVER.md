@@ -1,5 +1,57 @@
 # Handover — state of play
 
+## Current status (updated 2026-09-11)
+
+Everything below this box is the original handover, written after the
+2026-09-10 runs and before the two 2026-09-11 runs existed. It is kept
+because the reasoning in it is still the reasoning — but read this box
+first for what has actually happened since.
+
+**Runs on disk, current:**
+
+| bundle | harness | what it is |
+|---|---|---|
+| `bluos-probe-20260910T225205` | 1.4 | `state_setmaster` — the full grouping-matrix pass behind §5.3 and `C-41`–`C-51` |
+| `bluos-probe-20260910T225427` | 1.4 | `round2` — volume, playback, sleep, name, setting, preset, source and grouping state changes |
+| `bluos-probe-20260911T220357` | 1.6 | `all` — the full read-only round 1 (env, transport, ports, longpoll, errors, claims, inputs, artwork, browse, settings, discovery, stability; 450 probes). This is the primary read-only evidence bundle now: it supersedes the three unredacted 9/10 round-1 runs this document told you to delete, and also the narrow 22:51 discovery-only run |
+| `bluos-probe-20260911T220626` | 1.6 | `state_capture` — the staged-topology capture tree described below, now actually produced |
+
+**Removed in this cleanup pass:** `bluos-probe-20260910T225109` (the 22:51
+discovery-only bundle). Its 8 probes, including the `C-19` unicast-LSDP
+result, are byte-for-byte reproduced inside `bluos-probe-20260911T220357`'s
+own `discovery` suite — same fleet, same node ids, same INCONCLUSIVE verdict,
+newer harness. Nothing was lost.
+
+**`PROJECT-INVENTORY.md`** belongs in the "files to keep" table below; it was
+missing from it. Its corrections are already folded into the Sources table at
+the top of `bluos-http-api.md`.
+
+**Open work — the spec has not caught up with `20260911T220357`:**
+
+1. Only two spots were fixed in this pass, both unambiguous: §5.2 (`/Sync`)
+   and §10.0 (`/proxyToSlave`) now say what §17.1 already recorded for `C-05`
+   and `C-04` instead of still saying "untested". A dozen more claims that
+   run resolved — `C-07`, `C-08`, `C-09`, `C-10`, `C-11`, `C-12`, `C-13`,
+   `C-15`, `C-18`, `C-22`, `C-52` — are tested in `FINDINGS.md` but not yet in
+   §17.1 or the body text. Mechanical, but real work; do it as its own task
+   per `TEST-PLAN.md`'s "Feeding results back" section, fed `FINDINGS.md`
+   rather than the raw bundle.
+2. **`C-03` (`/audiomodes` as a read) now disagrees with itself.** §17.1
+   still says CONFIRMED, from the original 2026-09-10 hardware pass — the one
+   deleted from this repo for leaking a real MAC address. The clean
+   2026-09-11 re-run of the same claim, same firmware, same schema, came back
+   INCONCLUSIVE: 200 OK, but a 9-10 byte body on both players, not the
+   populated `<audiomode>` element the vendor sample shows. That is not a
+   mechanical merge — it needs a look at why the body differs before §17.1 is
+   touched.
+3. §17 carries two claim tables — the topic-ordered list that opens the
+   section, and the id-ordered §17.1 — and they can now drift apart exactly
+   the way `C-03` and `C-04` show. `SPEC-SECTION-claim-register.md` specified
+   one append-only table. Worth collapsing to that next time someone is
+   editing §17, rather than maintaining two by hand.
+
+---
+
 ## Where the project is
 
 The specification is verified far enough to build against. Grouping — the part
@@ -56,6 +108,8 @@ permanent id rather than forgotten, so stopping costs nothing.
 
 ## The capture set is now a build artefact
 
+**Done** — see `test-runs/bluos-probe-20260911T220626/captures/`.
+
 `state_capture` (v1.6) stages each documented state deliberately and captures
 every player at each one, instead of relying on states someone set up by hand
 once and saved. It produces a browsable tree inside the bundle:
@@ -90,7 +144,12 @@ such a capture can exist: no harness can conjure a particular stream.
 
 ## Replacing the old `captures/` set
 
-The old captures are unredacted. Replacing them takes **one round-1 run**, not
+**Done** — the hand-made `captures/` folder this section describes is gone
+from the repo, replaced by `bluos-probe-20260911T220357` (round 1) and
+`bluos-probe-20260911T220626` (`state_capture`). Kept below for the record of
+what replaced what.
+
+The old captures were unredacted. Replacing them took **one round-1 run**, not
 a discovery run — discovery only produces LSDP packets.
 
 | old folder | files | replaced by |
@@ -120,25 +179,31 @@ can go **except** for two things that no run reproduces:
   (`A-N132-radioparadise-mqa`, `A-N132-radioparadise-with-actions`) are then
   reproduced as `playing-as-found`.
 
-Everything else in `captures/` is reproducible. Keep
-`third-party-samples/` as a separate reference folder cited as `[T]` — it is
-not hardware evidence and does not belong in a folder of machine-produced
-captures.
+Everything else in `captures/` was reproducible, and the folder is gone.
+`third-party-samples/` — BluShell's schema-25 samples, not hardware evidence —
+is also not present as a folder in this repo; its content lives inline in
+`bluos-http-api.md` wherever a claim cites "BluShell sample". If a future
+sample turns up that isn't already quoted in the spec, give it a reference
+folder of its own cited as `[T]` rather than dropping it into `captures/`.
 
 ## Files to keep
 
 | file | why |
 |---|---|
 | `bluos-http-api.md` | the specification itself — the actual deliverable |
-| `bluos-probe.py` (v1.4) | the harness; 126 self-test assertions, `--verify-harness` before any run |
+| `bluos-probe.py` (v1.6) | the harness; 126 self-test assertions, `--verify-harness` before any run |
 | `SPEC-ADDITIONS-grouping.md` | the working notes behind the §5 rewrite, including the first-party app evidence. Now folded in — keep it as provenance, not as a to-do |
 | `SPEC-SECTION-claim-register.md` | the append-only §17 design and marker scheme |
 | `TEST-PLAN.md` | what is tested, what is deliberately not, and why |
 | `RUNBOOK.md` | how to run it |
 | `CODE-REVIEW.md` | static-analysis record and the two review rounds |
+| `PROJECT-INVENTORY.md` | third-party source-list reconciliation; corrections already folded into `bluos-http-api.md`'s Sources table |
 | `FINDINGS.md` + `SHAPES.md` + `REPORT.md` from each hardware run | the evidence |
 
 ## Files to discard
+
+**Done** — none of the four items below are in this repo. Kept as a record of
+what was deliberately left out and why, so nobody re-uploads them.
 
 - **`BluOS-Controller-4_16_0-MacOS.zip` (297 MB)** — mined. The grouping code is
   extracted into `SPEC-ADDITIONS-grouping.md`. Keep the DMG locally in case a
@@ -147,9 +212,10 @@ captures.
 - **`com_bluesound_bluesoundplayer_53.apk`** — third-party, thin, and misleading
   if treated as first-party. See the correction in
   `SPEC-ADDITIONS-grouping.md`.
-- **`raw/` directories from hardware runs** — hundreds of files. Keep them
-  locally as parser fixtures; do not paste them into a chat. `SAMPLES.md` has
-  one canonical response per endpoint, which is what a spec needs to quote.
+- **`raw/` directories from hardware runs** — hundreds of files. They stay
+  inside each `test-runs/` bundle as parser fixtures; do not paste them into a
+  chat. `SAMPLES.md` has one canonical response per endpoint, which is what a
+  spec needs to quote.
 - **`BluOS_RTI_Driver_Package_2_60.zip`** — already mined in an earlier pass.
 
 ---
@@ -179,7 +245,7 @@ Split by job:
 
 ---
 
-## Test status: complete
+## Test status: complete (as of 2026-09-10, superseded — see the box at top)
 
 Three v1.4 runs on 2026-09-10 (22:51 discovery, 22:52 `state_setmaster`, 22:54
 `round2`) came back with the `state_setmaster` suite fully clean — 70 probes,
