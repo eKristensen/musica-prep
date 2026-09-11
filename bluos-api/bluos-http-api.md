@@ -795,9 +795,9 @@ problem.
 Untested here. If you implement group management, this is the failure mode
 worth reproducing deliberately (T-29).
 
-### 5.2 A legacy `/Sync` endpoint **[T]**
+### 5.2 A legacy `/Sync` endpoint — absent on current firmware **[V hardware]**
 
-Older firmware appears to expose grouping under a different endpoint:
+Older firmware appears to have exposed grouping under a different endpoint:
 
 ```
 GET /Sync?slave=<ip>       # add
@@ -806,9 +806,9 @@ GET /Sync?remove=<ip>      # remove
 
 Note there is no `port` parameter. `bluos-dashboard` calls `/Sync` as a fallback
 whenever `/AddSlave` or `/RemoveSlave` fails, which suggests it found real
-devices needing it. No first-party client of this generation uses it, and it was
-not tested here — but it costs nothing to fall back to, and on a 4.16.22 player
-an unknown path is a clean 404 (§0.1) rather than an ambiguous failure.
+devices needing it once. On 4.16.22 the bare path returns a clean 404 (§0.1) on
+all three ports — see `C-05` in §17.1 — so a client of this generation has
+nothing to fall back to, but the 404 costs nothing to hit.
 
 That project also addresses `/RemoveSlave` **to the slave** when the master does
 not answer, which the vendor document does not mention. Also untested.
@@ -1444,7 +1444,7 @@ need direct player access, and add the caching the player does not provide.
 device, via `<soundbar_settings url>` in `/SyncStatus`. The app opens it in a
 WebView, and posts changes back as a url-encoded form.
 
-### 10.0 `/proxyToSlave` — writing to a grouped slave **[T]**
+### 10.0 `/proxyToSlave` — writing to a grouped slave **[V hardware][T]**
 
 A slave in a group is still individually addressable, but `blutui` (Rust) uses a
 relay on the master instead:
@@ -1466,7 +1466,13 @@ sit on a separate subnet (`zoneSubnet` appears in `/SyncStatus`, §2.1) and so b
 unreachable from the controller even though the master can reach them.
 
 Note the `slave` parameter is a **combined `ip:port`**, not the separate
-`slave` + `port` pair used by `/AddSlave`. Untested — see T-34.
+`slave` + `port` pair used by `/AddSlave`.
+
+The path's **existence** is confirmed on hardware (`C-04` in §17.1): called bare
+it answers 400, not the 404 an unknown path gets, on 4.16.22. The **relay
+behaviour** described above — that the body actually reaches the named slave —
+is not; that needs the slave's own setting to change, which no run has checked.
+See T-34.
 
 ### 10.1 `/GetSettings` — not present on current firmware **[V hardware]**
 

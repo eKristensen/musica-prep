@@ -17,7 +17,7 @@ chmod +x bluos-probe.py
 python3 bluos-probe.py --verify-harness
 ```
 
-Expect `117 passed, 0 failed`. Two lines reading `ERR boom` and
+Expect `126 passed, 0 failed`. Two lines reading `ERR boom` and
 `ERR e2e: a restore that returns 500` are **supposed** to appear: they are the
 tests that prove a failing restore is reported as failed.
 

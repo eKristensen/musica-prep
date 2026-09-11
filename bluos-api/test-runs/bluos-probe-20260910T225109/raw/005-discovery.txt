@@ -1,3 +1,0 @@
-sent to 192.0.2.12:11430
-packet: 064c53445001055101ffff
-datagrams received: 0
