@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Date: Fri, 11 Sep 2026 20:05:02 GMT
+Content-Length: 129
+
+# request: GET 192.0.2.11:11000/Browse?key=BluOS%3A

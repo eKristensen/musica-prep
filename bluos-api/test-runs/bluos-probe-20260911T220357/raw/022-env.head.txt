@@ -1,0 +1,5 @@
+HTTP/1.1 400 Bad Request
+Date: Fri, 11 Sep 2026 20:03:58 GMT
+Content-Length: 0
+
+# request: GET 192.0.2.12:11000/GetUnpairedSlaves

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/Sources/images/BluOSRadioIcon.png" serviceName="Radio" searchKey="Airable:Search" type="items">
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fpodcasts%252Fcharts" text="Popular Podcasts" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fpodcasts%252Ftrending" text="Trending" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fpodcasts%252Fgenre%252F4259184787981212" text="News" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fpodcasts%252Fgenre%252F1150270018260926" text="Sciences" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fpodcasts%252Fgenre%252F2960638262331486" text="Comedy" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fpodcasts%252Fgenre%252F9884304343257100" text="Hobbies" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fpodcasts%252Fgenre%252F5727237996645272" text="Cars and Motoring" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fpodcasts%252Fgenre%252F8961095066275448" text="Arts" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fpodcasts%252Fgenre%252F1087725375778973" text="Education" type="link"></item>
+</browse>

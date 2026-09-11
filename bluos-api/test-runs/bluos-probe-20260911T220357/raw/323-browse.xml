@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="sections">
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=A" text="A" text2="10" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=B" text="B" text2="10" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=C" text="C" text2="4" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=D" text="D" text2="3" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=E" text="E" text2="10" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=F" text="F" text2="3" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=G" text="G" text2="3" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=H" text="H" text2="3" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=J" text="J" text2="18" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=K" text="K" text2="4" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=L" text="L" text2="4" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=M" text="M" text2="11" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=N" text="N" text2="5" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=O" text="O" text2="1" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=P" text="P" text2="8" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=Q" text="Q" text2="1" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=R" text="R" text2="10" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=S" text="S" text2="13" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=T" text="T" text2="6" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=U" text="U" text2="1" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=V" text="V" text2="2" type="section"></item>
+  <item browseKey="LocalMusic:S:Composer/%2Flibrary%2Fv1%2FComposers%3Fservice=LocalMusic&amp;limit=50&amp;section=W" text="W" text2="2" type="section"></item>
+</browse>

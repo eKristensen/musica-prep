@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Date: Thu, 10 Sep 2026 20:54:28 GMT
+Content-Length: 141
+
+# request: GET 192.0.2.13:11000/Volume?level=5

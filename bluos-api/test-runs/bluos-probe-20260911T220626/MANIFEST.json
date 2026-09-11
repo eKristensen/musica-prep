@@ -1,0 +1,3427 @@
+{
+  "harness": "bluos-probe.py",
+  "version": "1.6",
+  "synthetic_target": false,
+  "timezone": {
+    "declared_to_device": "Europe/Copenhagen",
+    "harness_host_offset": "+0200",
+    "harness_host_tzname": "CEST",
+    "harness_local_time": "2026-09-11T22:07:08+02:00"
+  },
+  "body_sha256_is_of": "the redacted body as written to raw/. Digests of the original bodies are in the do-not-share key file, because for a structured body they would recover the redacted values.",
+  "started": "2026-09-11T22:06:26.795988",
+  "duration_s": 42.0,
+  "options": {
+    "player": null,
+    "discover": true,
+    "suite": "state_capture",
+    "out": "runs",
+    "redact_names": false,
+    "keep_bt_names": false,
+    "allow_state": true,
+    "max_volume": 10,
+    "preserve": null,
+    "breadth": 2,
+    "no_probe": false,
+    "slow": false,
+    "concurrency_max": 32,
+    "browse_depth": 3,
+    "browse_fanout": 6,
+    "browse_nodes": 60,
+    "no_bodies": false,
+    "no_zip": false,
+    "port_control": 11000,
+    "port_settings": 11001,
+    "port_web": 80,
+    "timezone": "Europe/Copenhagen",
+    "verify_harness": false
+  },
+  "secrets_supplied": 2,
+  "players": [
+    {
+      "label": "A",
+      "port": 11000,
+      "name": "Stue",
+      "model": "N132",
+      "model_name": "NODE",
+      "brand": "Bluesound",
+      "version": "4.16.22",
+      "schema": "34",
+      "mac": "02:00:00:00:00:0B",
+      "group": "",
+      "is_master": false,
+      "is_slave": false,
+      "reachable": true
+    },
+    {
+      "label": "B",
+      "port": 11000,
+      "name": "Kontor",
+      "model": "N130",
+      "model_name": "NODE",
+      "brand": "Bluesound",
+      "version": "4.16.22",
+      "schema": "34",
+      "mac": "02:00:00:00:00:0C",
+      "group": "",
+      "is_master": false,
+      "is_slave": false,
+      "reachable": true
+    },
+    {
+      "label": "C",
+      "port": 11000,
+      "name": "Køkken",
+      "model": "N132",
+      "model_name": "NODE",
+      "brand": "Bluesound",
+      "version": "4.16.22",
+      "schema": "34",
+      "mac": "02:00:00:00:00:0D",
+      "group": "",
+      "is_master": false,
+      "is_slave": false,
+      "reachable": true
+    },
+    {
+      "label": "D",
+      "port": 11000,
+      "name": "Soveværelse",
+      "model": "N110",
+      "model_name": "NODE 2",
+      "brand": "Bluesound",
+      "version": "4.16.22",
+      "schema": "34",
+      "mac": "02:00:00:00:00:0E",
+      "group": "",
+      "is_master": false,
+      "is_slave": false,
+      "reachable": true
+    }
+  ],
+  "facts": {
+    "capture_index": [
+      [
+        "playing as-found: Tidal mqa",
+        "A",
+        "001-state_capture",
+        "raw/001-state_capture.xml"
+      ],
+      [
+        "playing as-found: Tidal mqa",
+        "A",
+        "002-state_capture",
+        "raw/002-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "A",
+        "005-state_capture",
+        "raw/005-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "A",
+        "006-state_capture",
+        "raw/006-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "A",
+        "007-state_capture",
+        "raw/007-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "A",
+        "008-state_capture",
+        "raw/008-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "A",
+        "009-state_capture",
+        "raw/009-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "B",
+        "010-state_capture",
+        "raw/010-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "B",
+        "011-state_capture",
+        "raw/011-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "B",
+        "012-state_capture",
+        "raw/012-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "B",
+        "013-state_capture",
+        "raw/013-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "B",
+        "014-state_capture",
+        "raw/014-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "C",
+        "015-state_capture",
+        "raw/015-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "C",
+        "016-state_capture",
+        "raw/016-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "C",
+        "017-state_capture",
+        "raw/017-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "C",
+        "018-state_capture",
+        "raw/018-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "C",
+        "019-state_capture",
+        "raw/019-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "D",
+        "020-state_capture",
+        "raw/020-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "D",
+        "021-state_capture",
+        "raw/021-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "D",
+        "022-state_capture",
+        "raw/022-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "D",
+        "023-state_capture",
+        "raw/023-state_capture.xml"
+      ],
+      [
+        "standalone",
+        "D",
+        "024-state_capture",
+        "raw/024-state_capture.xml"
+      ],
+      [
+        "playing (preset recall)",
+        "A",
+        "029-state_capture",
+        "raw/029-state_capture.xml"
+      ],
+      [
+        "playing (preset recall)",
+        "A",
+        "030-state_capture",
+        "raw/030-state_capture.xml"
+      ],
+      [
+        "group: A master, B slave",
+        "A",
+        "033-state_capture",
+        "raw/033-state_capture.xml"
+      ],
+      [
+        "group: A master, B slave",
+        "A",
+        "034-state_capture",
+        "raw/034-state_capture.xml"
+      ],
+      [
+        "group: A master, B slave",
+        "B",
+        "035-state_capture",
+        "raw/035-state_capture.xml"
+      ],
+      [
+        "group: A master, B slave",
+        "B",
+        "036-state_capture",
+        "raw/036-state_capture.xml"
+      ],
+      [
+        "nested: A -> B -> C",
+        "A",
+        "043-state_capture",
+        "raw/043-state_capture.xml"
+      ],
+      [
+        "nested: A -> B -> C",
+        "A",
+        "044-state_capture",
+        "raw/044-state_capture.xml"
+      ],
+      [
+        "nested: A -> B -> C",
+        "B",
+        "045-state_capture",
+        "raw/045-state_capture.xml"
+      ],
+      [
+        "nested: A -> B -> C",
+        "B",
+        "046-state_capture",
+        "raw/046-state_capture.xml"
+      ],
+      [
+        "nested: A -> B -> C",
+        "C",
+        "047-state_capture",
+        "raw/047-state_capture.xml"
+      ],
+      [
+        "nested: A -> B -> C",
+        "C",
+        "048-state_capture",
+        "raw/048-state_capture.xml"
+      ],
+      [
+        "one-sided: D joined A via ?master=",
+        "A",
+        "054-state_capture",
+        "raw/054-state_capture.xml"
+      ],
+      [
+        "one-sided: D joined A via ?master=",
+        "A",
+        "055-state_capture",
+        "raw/055-state_capture.xml"
+      ],
+      [
+        "one-sided: D joined A via ?master=",
+        "D",
+        "056-state_capture",
+        "raw/056-state_capture.xml"
+      ],
+      [
+        "one-sided: D joined A via ?master=",
+        "D",
+        "057-state_capture",
+        "raw/057-state_capture.xml"
+      ]
+    ]
+  },
+  "redaction": {
+    "ipv4": {
+      "distinct": 5,
+      "replacements": 80
+    },
+    "mac": {
+      "distinct": 8,
+      "replacements": 28
+    },
+    "literal": {
+      "distinct": 2,
+      "replacements": 0
+    }
+  },
+  "probes": [
+    {
+      "id": "001-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] playing as-found: Tidal mqa -- /SyncStatus on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:29 GMT"
+        ],
+        [
+          "Content-Length",
+          "414"
+        ]
+      ],
+      "elapsed_ms": 40.4,
+      "body_bytes": 410,
+      "body_bytes_wire": 414,
+      "body_sha256": "6a51828996c38a572b683bb8411675187ba81ea1cd236df90935da300644babb",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/001-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"523\" syncStat=\"523\" version=\"4.16.22\" id=\"192.0.2.11:11000\" db=\"-49.1\" volume=\"20\" name=\"Stue\" model=\"N132\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0B\" hasSubwoofer=\"true\"><pairWithSub></pairWithSub><bluetoothOutput></bluetoothOutput></S"
+      }
+    },
+    {
+      "id": "002-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] playing as-found: Tidal mqa -- /Status on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:29 GMT"
+        ],
+        [
+          "Content-Length",
+          "1340"
+        ]
+      ],
+      "elapsed_ms": 13.6,
+      "body_bytes": 1340,
+      "body_bytes_wire": 1340,
+      "body_sha256": "80a2885312aaa5e1f74dfa68e53e68f544bc85e1033bdacb78c4c71ccf9a278a",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/002-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"ab81771c58c58dcaef900289f9923401\"><album>You Know You Like It</album><albumid>38014822</albumid><artist>DJ Snake</artist><artistid>4826235</artistid><canMovePlayback>true</canMovePlayback><canSeek>1</canSeek><cursor>36</cursor><db>-49.1</db><dirac>1</dirac><fn>Tidal:38014823</fn><image>/Artwork?service=Tidal&amp;songid=Tidal%3A38014823</image><i"
+      }
+    },
+    {
+      "id": "003-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "captured state: playing as-found: Tidal mqa",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": "players: A"
+      }
+    },
+    {
+      "id": "004-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "captured the source that was already playing on A",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": "service=Tidal quality=mqa. Anything content-dependent -- MQA fields, <actions> on a radio stream -- can only be captured this way: start the stream, then run this suite."
+      }
+    },
+    {
+      "id": "005-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] standalone -- /SyncStatus on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "414"
+        ]
+      ],
+      "elapsed_ms": 11.3,
+      "body_bytes": 410,
+      "body_bytes_wire": 414,
+      "body_sha256": "6a51828996c38a572b683bb8411675187ba81ea1cd236df90935da300644babb",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/005-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"523\" syncStat=\"523\" version=\"4.16.22\" id=\"192.0.2.11:11000\" db=\"-49.1\" volume=\"20\" name=\"Stue\" model=\"N132\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0B\" hasSubwoofer=\"true\"><pairWithSub></pairWithSub><bluetoothOutput></bluetoothOutput></S"
+      }
+    },
+    {
+      "id": "006-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] standalone -- /Status on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "1340"
+        ]
+      ],
+      "elapsed_ms": 9.9,
+      "body_bytes": 1340,
+      "body_bytes_wire": 1340,
+      "body_sha256": "5b3fb42cc0914e3c992a03e76ffa87ce475e2311f97bd8daf90b0cd530cc9343",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/006-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"ab81771c58c58dcaef900289f9923401\"><album>You Know You Like It</album><albumid>38014822</albumid><artist>DJ Snake</artist><artistid>4826235</artistid><canMovePlayback>true</canMovePlayback><canSeek>1</canSeek><cursor>36</cursor><db>-49.1</db><dirac>1</dirac><fn>Tidal:38014823</fn><image>/Artwork?service=Tidal&amp;songid=Tidal%3A38014823</image><i"
+      }
+    },
+    {
+      "id": "007-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Presets",
+      "note": "[capture] standalone -- /Presets on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "294"
+        ]
+      ],
+      "elapsed_ms": 8.5,
+      "body_bytes": 294,
+      "body_bytes_wire": 294,
+      "body_sha256": "5d49fb88fd6dc705596138612176fc72cffd52c05818151447bebd14823dbc59",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "presets",
+      "body_file": "raw/007-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<presets prid=\"1\">\n  <preset id=\"1\" name=\"Sunday Chill Mix: Ministry of Sound\" url=\"/Load?service=Tidal&amp;id=f6bddb25-a5dc-4658-993d-020000000001\" image=\"/Artwork?service=Tidal&amp;playlistimage=f8601f52-6d31-43bd-97a7-020000000002\"></preset>\n</presets>"
+      }
+    },
+    {
+      "id": "008-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Playlist",
+      "note": "[capture] standalone -- /Playlist on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Transfer-Encoding",
+          "chunked"
+        ]
+      ],
+      "elapsed_ms": 17.7,
+      "body_bytes": 18246,
+      "body_bytes_wire": 18246,
+      "body_sha256": "ae5b696e1f336691a0ce571dd612e815cc4b44a1db4c23cfdca749914a05b010",
+      "verbatim": false,
+      "redaction_edits": 1,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "playlist",
+      "body_file": "raw/008-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<playlist shuffle=\"1\" repeat=\"2\" length=\"37\" id=\"1193\" playlistid=\"Tidal:f6bddb25-a5dc-4658-993d-020000000001\">\n  <song albumid=\"122288227\" artistid=\"3685073\" songid=\"Tidal:122288231\" service=\"Tidal\" similarstationid=\"Tidal:radio:artist/3685073\" trackstationid=\"Tidal:radio:track/122288231\" id=\"0\">\n    <art>Andhim</art>\n    <alb>Simmer Down</alb>\n    <title>Ho"
+      }
+    },
+    {
+      "id": "009-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Volume",
+      "note": "[capture] standalone -- /Volume on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "142"
+        ]
+      ],
+      "elapsed_ms": 9.2,
+      "body_bytes": 142,
+      "body_bytes_wire": 142,
+      "body_sha256": "0d4e30b0af3f31dc99b05ee96e984bd6de3898bb386aa80b45953d4d65128454",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "volume",
+      "body_file": "raw/009-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<volume db=\"-49.1\" offsetDb=\"10\" mute=\"0\" etag=\"a79f2e9d2881ae370f00800f9d0a2c26\" source=\"\">20</volume>"
+      }
+    },
+    {
+      "id": "010-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] standalone -- /SyncStatus on B",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "397"
+        ]
+      ],
+      "elapsed_ms": 8.7,
+      "body_bytes": 393,
+      "body_bytes_wire": 397,
+      "body_sha256": "212fd0f74dfc390d91a1524eb9c1a508a24322aeeb6a530c5c8f0b4eb90b01a9",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/010-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"1025\" syncStat=\"1025\" version=\"4.16.22\" id=\"192.0.2.12:11000\" db=\"-27.5\" volume=\"27\" name=\"Kontor\" model=\"N130\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_nt.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0C\"><pairWithSub></pairWithSub><bluetoothOutput></bluetoothOutput></SyncStatus>"
+      }
+    },
+    {
+      "id": "011-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] standalone -- /Status on B",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "1254"
+        ]
+      ],
+      "elapsed_ms": 8.9,
+      "body_bytes": 1254,
+      "body_bytes_wire": 1254,
+      "body_sha256": "e300f73ae94f68401e3f62e05f2cf0027fada38f79f23d39d81ed1b7463c2e0d",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/011-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"d7bac2eccebbf802a96a476ef1ed9ab5\"><album>Romanticize The Dive</album><albumid>482411342</albumid><artist>Metric</artist><artistid>65040</artistid><canMovePlayback>true</canMovePlayback><canSeek>0</canSeek><cursor>124</cursor><db>-27.5</db><dirac>1</dirac><fn>Tidal:482411348</fn><image>/Artwork?service=Tidal&amp;songid=Tidal%3A482411348</image><i"
+      }
+    },
+    {
+      "id": "012-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Presets",
+      "note": "[capture] standalone -- /Presets on B",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "67"
+        ]
+      ],
+      "elapsed_ms": 9.1,
+      "body_bytes": 67,
+      "body_bytes_wire": 67,
+      "body_sha256": "49de224d4b4db17880ea67dc9d19e4c0d240e1346b155ca554acdf4484120dda",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "presets",
+      "body_file": "raw/012-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<presets prid=\"0\"></presets>"
+      }
+    },
+    {
+      "id": "013-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Playlist",
+      "note": "[capture] standalone -- /Playlist on B",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Transfer-Encoding",
+          "chunked"
+        ]
+      ],
+      "elapsed_ms": 22.0,
+      "body_bytes": 62326,
+      "body_bytes_wire": 62326,
+      "body_sha256": "c5fed406381d8d390dc576e6a92190964e2a60f6b53a87201a76bb44daeb38a3",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "playlist",
+      "body_file": "raw/013-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<playlist repeat=\"2\" length=\"125\" id=\"235\" shuffle=\"1\">\n  <song albumid=\"482411342\" artistid=\"65040\" songid=\"Tidal:482411348\" isFavourite=\"1\" service=\"Tidal\" similarstationid=\"Tidal:radio:artist/65040\" trackstationid=\"Tidal:radio:track/482411348\" id=\"0\">\n    <art>Metric</art>\n    <alb>Romanticize The Dive</alb>\n    <title>Moral Compass</title>\n    <track>6</t"
+      }
+    },
+    {
+      "id": "014-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Volume",
+      "note": "[capture] standalone -- /Volume on B",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "142"
+        ]
+      ],
+      "elapsed_ms": 9.6,
+      "body_bytes": 142,
+      "body_bytes_wire": 142,
+      "body_sha256": "197427b942aac83046304938799f0b4def008b268ecd12b6b5407e3dbdd449e8",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "volume",
+      "body_file": "raw/014-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<volume db=\"-27.5\" offsetDb=\"10\" mute=\"0\" etag=\"24f7d32b71ec7dfc7c7bef68b0701353\" source=\"\">27</volume>"
+      }
+    },
+    {
+      "id": "015-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "C",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] standalone -- /SyncStatus on C",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "394"
+        ]
+      ],
+      "elapsed_ms": 9.4,
+      "body_bytes": 390,
+      "body_bytes_wire": 394,
+      "body_sha256": "4cd9840373c3c7247c1d68a0dbc72041f46418618baba5dfb959742478d3e567",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/015-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"963\" syncStat=\"963\" version=\"4.16.22\" id=\"192.0.2.13:11000\" db=\"-38\" volume=\"38\" name=\"Køkken\" model=\"N132\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_nt.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0D\"><pairWithSub></pairWithSub><bluetoothOutput></bluetoothOutput></SyncStatus>"
+      }
+    },
+    {
+      "id": "016-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "C",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] standalone -- /Status on C",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "1251"
+        ]
+      ],
+      "elapsed_ms": 9.0,
+      "body_bytes": 1251,
+      "body_bytes_wire": 1251,
+      "body_sha256": "a4c701a4f05757495bee151f1d612815cdd3ee87e7de852e62af084e9417e451",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/016-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"f99493bdf725d0c7946e606fdf2827b1\"><album>Chasing Time</album><albumid>169319097</albumid><artist>Oscuro</artist><artistid>32670299</artistid><autofill>6</autofill><canMovePlayback>true</canMovePlayback><canSeek>0</canSeek><cursor>29</cursor><db>-38</db><dirac>1</dirac><fn>Tidal:169319098</fn><image>/Artwork?service=Tidal&amp;songid=Tidal%3A16931"
+      }
+    },
+    {
+      "id": "017-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "C",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Presets",
+      "note": "[capture] standalone -- /Presets on C",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "67"
+        ]
+      ],
+      "elapsed_ms": 9.1,
+      "body_bytes": 67,
+      "body_bytes_wire": 67,
+      "body_sha256": "49de224d4b4db17880ea67dc9d19e4c0d240e1346b155ca554acdf4484120dda",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "presets",
+      "body_file": "raw/017-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<presets prid=\"0\"></presets>"
+      }
+    },
+    {
+      "id": "018-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "C",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Playlist",
+      "note": "[capture] standalone -- /Playlist on C",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Transfer-Encoding",
+          "chunked"
+        ]
+      ],
+      "elapsed_ms": 12.7,
+      "body_bytes": 15105,
+      "body_bytes_wire": 15105,
+      "body_sha256": "c110b68960ed0d10ed8a03f2330470fccd43de3bb239797dc79f0bb185c00d05",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "playlist",
+      "body_file": "raw/018-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<playlist shuffle=\"0\" repeat=\"2\" length=\"30\" id=\"273\">\n  <song albumid=\"179419974\" artistid=\"14984875\" songid=\"Tidal:179419978\" isFavourite=\"1\" service=\"Tidal\" similarstationid=\"Tidal:radio:artist/14984875\" trackstationid=\"Tidal:radio:track/179419978\" id=\"0\">\n    <art>Yuki Kajiura</art>\n    <alb>Puella Magi Madoka Magica Ultimate Best</alb>\n    <title>Sis Pue"
+      }
+    },
+    {
+      "id": "019-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "C",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Volume",
+      "note": "[capture] standalone -- /Volume on C",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "140"
+        ]
+      ],
+      "elapsed_ms": 10.7,
+      "body_bytes": 140,
+      "body_bytes_wire": 140,
+      "body_sha256": "1aaf7f1affadfac672c2292882ee1573301b365a845d2bbe5379d4641669b911",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "volume",
+      "body_file": "raw/019-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<volume db=\"-38\" offsetDb=\"10\" mute=\"0\" etag=\"68039410a8958fea9444269d4d2c8bc6\" source=\"\">38</volume>"
+      }
+    },
+    {
+      "id": "020-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "D",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] standalone -- /SyncStatus on D",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "391"
+        ]
+      ],
+      "elapsed_ms": 14.4,
+      "body_bytes": 387,
+      "body_bytes_wire": 391,
+      "body_sha256": "157fdfc3e339fdf1507d87c29bfca0513f9ac3adc058e65fa15dc0ec1513d2c1",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/020-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"1958\" syncStat=\"1958\" version=\"4.16.22\" id=\"192.0.2.14:11000\" db=\"-58.5\" volume=\"14\" name=\"Soveværelse\" model=\"N110\" modelName=\"NODE 2\" class=\"streamer\" icon=\"/images/players/N110_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0E\" hasSubwoofer=\"true\"><pairWithSub></pairWithSub></SyncStatus>"
+      }
+    },
+    {
+      "id": "021-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "D",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] standalone -- /Status on D",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "1448"
+        ]
+      ],
+      "elapsed_ms": 16.4,
+      "body_bytes": 1448,
+      "body_bytes_wire": 1448,
+      "body_sha256": "70da7245831d05f44853724c17cf9e6f2c77c449347529f1356366fec84e4dd2",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/021-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"4e5379df8b9b94ba2fd48d3fbdf704c3\"><actions><action name=\"back\" state=\"0\"></action><action name=\"skip\" url=\"/Action?service=RadioParadise&amp;next=2921536\" state=\"0\"></action><action name=\"love\" url=\"/Action?service=RadioParadise&amp;love=53146&amp;reset=0\" type=\"thumbs\" state=\"-1\" text=\"Love\" icon=\"/images/loveban/love.png\"></action><action name"
+      }
+    },
+    {
+      "id": "022-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "D",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Presets",
+      "note": "[capture] standalone -- /Presets on D",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "424"
+        ]
+      ],
+      "elapsed_ms": 14.4,
+      "body_bytes": 424,
+      "body_bytes_wire": 424,
+      "body_sha256": "74df435ce43f9e3de1d84886d88bf0d82d343c1008c18dc7190e03d0283529c4",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "presets",
+      "body_file": "raw/022-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<presets prid=\"0\">\n  <preset id=\"1\" name=\"RP Main Mix\" url=\"RadioParadise:/0:4\" image=\"https://img.radioparadise.com/source/27/channel_logo/chan_0.png\"></preset>\n  <preset id=\"2\" name=\"Rolig musik\" url=\"/Load?service=Tidal&amp;id=9977e64f-8df5-4967-9219-020000000003\" image=\"/Artwork?service=Tidal&amp;playlistimage=6793e3e6-0a62-4921-8158-020000000004\" volume="
+      }
+    },
+    {
+      "id": "023-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "D",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Playlist",
+      "note": "[capture] standalone -- /Playlist on D",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Transfer-Encoding",
+          "chunked"
+        ]
+      ],
+      "elapsed_ms": 22.5,
+      "body_bytes": 10138,
+      "body_bytes_wire": 10138,
+      "body_sha256": "d95e0863ebd4abe8e5f56ef26f86144dec1705fdb08fdce2b70810d12b1c1d5f",
+      "verbatim": false,
+      "redaction_edits": 1,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "playlist",
+      "body_file": "raw/023-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<playlist length=\"20\" id=\"3064\" playlistid=\"Tidal:9977e64f-8df5-4967-9219-020000000003\" shuffle=\"0\" repeat=\"2\">\n  <song albumid=\"185331971\" artistid=\"5481574\" songid=\"Tidal:185331984\" isFavourite=\"1\" service=\"Tidal\" similarstationid=\"Tidal:radio:artist/5481574\" trackstationid=\"Tidal:radio:track/185331984\" id=\"0\">\n    <art>Cult With No Name</art>\n    <alb>Anot"
+      }
+    },
+    {
+      "id": "024-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "D",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Volume",
+      "note": "[capture] standalone -- /Volume on D",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:35 GMT"
+        ],
+        [
+          "Content-Length",
+          "141"
+        ]
+      ],
+      "elapsed_ms": 17.2,
+      "body_bytes": 141,
+      "body_bytes_wire": 141,
+      "body_sha256": "4897c3373e3e9e30e9f27e787bcc11b5febfa1c248838aab46a4c1e5aedde406",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "volume",
+      "body_file": "raw/024-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<volume db=\"-58.5\" offsetDb=\"0\" mute=\"0\" etag=\"b5c6c6be3f0cf7e0a87861a4d3f147d2\" source=\"\">14</volume>"
+      }
+    },
+    {
+      "id": "025-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "captured state: standalone",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": "players: A, B, C, D"
+      }
+    },
+    {
+      "id": "026-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Volume?level=10",
+      "note": "cap A at level 10 before starting audio (was 20)",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:36 GMT"
+        ],
+        [
+          "Content-Length",
+          "142"
+        ]
+      ],
+      "elapsed_ms": 11.0,
+      "body_bytes": 142,
+      "body_bytes_wire": 142,
+      "body_sha256": "5f208b6268f66f61b093e4ae284f3f17ec5a78a984e27aa4f4ad0c00b1a3b758",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "volume",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<volume db=\"-62.2\" offsetDb=\"10\" mute=\"0\" etag=\"9e12351ae5fcdac65a5d201f53787375\" source=\"\">10</volume>"
+      }
+    },
+    {
+      "id": "027-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "A volume lowered from 20 to the --max-volume ceiling of 10",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": "restored from the ledger at the end of the run"
+      }
+    },
+    {
+      "id": "028-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Preset?id=1",
+      "note": "capture setup: start playback on A from preset 1",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:36 GMT"
+        ],
+        [
+          "Content-Length",
+          "93"
+        ]
+      ],
+      "elapsed_ms": 315.5,
+      "body_bytes": 93,
+      "body_bytes_wire": 93,
+      "body_sha256": "c3591150d83b86f3b70aebf9deb5ff15fc73c0e6b82f96f809bf6fe464083d06",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "loaded",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<loaded service=\"Tidal\"><entries>27</entries></loaded>"
+      }
+    },
+    {
+      "id": "029-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] playing (preset recall) -- /SyncStatus on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:38 GMT"
+        ],
+        [
+          "Content-Length",
+          "414"
+        ]
+      ],
+      "elapsed_ms": 11.1,
+      "body_bytes": 410,
+      "body_bytes_wire": 414,
+      "body_sha256": "563ed422728dc4f8906fa566ed0b68b3991b01fd31cbb300ef4dca3271c3019c",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/029-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"525\" syncStat=\"525\" version=\"4.16.22\" id=\"192.0.2.11:11000\" db=\"-62.2\" volume=\"10\" name=\"Stue\" model=\"N132\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0B\" hasSubwoofer=\"true\"><pairWithSub></pairWithSub><bluetoothOutput></bluetoothOutput></S"
+      }
+    },
+    {
+      "id": "030-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] playing (preset recall) -- /Status on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:38 GMT"
+        ],
+        [
+          "Content-Length",
+          "1323"
+        ]
+      ],
+      "elapsed_ms": 12.8,
+      "body_bytes": 1323,
+      "body_bytes_wire": 1323,
+      "body_sha256": "79bf15c5801b669512d9857f3ccb3e32a810e55533fb0d3a0d5773f3e4d2fe05",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/030-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"e5f35ef28fe861e319c344de5993b81d\"><album>At Night, Alone.</album><albumid>60269426</albumid><artist>Mike Posner</artist><artistid>3676611</artistid><canMovePlayback>true</canMovePlayback><canSeek>1</canSeek><cursor>36</cursor><db>-62.2</db><dirac>1</dirac><fn>Tidal:60269439</fn><image>/Artwork?service=Tidal&amp;songid=Tidal%3A60269439</image><in"
+      }
+    },
+    {
+      "id": "031-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "captured state: playing (preset recall)",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": "players: A"
+      }
+    },
+    {
+      "id": "032-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/AddSlave?slaves=192.0.2.12&ports=11000",
+      "note": "set up: A takes B",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:38 GMT"
+        ],
+        [
+          "Content-Length",
+          "108"
+        ]
+      ],
+      "elapsed_ms": 24.8,
+      "body_bytes": 104,
+      "body_bytes_wire": 108,
+      "body_sha256": "fb2721679680da0f57c85fe9fe2287cb091210f750a9e8810b26996be0200135",
+      "verbatim": false,
+      "redaction_edits": 1,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "addSlave",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<addSlave><slave id=\"192.0.2.12\" port=\"11000\"></slave></addSlave>"
+      }
+    },
+    {
+      "id": "033-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] group: A master, B slave -- /SyncStatus on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:42 GMT"
+        ],
+        [
+          "Content-Length",
+          "544"
+        ]
+      ],
+      "elapsed_ms": 9.3,
+      "body_bytes": 536,
+      "body_bytes_wire": 544,
+      "body_sha256": "470c60f25243042fb97e3216cf0a37ff7d82ad6da22b8f9c2a2086f2c9d07bc5",
+      "verbatim": false,
+      "redaction_edits": 3,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/033-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"529\" syncStat=\"529\" version=\"4.16.22\" id=\"192.0.2.11:11000\" db=\"-62.2\" volume=\"10\" name=\"Stue\" model=\"N132\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" group=\"Stue+Kontor\" mac=\"02:00:00:00:00:0B\" hasSubwoofer=\"true\"><slave id=\"192.0.2.12\" port=\"11000\" name=\"Kon"
+      }
+    },
+    {
+      "id": "034-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] group: A master, B slave -- /Status on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:42 GMT"
+        ],
+        [
+          "Content-Length",
+          "1386"
+        ]
+      ],
+      "elapsed_ms": 10.5,
+      "body_bytes": 1386,
+      "body_bytes_wire": 1386,
+      "body_sha256": "7c61030b7327fbd6572598a714a629b3ad7b7394a740b54033d86cdbe0b08972",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/034-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"ce10f4078780859daf03c3d37523fcf6\"><album>At Night, Alone.</album><albumid>60269426</albumid><artist>Mike Posner</artist><artistid>3676611</artistid><canMovePlayback>true</canMovePlayback><canSeek>1</canSeek><cursor>36</cursor><db>-62.2</db><dirac>1</dirac><fn>Tidal:60269439</fn><groupName>Stue+Kontor</groupName><groupVolume>10</groupVolume><imag"
+      }
+    },
+    {
+      "id": "035-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] group: A master, B slave -- /SyncStatus on B",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:42 GMT"
+        ],
+        [
+          "Content-Length",
+          "441"
+        ]
+      ],
+      "elapsed_ms": 10.1,
+      "body_bytes": 433,
+      "body_bytes_wire": 441,
+      "body_sha256": "ba7020e0233679eb784cd4cea22544dd883609e034f99746bbe757980023bb27",
+      "verbatim": false,
+      "redaction_edits": 3,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/035-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"1028\" syncStat=\"1028\" version=\"4.16.22\" id=\"192.0.2.12:11000\" db=\"-27.6\" volume=\"27\" name=\"Kontor\" model=\"N130\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_nt.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0C\"><master port=\"11000\">192.0.2.11</master><pairWithSub></pairWithSub><bluetoothOutpu"
+      }
+    },
+    {
+      "id": "036-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] group: A master, B slave -- /Status on B",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Length",
+          "1386"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:42 GMT"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ]
+      ],
+      "elapsed_ms": 18.3,
+      "body_bytes": 1386,
+      "body_bytes_wire": 1386,
+      "body_sha256": "7c61030b7327fbd6572598a714a629b3ad7b7394a740b54033d86cdbe0b08972",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/036-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"ce10f4078780859daf03c3d37523fcf6\"><album>At Night, Alone.</album><albumid>60269426</albumid><artist>Mike Posner</artist><artistid>3676611</artistid><canMovePlayback>true</canMovePlayback><canSeek>1</canSeek><cursor>36</cursor><db>-62.2</db><dirac>1</dirac><fn>Tidal:60269439</fn><groupName>Stue+Kontor</groupName><groupVolume>10</groupVolume><imag"
+      }
+    },
+    {
+      "id": "037-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "captured state: group: A master, B slave",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": "players: A, B"
+      }
+    },
+    {
+      "id": "038-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/AddSlave?slaves=192.0.2.13&ports=11000",
+      "note": "set up: A takes C",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:42 GMT"
+        ],
+        [
+          "Content-Length",
+          "108"
+        ]
+      ],
+      "elapsed_ms": 26.1,
+      "body_bytes": 104,
+      "body_bytes_wire": 108,
+      "body_sha256": "0cae646e309d735861cb6a3d6bedc773600445b76d5cef90a5b0539045cfbddb",
+      "verbatim": false,
+      "redaction_edits": 1,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "addSlave",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<addSlave><slave id=\"192.0.2.13\" port=\"11000\"></slave></addSlave>"
+      }
+    },
+    {
+      "id": "039-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/RemoveSlave?slaves=192.0.2.12,192.0.2.13&ports=11000,11000",
+      "note": "teardown: free the slaves of A",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:44 GMT"
+        ],
+        [
+          "Content-Length",
+          "652"
+        ]
+      ],
+      "elapsed_ms": 9.8,
+      "body_bytes": 640,
+      "body_bytes_wire": 652,
+      "body_sha256": "ab0094f558cebee40c8d506957fe2bd4fe0db498bc58cd04ca5c386cfb6fc4b2",
+      "verbatim": false,
+      "redaction_edits": 4,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"532\" syncStat=\"532\" version=\"4.16.22\" id=\"192.0.2.11:11000\" db=\"-62.2\" volume=\"10\" name=\"Stue\" model=\"N132\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" group=\"Stue + 2\" mac=\"02:00:00:00:00:0B\" hasSubwoofer=\"true\"><slave id=\"192.0.2.12\" port=\"11000\" name=\"Kontor"
+      }
+    },
+    {
+      "id": "040-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "reset topology before 'before nesting': freed A, B, C",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": ""
+      }
+    },
+    {
+      "id": "041-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/AddSlave?slaves=192.0.2.13&ports=11000",
+      "note": "set up: B takes C",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:48 GMT"
+        ],
+        [
+          "Content-Length",
+          "108"
+        ]
+      ],
+      "elapsed_ms": 26.3,
+      "body_bytes": 104,
+      "body_bytes_wire": 108,
+      "body_sha256": "0cae646e309d735861cb6a3d6bedc773600445b76d5cef90a5b0539045cfbddb",
+      "verbatim": false,
+      "redaction_edits": 1,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "addSlave",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<addSlave><slave id=\"192.0.2.13\" port=\"11000\"></slave></addSlave>"
+      }
+    },
+    {
+      "id": "042-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/AddSlave?slave=192.0.2.12&port=11000",
+      "note": "capture setup: nest B (a master) under A",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:50 GMT"
+        ],
+        [
+          "Content-Length",
+          "108"
+        ]
+      ],
+      "elapsed_ms": 28.9,
+      "body_bytes": 104,
+      "body_bytes_wire": 108,
+      "body_sha256": "fb2721679680da0f57c85fe9fe2287cb091210f750a9e8810b26996be0200135",
+      "verbatim": false,
+      "redaction_edits": 1,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "addSlave",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<addSlave><slave id=\"192.0.2.12\" port=\"11000\"></slave></addSlave>"
+      }
+    },
+    {
+      "id": "043-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] nested: A -> B -> C -- /SyncStatus on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:55 GMT"
+        ],
+        [
+          "Content-Length",
+          "544"
+        ]
+      ],
+      "elapsed_ms": 10.9,
+      "body_bytes": 536,
+      "body_bytes_wire": 544,
+      "body_sha256": "26e2ceea58df7d75b2b200ec7dc50ac20d06c1d9246e44ff4d3d5b9d8ad267eb",
+      "verbatim": false,
+      "redaction_edits": 3,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/043-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"540\" syncStat=\"540\" version=\"4.16.22\" id=\"192.0.2.11:11000\" db=\"-62.2\" volume=\"10\" name=\"Stue\" model=\"N132\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" group=\"Stue+Kontor\" mac=\"02:00:00:00:00:0B\" hasSubwoofer=\"true\"><slave id=\"192.0.2.12\" port=\"11000\" name=\"Kon"
+      }
+    },
+    {
+      "id": "044-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] nested: A -> B -> C -- /Status on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:55 GMT"
+        ],
+        [
+          "Content-Length",
+          "1387"
+        ]
+      ],
+      "elapsed_ms": 14.8,
+      "body_bytes": 1387,
+      "body_bytes_wire": 1387,
+      "body_sha256": "aa679114a401c17699c41081246967da7465a18b04b92e3ca5d62d1f5654bd10",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/044-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"61f8b8e4bff5b0e3e2c94844258b9a7c\"><album>At Night, Alone.</album><albumid>60269426</albumid><artist>Mike Posner</artist><artistid>3676611</artistid><canMovePlayback>true</canMovePlayback><canSeek>1</canSeek><cursor>36</cursor><db>-62.2</db><dirac>1</dirac><fn>Tidal:60269439</fn><groupName>Stue+Kontor</groupName><groupVolume>10</groupVolume><imag"
+      }
+    },
+    {
+      "id": "045-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] nested: A -> B -> C -- /SyncStatus on B",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:55 GMT"
+        ],
+        [
+          "Content-Length",
+          "575"
+        ]
+      ],
+      "elapsed_ms": 10.8,
+      "body_bytes": 563,
+      "body_bytes_wire": 575,
+      "body_sha256": "af31443832fa07a2fd9be5963f5c41cce73b70d7e080d51804190e99c7ba985b",
+      "verbatim": false,
+      "redaction_edits": 4,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/045-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"1036\" syncStat=\"1036\" version=\"4.16.22\" id=\"192.0.2.12:11000\" db=\"-27.7\" volume=\"26\" name=\"Kontor\" model=\"N130\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_nt.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" group=\"Kontor+Køkken\" mac=\"02:00:00:00:00:0C\"><master port=\"11000\">192.0.2.11</master><slave id=\"192.0.2.1"
+      }
+    },
+    {
+      "id": "046-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] nested: A -> B -> C -- /Status on B",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Length",
+          "1387"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:55 GMT"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ]
+      ],
+      "elapsed_ms": 19.3,
+      "body_bytes": 1387,
+      "body_bytes_wire": 1387,
+      "body_sha256": "aa679114a401c17699c41081246967da7465a18b04b92e3ca5d62d1f5654bd10",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/046-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"61f8b8e4bff5b0e3e2c94844258b9a7c\"><album>At Night, Alone.</album><albumid>60269426</albumid><artist>Mike Posner</artist><artistid>3676611</artistid><canMovePlayback>true</canMovePlayback><canSeek>1</canSeek><cursor>36</cursor><db>-62.2</db><dirac>1</dirac><fn>Tidal:60269439</fn><groupName>Stue+Kontor</groupName><groupVolume>10</groupVolume><imag"
+      }
+    },
+    {
+      "id": "047-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "C",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] nested: A -> B -> C -- /SyncStatus on C",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:55 GMT"
+        ],
+        [
+          "Content-Length",
+          "440"
+        ]
+      ],
+      "elapsed_ms": 10.9,
+      "body_bytes": 432,
+      "body_bytes_wire": 440,
+      "body_sha256": "039939afdff1a0cd0e3f2d6d9437e8836942dcbf3e478da483b9ee65e0dec53c",
+      "verbatim": false,
+      "redaction_edits": 3,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/047-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"972\" syncStat=\"972\" version=\"4.16.22\" id=\"192.0.2.13:11000\" db=\"-38.3\" volume=\"37\" name=\"Køkken\" model=\"N132\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_nt.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0D\"><master port=\"11000\">192.0.2.12</master><pairWithSub></pairWithSub><bluetoothOutput>"
+      }
+    },
+    {
+      "id": "048-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "C",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] nested: A -> B -> C -- /Status on C",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Length",
+          "1387"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:55 GMT"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ]
+      ],
+      "elapsed_ms": 20.0,
+      "body_bytes": 1387,
+      "body_bytes_wire": 1387,
+      "body_sha256": "aa679114a401c17699c41081246967da7465a18b04b92e3ca5d62d1f5654bd10",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/048-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"61f8b8e4bff5b0e3e2c94844258b9a7c\"><album>At Night, Alone.</album><albumid>60269426</albumid><artist>Mike Posner</artist><artistid>3676611</artistid><canMovePlayback>true</canMovePlayback><canSeek>1</canSeek><cursor>36</cursor><db>-62.2</db><dirac>1</dirac><fn>Tidal:60269439</fn><groupName>Stue+Kontor</groupName><groupVolume>10</groupVolume><imag"
+      }
+    },
+    {
+      "id": "049-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "captured state: nested: A -> B -> C",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": "players: A, B, C"
+      }
+    },
+    {
+      "id": "050-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/RemoveSlave?slaves=192.0.2.12&ports=11000",
+      "note": "teardown: free the slaves of A",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:55 GMT"
+        ],
+        [
+          "Content-Length",
+          "544"
+        ]
+      ],
+      "elapsed_ms": 15.3,
+      "body_bytes": 536,
+      "body_bytes_wire": 544,
+      "body_sha256": "26e2ceea58df7d75b2b200ec7dc50ac20d06c1d9246e44ff4d3d5b9d8ad267eb",
+      "verbatim": false,
+      "redaction_edits": 3,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"540\" syncStat=\"540\" version=\"4.16.22\" id=\"192.0.2.11:11000\" db=\"-62.2\" volume=\"10\" name=\"Stue\" model=\"N132\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" group=\"Stue+Kontor\" mac=\"02:00:00:00:00:0B\" hasSubwoofer=\"true\"><slave id=\"192.0.2.12\" port=\"11000\" name=\"Kon"
+      }
+    },
+    {
+      "id": "051-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "B",
+      "method": "GET",
+      "port": 11000,
+      "path": "/RemoveSlave?slaves=192.0.2.13&ports=11000",
+      "note": "teardown: free the slaves of B",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:06:55 GMT"
+        ],
+        [
+          "Content-Length",
+          "531"
+        ]
+      ],
+      "elapsed_ms": 10.4,
+      "body_bytes": 523,
+      "body_bytes_wire": 531,
+      "body_sha256": "6c018e7929db2404adb83d893c518e576f7c1fc245dfc6f83366163d9428632b",
+      "verbatim": false,
+      "redaction_edits": 3,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"1037\" syncStat=\"1037\" version=\"4.16.22\" id=\"192.0.2.12:11000\" db=\"-27.7\" volume=\"26\" name=\"Kontor\" model=\"N130\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_nt.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" group=\"Kontor+Køkken\" mac=\"02:00:00:00:00:0C\"><slave id=\"192.0.2.13\" port=\"11000\" name=\"Køkken\" model=\"N13"
+      }
+    },
+    {
+      "id": "052-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "reset topology before 'before the one-sided join': freed A, B, C",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": ""
+      }
+    },
+    {
+      "id": "053-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "D",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SetMaster?master=192.0.2.11&port=11000",
+      "note": "capture setup: D joins A slave-side",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:07:00 GMT"
+        ],
+        [
+          "Content-Length",
+          "391"
+        ]
+      ],
+      "elapsed_ms": 79.3,
+      "body_bytes": 387,
+      "body_bytes_wire": 391,
+      "body_sha256": "157fdfc3e339fdf1507d87c29bfca0513f9ac3adc058e65fa15dc0ec1513d2c1",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"1958\" syncStat=\"1958\" version=\"4.16.22\" id=\"192.0.2.14:11000\" db=\"-58.5\" volume=\"14\" name=\"Soveværelse\" model=\"N110\" modelName=\"NODE 2\" class=\"streamer\" icon=\"/images/players/N110_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0E\" hasSubwoofer=\"true\"><pairWithSub></pairWithSub></SyncStatus>"
+      }
+    },
+    {
+      "id": "054-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] one-sided: D joined A via ?master= -- /SyncStatus on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:07:02 GMT"
+        ],
+        [
+          "Content-Length",
+          "414"
+        ]
+      ],
+      "elapsed_ms": 17.5,
+      "body_bytes": 410,
+      "body_bytes_wire": 414,
+      "body_sha256": "bc00131d4ab2d3992ddc74bcdcbaaf8a4273839341165fe4170bc0aa5b1369a2",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/054-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"542\" syncStat=\"542\" version=\"4.16.22\" id=\"192.0.2.11:11000\" db=\"-62.2\" volume=\"10\" name=\"Stue\" model=\"N132\" modelName=\"NODE\" class=\"streamer\" icon=\"/images/players/N125_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0B\" hasSubwoofer=\"true\"><pairWithSub></pairWithSub><bluetoothOutput></bluetoothOutput></S"
+      }
+    },
+    {
+      "id": "055-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "A",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] one-sided: D joined A via ?master= -- /Status on A",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:07:02 GMT"
+        ],
+        [
+          "Content-Length",
+          "1324"
+        ]
+      ],
+      "elapsed_ms": 15.0,
+      "body_bytes": 1324,
+      "body_bytes_wire": 1324,
+      "body_sha256": "58f7b7d7df74b87e02fd41750bc56d5896080d9a67ee5c459cd54754a83a904a",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/055-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"f38cc7840d521b109888e3d11c0f16eb\"><album>At Night, Alone.</album><albumid>60269426</albumid><artist>Mike Posner</artist><artistid>3676611</artistid><canMovePlayback>true</canMovePlayback><canSeek>1</canSeek><cursor>36</cursor><db>-62.2</db><dirac>1</dirac><fn>Tidal:60269439</fn><image>/Artwork?service=Tidal&amp;songid=Tidal%3A60269439</image><in"
+      }
+    },
+    {
+      "id": "056-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "D",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SyncStatus",
+      "note": "[capture] one-sided: D joined A via ?master= -- /SyncStatus on D",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:07:02 GMT"
+        ],
+        [
+          "Content-Length",
+          "455"
+        ]
+      ],
+      "elapsed_ms": 40.1,
+      "body_bytes": 447,
+      "body_bytes_wire": 455,
+      "body_sha256": "73ecc64b00c45dbef0f1b603df71abdc7217b979a3a9f68d985aac4340c4c3d2",
+      "verbatim": false,
+      "redaction_edits": 3,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "raw/056-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"1960\" syncStat=\"1960\" version=\"4.16.22\" id=\"192.0.2.14:11000\" db=\"-58.5\" volume=\"14\" name=\"Soveværelse\" model=\"N110\" modelName=\"NODE 2\" class=\"streamer\" icon=\"/images/players/N110_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0E\" hasSubwoofer=\"true\"><master reconnecting=\"true\" port=\"11000\">192.0.2.11</m"
+      }
+    },
+    {
+      "id": "057-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "D",
+      "method": "GET",
+      "port": 11000,
+      "path": "/Status",
+      "note": "[capture] one-sided: D joined A via ?master= -- /Status on D",
+      "spec_ref": "2",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Content-Length",
+          "1324"
+        ],
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:07:02 GMT"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ]
+      ],
+      "elapsed_ms": 40.9,
+      "body_bytes": 1324,
+      "body_bytes_wire": 1324,
+      "body_sha256": "58f7b7d7df74b87e02fd41750bc56d5896080d9a67ee5c459cd54754a83a904a",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "status",
+      "body_file": "raw/057-state_capture.xml",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<status etag=\"f38cc7840d521b109888e3d11c0f16eb\"><album>At Night, Alone.</album><albumid>60269426</albumid><artist>Mike Posner</artist><artistid>3676611</artistid><canMovePlayback>true</canMovePlayback><canSeek>1</canSeek><cursor>36</cursor><db>-62.2</db><dirac>1</dirac><fn>Tidal:60269439</fn><image>/Artwork?service=Tidal&amp;songid=Tidal%3A60269439</image><in"
+      }
+    },
+    {
+      "id": "058-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "captured state: one-sided: D joined A via ?master=",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": "players: A, D"
+      }
+    },
+    {
+      "id": "059-state_capture",
+      "suite": "state_capture",
+      "safety": "state",
+      "player": "D",
+      "method": "GET",
+      "port": 11000,
+      "path": "/SetMaster",
+      "note": "teardown fallback: D leaves its group",
+      "spec_ref": "5",
+      "status": 200,
+      "reason": "OK",
+      "http_version": "HTTP/1.1",
+      "headers": [
+        [
+          "Content-Type",
+          "application/xml"
+        ],
+        [
+          "X-Sovi-Effective-Language",
+          "en"
+        ],
+        [
+          "Date",
+          "Fri, 11 Sep 2026 20:07:04 GMT"
+        ],
+        [
+          "Content-Length",
+          "391"
+        ]
+      ],
+      "elapsed_ms": 140.4,
+      "body_bytes": 387,
+      "body_bytes_wire": 391,
+      "body_sha256": "cc0c92d34eca7912d17cb422efa175f326b9639021abd5e3ffda43c9bb67cb79",
+      "verbatim": false,
+      "redaction_edits": 2,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "application/xml",
+      "root_element": "SyncStatus",
+      "body_file": "",
+      "body_kind": "xml",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "body_preview": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SyncStatus etag=\"1961\" syncStat=\"1961\" version=\"4.16.22\" id=\"192.0.2.14:11000\" db=\"-58.5\" volume=\"14\" name=\"Soveværelse\" model=\"N110\" modelName=\"NODE 2\" class=\"streamer\" icon=\"/images/players/N110_sub.png\" brand=\"Bluesound\" schemaVersion=\"34\" initialized=\"true\" mac=\"02:00:00:00:00:0E\" hasSubwoofer=\"true\"><pairWithSub></pairWithSub></SyncStatus>"
+      }
+    },
+    {
+      "id": "060-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "reset topology before 'capture teardown': freed D",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": ""
+      }
+    },
+    {
+      "id": "061-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "D could only be freed by a bare /SetMaster",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "OK",
+      "extra": {
+        "detail": "Expected: after a slave-side join with /SetMaster?master=, no master lists this player as a <slave>, so /RemoveSlave has nothing to act on. The self-unjoin is the only way out. This does not invalidate the case that follows."
+      }
+    },
+    {
+      "id": "062-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "original topology restored: yes",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "OK",
+      "extra": {
+        "detail": "A: before master=- slaves=[] / after master=- slaves=[]\nB: before master=- slaves=[] / after master=- slaves=[]\nC: before master=- slaves=[] / after master=- slaves=[]\nD: before master=- slaves=[] / after master=- slaves=[]"
+      }
+    },
+    {
+      "id": "063-state_capture",
+      "suite": "state_capture",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "38 labelled captures across 6 states",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "INFO",
+      "extra": {
+        "detail": "playing as-found: Tidal mqa                    A   001-state_capture      raw/001-state_capture.xml\nplaying as-found: Tidal mqa                    A   002-state_capture      raw/002-state_capture.xml\nstandalone                                     A   005-state_capture      raw/005-state_capture.xml\nstandalone                                     A   006-state_capture      raw/006-state_capture.xml\nstandalone                                     A   007-state_capture      raw/007-state_capture.xml\nstandalone                                     A   008-state_capture      raw/008-state_capture.xml\nstandalone                                     A   009-state_capture      raw/009-state_capture.xml\nstandalone                                     B   010-state_capture      raw/010-state_capture.xml\nstandalone                                     B   011-state_capture      raw/011-state_capture.xml\nstandalone                                     B   012-state_capture      raw/012-state_capture.xml\nstandalone                                     B   013-state_capture      raw/013-state_capture.xml\nstandalone                                     B   014-state_capture      raw/014-state_capture.xml\nstandalone                                     C   015-state_capture      raw/015-state_capture.xml\nstandalone                                     C   016-state_capture      raw/016-state_capture.xml\nstandalone                                     C   017-state_capture      raw/017-state_capture.xml\nstandalone                                     C   018-state_capture      raw/018-state_capture.xml\nstandalone                                     C   019-state_capture      raw/019-state_capture.xml\nstandalone                                     D   020-state_capture      raw/020-state_capture.xml\nstandalone                                     D   021-state_capture      raw/021-state_capture.xml\nstandalone                                     D   022-state_capture      raw/022-state_capture.xml\nstandalone                                     D   023-state_capture      raw/023-state_capture.xml\nstandalone                                     D   024-state_capture      raw/024-state_capture.xml\nplaying (preset recall)                        A   029-state_capture      raw/029-state_capture.xml\nplaying (preset recall)                        A   030-state_capture      raw/030-state_capture.xml\ngroup: A master, B slave                       A   033-state_capture      raw/033-state_capture.xml\ngroup: A master, B slave                       A   034-state_capture      raw/034-state_capture.xml\ngroup: A master, B slave                       B   035-state_capture      raw/035-state_capture.xml\ngroup: A master, B slave                       B   036-state_capture      raw/036-state_capture.xml\nnested: A -> B -> C                            A   043-state_capture      raw/043-state_capture.xml\nnested: A -> B -> C                            A   044-state_capture      raw/044-state_capture.xml\nnested: A -> B -> C                            B   045-state_capture      raw/045-state_capture.xml\nnested: A -> B -> C                            B   046-state_capture      raw/046-state_capture.xml\nnested: A -> B -> C                            C   047-state_capture      raw/047-state_capture.xml\nnested: A -> B -> C                            C   048-state_capture      raw/048-state_capture.xml\none-sided: D joined A via ?master=             A   054-state_capture      raw/054-state_capture.xml\none-sided: D joined A via ?master=             A   055-state_capture      raw/055-state_capture.xml\none-sided: D joined A via ?master=             D   056-state_capture      raw/056-state_capture.xml\none-sided: D joined A via ?master=             D   057-state_capture      raw/057-state_capture.xml"
+      }
+    },
+    {
+      "id": "064-restore",
+      "suite": "restore",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "restore the original topology (all standalone)",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "OK",
+      "extra": {
+        "detail": "restored"
+      }
+    },
+    {
+      "id": "065-restore",
+      "suite": "restore",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "A: restore transport state to 'play'",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "OK",
+      "extra": {
+        "detail": "restored"
+      }
+    },
+    {
+      "id": "066-restore",
+      "suite": "restore",
+      "safety": "read",
+      "player": "-",
+      "method": "-",
+      "port": 0,
+      "path": "(analysis)",
+      "note": "A: restore volume to 20",
+      "spec_ref": "",
+      "status": null,
+      "reason": "",
+      "http_version": "",
+      "headers": [],
+      "elapsed_ms": null,
+      "body_bytes": null,
+      "body_bytes_wire": null,
+      "body_sha256": "",
+      "verbatim": true,
+      "redaction_edits": 0,
+      "claim": "",
+      "claim_verdict": "",
+      "content_type": "",
+      "root_element": "",
+      "body_file": "",
+      "body_kind": "",
+      "error": "",
+      "verdict_note": "",
+      "expect": "",
+      "verdict": "OK",
+      "extra": {
+        "detail": "restored"
+      }
+    }
+  ]
+}

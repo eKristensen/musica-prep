@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<radiotime service="RadioParadise">
+  <category text="MQA" key="20">
+    <item text="The Main Mix" type="audio" URL="RadioParadise%3A%2F0%3A20" image="https://img.radioparadise.com/channels/0/0/cover_512x512/0.jpg"></item>
+    <item text="Mellow Mix" type="audio" URL="RadioParadise%3A%2F1%3A20%2FMellow%2520Mix" image="https://img.radioparadise.com/channels/0/1/cover_512x512/0.jpg"></item>
+    <item text="RockIt!" type="audio" URL="RadioParadise%3A%2F2%3A20%2FRockIt%2521" image="https://img.radioparadise.com/channels/0/2/cover_512x512/0.jpg"></item>
+    <item text="The Globe" type="audio" URL="RadioParadise%3A%2F3%3A20%2FThe%2520Globe" image="https://img.radioparadise.com/channels/0/3/cover_512x512/0.jpg"></item>
+    <item text="Beyond..." type="audio" URL="RadioParadise%3A%2F5%3A20%2FBeyond..." image="https://img.radioparadise.com/channels/0/5/cover_512x512/0.jpg"></item>
+    <item text="Serenity" type="audio" URL="RadioParadise%3A%2F42%3A20%2FSerenity" image="https://img.radioparadise.com/channels/0/42/cover_512x512/0.jpg"></item>
+    <item text="KFAT" type="audio" URL="RadioParadise%3A%2F945%3A20%2FKFAT" image="https://img.radioparadise.com/channels/0/945/cover_512x512/0.jpg"></item>
+  </category>
+  <category text="CD Quality" key="4">
+    <item text="The Main Mix" type="audio" URL="RadioParadise%3A%2F0%3A4" image="https://img.radioparadise.com/channels/0/0/cover_512x512/0.jpg"></item>
+    <item text="Mellow Mix" type="audio" URL="RadioParadise%3A%2F1%3A4%2FMellow%2520Mix" image="https://img.radioparadise.com/channels/0/1/cover_512x512/0.jpg"></item>
+    <item text="RockIt!" type="audio" URL="RadioParadise%3A%2F2%3A4%2FRockIt%2521" image="https://img.radioparadise.com/channels/0/2/cover_512x512/0.jpg"></item>
+    <item text="The Globe" type="audio" URL="RadioParadise%3A%2F3%3A4%2FThe%2520Globe" image="https://img.radioparadise.com/channels/0/3/cover_512x512/0.jpg"></item>
+    <item text="Beyond..." type="audio" URL="RadioParadise%3A%2F5%3A4%2FBeyond..." image="https://img.radioparadise.com/channels/0/5/cover_512x512/0.jpg"></item>
+    <item text="Serenity" type="audio" URL="RadioParadise%3A%2F42%3A4%2FSerenity" image="https://img.radioparadise.com/channels/0/42/cover_512x512/0.jpg"></item>
+    <item text="KFAT" type="audio" URL="RadioParadise%3A%2F945%3A4%2FKFAT" image="https://img.radioparadise.com/channels/0/945/cover_512x512/0.jpg"></item>
+  </category>
+</radiotime>

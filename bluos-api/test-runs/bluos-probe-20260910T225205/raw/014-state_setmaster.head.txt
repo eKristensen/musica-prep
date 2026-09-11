@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+X-Sovi-Effective-Language: en
+Date: Thu, 10 Sep 2026 20:52:35 GMT
+Content-Length: 395
+
+# request: GET 192.0.2.12:11000/SetMaster?master=192.0.2.11&port=11000

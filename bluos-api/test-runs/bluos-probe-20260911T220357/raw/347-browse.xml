@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="artists">
+  <item browseKey="LocalMusic:MG/LocalMusic-Artist?artist=Gregorian" contextMenuKey="LocalMusic:CM/LocalMusic-Artist?artist=Gregorian" text="Gregorian" type="artist"></item>
+</browse>

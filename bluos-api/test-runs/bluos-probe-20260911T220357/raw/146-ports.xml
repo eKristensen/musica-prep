@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="screen.xsd" version="1" screenTitle="Favourites" id="screen-LocalMusic-Favourites" service="LocalMusic">
+  <selectorMenu menuTitle="Select Service" replaceScreen="false">
+    <item icon="/images/LibraryIcon.png?style=Default" text="Library" selected="true">
+      <action type="player-link" URI="/ui/action?CfavouritesService=LocalMusic" refreshScreen="true"></action>
+    </item>
+    <item icon="/Sources/images/TidalIcon.png?style=Default" text="TIDAL">
+      <action type="player-link" URI="/ui/action?CfavouritesService=Tidal" refreshScreen="true"></action>
+    </item>
+    <item icon="/Sources/images/TuneInIcon.png?style=Default" text="TuneIn">
+      <action type="player-link" URI="/ui/action?CfavouritesService=TuneIn" refreshScreen="true"></action>
+    </item>
+  </selectorMenu>
+  <infoPanel icon="/images/ui/ic_info_favourites.png" text="You don&#39;t have any Favourites on Library" subText="You can add any content within Library as a favourite to have it show up here."></infoPanel>
+</screen>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="artists">
+  <item browseKey="LocalMusic:MG/LocalMusic-Artist?artist=Ennio+Morricone" contextMenuKey="LocalMusic:CM/LocalMusic-Artist?artist=Ennio+Morricone" text="Ennio Morricone" type="artist"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Artist?artist=Europe" contextMenuKey="LocalMusic:CM/LocalMusic-Artist?artist=Europe" text="Europe" type="artist"></item>
+</browse>

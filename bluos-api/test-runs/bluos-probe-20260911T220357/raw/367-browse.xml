@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="composers">
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Beau+Hill" text="Beau Hill" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Ben+E.+King" text="Ben E. King" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Benny+Andersson" text="Benny Andersson" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Bernie+Worrell" text="Bernie Worrell" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Berry+Gordy%2C+Jr." text="Berry Gordy, Jr." type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Bill+Conti" text="Bill Conti" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Bj%C3%B6rn+Ulvaeus" text="Björn Ulvaeus" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Bono" text="Bono" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Brian+Connolly" text="Brian Connolly" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Brian+May" text="Brian May" type="composer"></item>
+</browse>

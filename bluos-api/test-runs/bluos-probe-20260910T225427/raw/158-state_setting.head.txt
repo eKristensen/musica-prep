@@ -1,0 +1,5 @@
+HTTP/1.1 200 OK
+Date: Thu, 10 Sep 2026 20:54:34 GMT
+Content-Length: 0
+
+# request: GET 192.0.2.11:11000/setting?ledbrightness=1

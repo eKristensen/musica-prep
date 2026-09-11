@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+X-Sovi-Ui-Context: eyJ2IjoxLCJTcyI6IkxvY2FsTXVzaWMifQo=
+Date: Fri, 11 Sep 2026 20:04:06 GMT
+Content-Length: 1137
+
+# request: GET 192.0.2.11:11000/ui/Favourites

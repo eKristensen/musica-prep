@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Date: Fri, 11 Sep 2026 20:05:04 GMT
+Transfer-Encoding: chunked
+
+# request: GET 192.0.2.11:11000/Browse?key=Airable%3ABrowseMenu%2F%252FRadioBrowse%253Fservice%3DAirable%26url%3Dhttps%25253A%25252F%25252F7818664144.airable.io%25252Fradio%25252Fstations%25252Fcharts

@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+X-Sovi-Effective-Language: en
+Date: Fri, 11 Sep 2026 20:07:02 GMT
+Content-Length: 455
+
+# request: GET 192.0.2.14:11000/SyncStatus

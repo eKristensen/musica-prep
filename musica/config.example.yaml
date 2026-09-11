@@ -1,0 +1,15 @@
+# Copy to config.yaml and edit. config.yaml is gitignored.
+#
+# IP addresses only. Names, models and capabilities come from the players
+# themselves via /SyncStatus. Port is optional and defaults to 11000.
+# Unknown keys are ignored rather than fatal.
+
+players:
+  - { ip: 10.20.30.11, port: 11000 }
+  - { ip: 10.20.30.12 }
+
+# Which player browse requests are sent to. Optional; defaults to the first
+# reachable player. Without this the same tree gets cached once per player.
+browse_player: 10.20.30.11
+
+listen: "0.0.0.0:8080"

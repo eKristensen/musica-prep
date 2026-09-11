@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Date: Fri, 11 Sep 2026 20:05:11 GMT
+Transfer-Encoding: chunked
+
+# request: GET 192.0.2.11:11000/Browse?key=TuneIn%3ABrowseMenu%2F%252FRadioBrowse%253Fservice%3DTuneIn%26url%3Dhttps%25253A%25252F%25252Fapi.radiotime.com%25252Fcategories%25252Fc100000088%25253Fserial%25253DC0%2525253a74%2525253a2B%2525253aFF%2525253a2C%2525253a1E%252526partnerId%25253D8OeGua6y%252526version%25253D2%252526formats%25253Dwma%2525252cmp3%2525252caac%2525252cogg%2525252chls%252526viewModel%25253DFalse%252526itemToken%25253DBggIAAYABgABAAEAAQEAAQgAAA

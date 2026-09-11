@@ -1,0 +1,5 @@
+HTTP/1.1 503 Service Unavailable
+Date: Fri, 11 Sep 2026 20:04:03 GMT
+Content-Length: 0
+
+# request: GET 192.0.2.14:11000/BTDevices?timeout=1

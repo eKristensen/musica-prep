@@ -1,0 +1,1451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services schemaVersion="34" sid="72" url="/redirectToCp?href=%2Fservices%3Fnoheader%3D1%26schemaVersion%3D35">
+<service hasStableBrowse="true" name="BluOS" type="BluOSPlaylists" displayname="BluOS" icon="/images/BluOSIcon.png">
+	<menu>
+		<menuEntry displayName="Playlists" inlineRows="5">
+			<sort name="sort" default="alpha" minimumSchemaVersion="19">
+				<value name="recent" displayName="Date added" />
+				<value name="alpha" displayName="A → Z" />
+			</sort>
+	  		<browseRequest url="/Playlists" resultType="Playlist" myPlaylistsFilter="myPlaylists=1">
+			</browseRequest>
+		</menuEntry>
+		<menuGroup context="Playlist">
+			<nofilter/>
+			<menuEntry displayName="Songs">
+				<browseRequest url="/Songs" resultType="Song">
+					<requestItemParameter name="playlist" />
+				</browseRequest>
+			</menuEntry>
+			<menuEntry displayName="Play now">
+				<disableOnAttribute name="playlistid" />
+				<request url="/Add" type="add" subtype="now">
+					<requestItemParameter name="playlist" />
+					<requestParameter>playnow=1</requestParameter>
+					<requestParameter>clear=0</requestParameter>
+					<requestParameter>shuffle=0</requestParameter>
+				</request>
+			</menuEntry>
+			<menuEntry displayName="Shuffle">
+				<disableOnAttribute name="playlistid" />
+				<request url="/Add" type="add" subtype="shuffle">
+					<requestItemParameter name="playlist" />
+					<requestParameter>shuffle=1</requestParameter>
+					<requestParameter>playnow=1</requestParameter>
+				</request>
+			</menuEntry>
+			<menuEntry displayName="Add next">
+				<request url="/Add" type="add" subtype="next">
+					<requestItemParameter name="playlist" />
+					<requestItemParameter name="playlistid" optional="true" />
+					<requestParameter>playnow=-1</requestParameter>
+					<requestParameter>where=next</requestParameter>
+				</request>
+			</menuEntry>
+			<menuEntry displayName="Add last">
+				<request url="/Add" type="add" subtype="last">
+					<requestItemParameter name="playlist" />
+					<requestItemParameter name="playlistid" optional="true" />
+					<requestParameter>playnow=-1</requestParameter>
+					<requestParameter>where=last</requestParameter>
+				</request>
+			</menuEntry>
+			<menuEntry displayName="Delete">
+				<disableOnAttribute name="playlistid" />
+				<confirmAction text="Delete playlist: %s?">
+					<textItemSubstitution attribute="text" source="playlist" />
+				</confirmAction>
+				<request url="/Delete" type="delete">
+					<requestItemParameter name="name" source="playlist" />
+				</request>
+			</menuEntry>
+		</menuGroup>
+	</menu>
+</service>
+  
+<service displayname="" name="Capture" type="AudioInputs">
+  <menu>
+    <menuGroup mainMenu="true">
+      <menuEntry displayName="Inputs">
+        <browseRequest url="/RadioBrowse" resultType="BrowseMenu" />
+      </menuEntry>
+    </menuGroup>
+  </menu>
+</service>
+
+<service displayname="" name="Alarms" type="Alarms">
+  <menu>
+    <menuEntry displayName="Alarms">
+      <browseRequest url="/Alarms" resultType="Alarms" />
+    </menuEntry>
+    <menuEntry displayName="Alarm Sound">
+      <browseRequest url="/RadioBrowse" resultType="BrowseMenu" />
+    </menuEntry>
+  </menu>
+</service>
+<service type="LocalMusic" name="LocalMusic" displayname="Library" label="No Label" icon="/images/LibraryIcon.png" hasStableBrowse="true" >
+
+    <menu>
+      <search prompt="Search..." parameterName="expr">
+        <menuGroup context="Search" minimumSchemaVersion="2">
+          <menuEntry displayName="Artists" inlineRows="4">
+            <nofilter/>
+            <browseRequest url="/library/v1/Artists" resultType="Artist" />
+          </menuEntry>
+          <menuEntry displayName="Albums" inlineRows="1">
+            <browseRequest url="/library/v1/Albums" resultType="Album" />
+          </menuEntry>
+          <menuEntry displayName="Songs" inlineRows="4">
+            <browseRequest url="/library/v1/Songs" resultType="Song" />
+          </menuEntry>
+          <menuEntry displayName="Composers" minimumSchemaVersion="12" inlineRows="4">
+            <nofilter/>
+            <browseRequest url="/library/v1/Composers" resultType="Composer" />
+          </menuEntry>
+        </menuGroup>
+        <browseRequest url="/library/v1/Search" resultType="Search" />
+      </search>
+      <filter name="quality" displayName="Filter by quality" class="multiple">
+        <value name="mqa" displayName="MQA" type="mqa" />
+        <value name="hr" displayName="High Resolution" type="hr" />
+        <value name="cd" displayName="CD" type="cd" />
+      </filter>
+      <menuEntry displayName="Artists">
+        <nofilter/>
+        <browseRequest url="/library/v1/Artists" resultType="Artist" grouped="true"/>
+      </menuEntry>
+      <menuEntry displayName="Albums" defaultView="true">
+        <sort name="sort" default="alpha" minimumSchemaVersion="19">
+          <value name="alpha" displayName="A → Z" />
+          <value name="recent" displayName="Recent" />
+          <value name="year" displayName="Year" />
+          <value name="decade" displayName="Decade" />
+          <value name="artist" displayName="Artist" />
+          <value name="artistDate" displayName="Artist, release-date" />
+        </sort>
+        <browseRequest url="/library/v1/Albums" resultType="Album" grouped="true"/>
+      </menuEntry>
+      <menuEntry displayName="Songs">
+        <browseRequest url="/library/v1/Songs" resultType="Song" grouped="true">
+          <requestParameter>all=1</requestParameter> <!-- helper for GetSongIds() -->
+        </browseRequest>
+      </menuEntry>
+      <genreGroup displayName="Genres"  minimumSchemaVersion="20">
+        <browseRequest url="/library/v1/Genres" resultType="Genre" />
+        <menuEntry displayName="Songs" inlineRows="5">
+          <browseRequest url="/library/v1/Songs" resultType="Song" grouped="true">
+            <genreItemParameter name="genre"/>
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Artists" inlineRows="5">
+          <nofilter/>
+          <browseRequest url="/library/v1/Artists" resultType="Artist" grouped="true">
+            <genreItemParameter name="genre"/>
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Albums" inlineRows="1">
+          <sort name="sort" default="alpha" minimumSchemaVersion="19">
+            <value name="alpha" displayName="A → Z" />
+            <value name="recent" displayName="Recent" />
+            <value name="year" displayName="Year" />
+            <value name="decade" displayName="Decade" />
+            <value name="artist" displayName="Artist" />
+            <value name="artistDate" displayName="Artist, release-date" />
+          </sort>
+          <browseRequest url="/library/v1/Albums" resultType="Album" grouped="true">
+            <genreItemParameter name="genre"/>
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Composers" inlineRows="5">
+          <nofilter/>
+          <browseRequest url="/library/v1/Composers" resultType="Composer" grouped="true">
+            <genreItemParameter name="genre"/>
+          </browseRequest>
+        </menuEntry>
+      </genreGroup>
+      
+      <menuEntry displayName="Playlists">
+        <nofilter/>
+        <browseRequest url="/library/v1/Playlists" resultType="Playlist" myPlaylistsFilter="myPlaylists=1">
+          <requestParameter>imported=1</requestParameter>
+        </browseRequest>
+      </menuEntry>
+      <menuEntry displayName="Composers" minimumSchemaVersion="12">
+        <nofilter/>
+        <browseRequest url="/library/v1/Composers" resultType="Composer" grouped="true"/>
+      </menuEntry>
+      
+      <menuEntry displayName="Folders" minimumSchemaVersion="5">
+        <browseRequest url="/library/v1/Folders" resultType="SongsFoldersPlaylists" >
+          <requestItemParameter name="path" optional="true" />
+        </browseRequest>
+      </menuEntry>
+      <inlineEntry displayName="New" minimumSchemaVersion="19">
+        <browseRequest url="/library/v1/Albums" resultType="Album">
+          <requestParameter>recent=1</requestParameter>
+        </browseRequest>
+      </inlineEntry>
+      <menuGroup id="LocalMusic-Artist" context="Artist">
+        <menuEntry displayName="Info">
+          <browseRequest url="/Info" type="info" resultType="Info">
+            <requestParameter>service=LocalMusic</requestParameter>
+            <requestItemParameter name="artist" />
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Albums" inlineRows="2">
+          <sort name="sort" default="alpha" minimumSchemaVersion="19">
+            <value name="alpha" displayName="A → Z" />
+            <value name="date" displayName="Release date" />
+            <value name="recent" displayName="Recent" />
+          </sort>
+          <browseRequest url="/library/v1/Albums" resultType="Album">
+            <requestItemParameter name="artist" />
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Songs" inlineRows="5">
+          <browseRequest url="/library/v1/Songs" resultType="Song">
+            <requestItemParameter name="artist" />
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Favourite" >
+          <disableOnAttribute name="isFavourite"/>
+          <request url="/AddFavourite" type="favourite" subtype="add">
+            <requestItemParameter name="artist" />
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Remove favourite" >
+          <enableOnAttribute name="isFavourite"/>
+          <request url="/DeleteFavourite" type="favourite" subtype="delete">
+            <requestItemParameter name="artist" />
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add all songs to queue">
+          <request url="/Add" type="addAll" subtype="last">
+            <requestItemParameter name="artist" />
+            <requestParameter>playnow=-1</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Play all">
+          <request url="/Add" type="addAll" subtype="last">
+            <requestItemParameter name="artist" />
+            <requestParameter>playnow=1</requestParameter>
+            <requestParameter>shuffle=0</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Shuffle">
+          <request url="/Add" type="addAll" subtype="shuffle">
+            <requestItemParameter name="artist" />
+            <requestParameter>shuffle=1</requestParameter>
+            <requestParameter>playnow=1</requestParameter>
+          </request>
+        </menuEntry>
+        
+		<menuEntry displayName="on TIDAL">
+          <textItemSubstitution attribute="displayName" source="artist" />
+          <searchRequest url="/Search" type="searchOn" resultType="Search" service="Tidal" view="artists" subtitleParameter="expr">
+            <requestItemParameter name="expr" source="artist" />
+          </searchRequest>
+        </menuEntry>
+
+      </menuGroup>
+      <menuGroup id="LocalMusic-Composer" context="Composer" minimumSchemaVersion="12">
+        <menuEntry displayName="Albums" inlineRows="2">
+          <browseRequest url="/library/v1/Albums" resultType="Album">
+            <requestItemParameter name="composer" />
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Songs" inlineRows="5">
+          <browseRequest url="/library/v1/Songs" resultType="Song">
+            <requestItemParameter name="composer" />
+          </browseRequest>
+        </menuEntry>
+        
+      </menuGroup>
+      <menuGroup id="LocalMusic-Album" context="Album">
+        <menuEntry displayName="Favourite" >
+          <disableOnAttribute name="isFavourite"/>
+          <request url="/AddFavourite" type="favourite" subtype="add">
+            <requestItemParameter name="album" />
+            <requestItemParameter name="artist" />
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Remove favourite" >
+          <enableOnAttribute name="isFavourite"/>
+          <request url="/DeleteFavourite" type="favourite" subtype="delete">
+            <requestItemParameter name="album" />
+            <requestItemParameter name="artist" />
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Play now">
+          <request url="/Add" type="add" subtype="now">
+            <requestItemParameter name="album" />
+            <requestItemParameter name="artist" />
+            <requestParameter>playnow=1</requestParameter>
+            <requestParameter>clear=0</requestParameter>
+            <requestParameter>shuffle=0</requestParameter>
+            <requestParameter>where=nextAlbum</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Shuffle">
+          <request url="/Add" type="add" subtype="shuffle">
+            <requestItemParameter name="album" />
+            <requestItemParameter name="artist" />
+            <requestParameter>shuffle=1</requestParameter>
+            <requestParameter>playnow=1</requestParameter>
+            <requestParameter>where=nextAlbum</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add next">
+          <request url="/Add" type="addAll" subtype="next">
+            <requestItemParameter name="album" />
+            <requestItemParameter name="artist" />
+            <requestParameter>playnow=-1</requestParameter>
+            <requestParameter>where=nextAlbum</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add last">
+           <request url="/Add" type="addAll" subtype="last">
+            <requestItemParameter name="album" />
+            <requestItemParameter name="artist" />
+            <requestParameter>playnow=-1</requestParameter>
+            <requestParameter>where=last</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add to playlist…" minimumSchemaVersion="13">
+          <browseRequest url="/AddToPlaylistOptions" type="addtoplaylist" resultType="AddToPlaylistOptions">
+            <requestItemParameter name="artist" />
+            <requestItemParameter name="album" />
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Go to artist" minimumSchemaVersion="14">
+          <contextRequest url="/library/v1/Artists" resultType="Artist" type="gotoartist">
+             <requestItemParameter name="artist"/>
+          </contextRequest>
+        </menuEntry>
+        <menuEntry displayName="Info">
+          <browseRequest url="/Info" type="info" resultType="Info">
+            <requestParameter>service=LocalMusic</requestParameter>
+            <requestItemParameter name="artist" />
+            <requestItemParameter name="album" />
+          </browseRequest>
+        </menuEntry>
+        
+		<menuEntry displayName="on TIDAL">
+		  <searchRequest url="/Search" type="searchOn" resultType="Search" service="Tidal" view="albums" subtitleParameter="expr">
+		    <requestItemParameter name="expr" source="album" />
+		  </searchRequest>
+		</menuEntry>
+
+      </menuGroup>
+      <menuGroup context="Song">
+        <menuEntry displayName="Favourite" >
+          <disableOnAttribute name="isFavourite" />
+          <request url="/AddFavourite" type="favourite" subtype="add">
+            <requestItemParameter source="filename" name="fn" />
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Remove favourite" >
+          <enableOnAttribute name="isFavourite" />
+          <request url="/DeleteFavourite" type="favourite" subtype="delete">
+            <requestItemParameter source="filename" name="fn" />
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Play now">
+          <request url="/Add" type="add" subtype="now">
+            <requestItemParameter source="filename" name="file" />
+            <requestParameter>playnow=1</requestParameter>
+            <requestParameter>clear=0</requestParameter>
+            <requestParameter>where=next</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add next">
+          <request url="/Add" type="add" subtype="next">
+            <requestItemParameter source="filename" name="file" />
+            <requestParameter>playnow=-1</requestParameter>
+            <requestParameter>where=next</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add last">
+          <request url="/Add" type="add" subtype="last">
+            <requestItemParameter source="filename" name="file" />
+            <requestParameter>playnow=-1</requestParameter>
+            <requestParameter>where=last</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add to playlist…" minimumSchemaVersion="7">
+          <browseRequest url="/AddToPlaylistOptions" type="addtoplaylist" resultType="AddToPlaylistOptions">
+            <requestItemParameter name="songid" source="filename" />
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Go to album" minimumSchemaVersion="14">
+          <contextRequest url="/library/v1/Albums" resultType="Album" type="gotoalbum">
+             <requestItemParameter name="artist"/>
+             <requestItemParameter name="album"/>
+          </contextRequest>
+        </menuEntry>
+        <menuEntry displayName="Go to artist" minimumSchemaVersion="14">
+          <contextRequest url="/library/v1/Artists" resultType="Artist" type="gotoartist">
+             <requestItemParameter name="artist"/>
+          </contextRequest>
+        </menuEntry>
+        <menuEntry displayName="Info">
+          <browseRequest url="/Info" type="info" resultType="Info">
+            <requestParameter>service=LocalMusic</requestParameter>
+            <requestItemParameter name="artist" />
+            <requestItemParameter name="album" />
+            <requestItemParameter name="title" />
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Technical info">
+          <browseRequest url="/Info" type="info" resultType="BriefInfo">
+            <requestItemParameter name="filename"/>
+            <requestItemParameter name="service" />
+            <requestParameter>category=technical</requestParameter>
+          </browseRequest>
+        </menuEntry>
+        
+      </menuGroup>
+      <menuGroup id="LocalMusic-Playlist" context="Playlist" minimumSchemaVersion="3">
+        <nofilter/>
+        <menuEntry displayName="Songs">
+          <browseRequest url="/Songs" resultType="Song">
+            <requestItemParameter name="playlistid" optional="true" />
+            <requestItemParameter name="playlist" optional="true" />
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Play now">
+          <request url="/Add" type="add" subtype="now">
+            <requestItemParameter name="playlistid" />
+            <requestItemParameter name="playlist" />
+            <requestParameter>playnow=1</requestParameter>
+            <requestParameter>clear=0</requestParameter>
+            <requestParameter>shuffle=0</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Shuffle">
+          <request url="/Add" type="add" subtype="shuffle">
+            <requestItemParameter name="playlistid" />
+            <requestParameter>shuffle=1</requestParameter>
+            <requestParameter>playnow=1</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add next">
+          <request url="/Add" type="add" subtype="next">
+            <requestItemParameter name="playlistid" />
+            <requestParameter>playnow=-1</requestParameter>
+            <requestParameter>where=next</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add last">
+          <request url="/Add" type="add" subtype="last">
+            <requestItemParameter name="playlistid" />
+            <requestParameter>playnow=-1</requestParameter>
+            <requestParameter>where=last</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Favourite" >
+          <disableOnAttribute name="isFavourite" />
+          <request url="/AddFavourite" type="favourite" subtype="add">
+            <requestItemParameter name="playlistid" />
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Remove favourite" >
+          <enableOnAttribute name="isFavourite" />
+          <request url="/DeleteFavourite" type="favourite" subtype="delete">
+            <requestItemParameter name="playlistid" />
+          </request>
+        </menuEntry>
+      </menuGroup>
+      <menuGroup context="Genre" minimumSchemaVersion="10">
+        <nofilter/>
+        <menuEntry displayName="Play now">
+          <request url="/Add" type="addAll" subtype="now">
+            <requestItemParameter name="genre" />
+            <requestParameter>playnow=1</requestParameter>
+            <requestParameter>clear=0</requestParameter>
+            <requestParameter>shuffle=0</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Shuffle">
+          <request url="/Add" type="addAll" subtype="shuffle">
+            <requestItemParameter name="genre" />
+            <requestParameter>shuffle=1</requestParameter>
+            <requestParameter>playnow=1</requestParameter>
+          </request>
+        </menuEntry>
+      </menuGroup>
+      <menuGroup context="Folder" minimumSchemaVersion="10">
+        <menuEntry displayName="Add all songs to queue">
+          <request url="/Add" type="addAll" subtype="last">
+            <requestItemParameter name="path" />
+            <requestParameter>playnow=-1</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Play now">
+          <request url="/Add" type="addAll" subtype="now">
+            <requestItemParameter name="path" />
+            <requestParameter>playnow=1</requestParameter>
+            <requestParameter>clear=0</requestParameter>
+            <requestParameter>shuffle=0</requestParameter>
+            <requestParameter>where=next</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Shuffle">
+          <request url="/Add" type="addAll" subtype="shuffle">
+            <requestItemParameter name="path" />
+              <requestParameter>playnow=1</requestParameter>
+              <requestParameter>shuffle=1</requestParameter>
+              <requestParameter>where=next</requestParameter>
+          </request>
+        </menuEntry>
+      </menuGroup>
+      <menuGroup id="LocalMusic-Favourites" context="Favourites" >
+        <menuEntry displayName="Artists">
+          <nofilter/>
+          <browseRequest url="/library/v1/Artists" resultType="Artist">
+            <requestParameter>category=FAVOURITES</requestParameter>
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Albums">
+          <browseRequest url="/library/v1/Albums" resultType="Album">
+            <requestParameter>category=FAVOURITES</requestParameter>
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Songs">
+          <browseRequest url="/library/v1/Songs" resultType="Song">
+            <requestParameter>category=FAVOURITES</requestParameter>
+          </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Playlists">
+          <nofilter/>
+          <browseRequest url="/library/v1/Playlists" resultType="Playlist">
+            <requestParameter>category=FAVOURITES</requestParameter>
+          </browseRequest>
+        </menuEntry>
+      </menuGroup>
+      <menuGroup context="Playqueue">
+        <menuGroup context="Song">
+          <menuEntry displayName="Favourite" >
+            <disableOnAttribute name="isFavourite" />
+            <request url="/AddFavourite" type="favourite" subtype="add">
+              <requestItemParameter source="filename" name="fn" />
+            </request>
+          </menuEntry>
+          <menuEntry displayName="Remove favourite" >
+            <enableOnAttribute name="isFavourite" />
+            <request url="/DeleteFavourite" type="favourite" subtype="delete">
+              <requestItemParameter source="filename" name="fn" />
+            </request>
+          </menuEntry>
+          <menuEntry displayName="Add to playlist…" minimumSchemaVersion="7">
+            <browseRequest url="/AddToPlaylistOptions" type="addtoplaylist" resultType="AddToPlaylistOptions">
+              <requestItemParameter name="songid" source="filename" />
+            </browseRequest>
+          </menuEntry>
+          <menuEntry displayName="Info">
+            <browseRequest url="/Info" type="info" resultType="Info">
+              <requestItemParameter name="artist" />
+              <requestItemParameter name="album" />
+              <requestItemParameter name="title" />
+              <requestItemParameter name="service" />
+            </browseRequest>
+          </menuEntry>
+          <menuEntry displayName="Technical info">
+            <browseRequest url="/Info" type="info" resultType="BriefInfo">
+              <requestItemParameter name="filename" />
+              <requestItemParameter name="service" />
+              <requestParameter>category=technical</requestParameter>
+            </browseRequest>
+          </menuEntry>
+          
+		<menuEntry displayName="on TIDAL: %s">
+          <textItemSubstitution attribute="displayName" source="artist" />
+          <searchRequest url="/Search" type="searchOn" resultType="Search" service="Tidal" view="artists" subtitleParameter="expr">
+            <requestItemParameter name="expr" source="artist" />
+          </searchRequest>
+        </menuEntry>
+
+        </menuGroup>
+        <menuGroup context="NowPlaying">
+          <menuEntry displayName="Favourite" >
+            <disableOnAttribute name="isFavourite" />
+            <request url="/AddFavourite" type="favourite" subtype="add">
+              <requestItemParameter source="filename" name="fn" />
+            </request>
+         </menuEntry>
+         <menuEntry displayName="Remove favourite" >
+            <enableOnAttribute name="isFavourite" />
+            <request url="/DeleteFavourite" type="favourite" subtype="delete">
+              <requestItemParameter source="filename" name="fn" />
+            </request>
+          </menuEntry>
+          <menuEntry displayName="Add to playlist…" minimumSchemaVersion="7">
+            <browseRequest url="/AddToPlaylistOptions" type="addtoplaylist" resultType="AddToPlaylistOptions">
+              <requestItemParameter name="songid" source="filename" />
+            </browseRequest>
+          </menuEntry>
+          <menuEntry displayName="Go to album" minimumSchemaVersion="14">
+            <contextRequest url="/library/v1/Albums" resultType="Album" type="gotoalbum">
+               <requestItemParameter name="artist"/>
+               <requestItemParameter name="album"/>
+            </contextRequest>
+          </menuEntry>
+          <menuEntry displayName="Go to artist" minimumSchemaVersion="14">
+            <contextRequest url="/library/v1/Artists" resultType="Artist" type="gotoartist">
+               <requestItemParameter name="artist"/>
+            </contextRequest>
+          </menuEntry>
+          <menuEntry displayName="Info">
+            <browseRequest url="/Info" type="info" resultType="Info">
+              <requestItemParameter name="artist" />
+              <requestItemParameter name="album" />
+              <requestItemParameter name="title" />
+              <requestItemParameter name="service" />
+            </browseRequest>
+          </menuEntry>
+          <menuEntry displayName="Technical info">
+            <browseRequest url="/Info" type="info" resultType="BriefInfo">
+              <requestItemParameter name="filename" />
+              <requestItemParameter name="service" />
+              <requestParameter>category=technical</requestParameter>
+            </browseRequest>
+          </menuEntry>
+          
+		<menuEntry displayName="on TIDAL: %s">
+          <textItemSubstitution attribute="displayName" source="artist" />
+          <searchRequest url="/Search" type="searchOn" resultType="Search" service="Tidal" view="artists" subtitleParameter="expr">
+            <requestItemParameter name="expr" source="artist" />
+          </searchRequest>
+        </menuEntry>
+
+        </menuGroup>
+      </menuGroup>
+    </menu>
+    <artworkRequest url="/library/v1/Artwork">
+      <requestItemParameter name="album" />
+      <requestItemParameter optional="true" name="artist" />
+    </artworkRequest>
+</service>
+
+  <service displayname="TuneIn" name="TuneIn" type="RadioService" hasStableBrowse="true" icon="/Sources/images/TuneInIcon.png">
+  <menu>
+    <menuGroup mainMenu="true">
+      <search prompt="Search stations, shows, podcasts" parameterName="expr">
+        <browseRequest url="/RadioBrowse" resultType="BrowseMenu" />
+      </search>
+      <menuEntry displayName="Top Level">
+        <browseRequest url="/RadioBrowse" resultType="BrowseMenu" />
+      </menuEntry>
+    </menuGroup>
+    <menuEntry displayName="Favourites" defaultView="true">
+      <browseRequest url="/RadioBrowse" resultType="BrowseMenu" type="favourite" >
+        <requestParameter>url=presets</requestParameter>
+      </browseRequest>
+    </menuEntry>
+    <menuGroup context="Item">
+      <menuEntry displayName="Favourite">
+        <disableOnAttribute name="is_preset" />
+        <request url="/AddFavourite" type="favourite" subtype="add">
+          <requestItemParameter source="preset_id" name="preset_id" />
+        </request>
+      </menuEntry>
+      <menuEntry displayName="Remove favourite">
+        <enableOnAttribute name="is_preset" />
+        <request url="/DeleteFavourite" type="favourite" subtype="delete">
+          <requestItemParameter source="preset_id" name="id" />
+        </request>
+      </menuEntry>
+      <menuEntry displayName="Related stations">
+        <enableOnAttribute name="inputType">
+          <value>station</value>
+        </enableOnAttribute>
+        <browseRequest url="/RadioBrowse" resultType="BrowseMenu" type="relatedStations">
+          <requestParameter>c=related</requestParameter>
+          <requestItemParameter source="preset_id" name="id" />
+        </browseRequest>
+      </menuEntry>
+      <menuEntry displayName="Add preset" minimumSchemaVersion="27">
+        <enableOnAttribute name="inputType">
+          <value>station</value>
+        </enableOnAttribute>
+        <request url="/SetPreset" type="preset" preset_name="text" preset_url="URL" preset_image="image">
+          <requestItemParameter name="url" source="URL"/>
+          <requestItemParameter name="name" source="text"/>
+          <requestItemParameter name="image" optional="true" />
+        </request>
+      </menuEntry>
+    </menuGroup>
+    <menuGroup context="Playqueue">
+      <menuGroup context="NowPlaying">
+        <menuEntry displayName="Favourite">
+          <disableOnAttribute name="is_preset" />
+          <request url="/Action" type="favourite" subtype="add">
+            <requestParameter>action=addFavourite</requestParameter>
+            <requestItemParameter source="preset_id" name="preset_id" />
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Remove favourite">
+          <enableOnAttribute name="is_preset" />
+          <request url="/Action" type="favourite" subtype="delete">
+            <requestParameter>action=deleteFavourite</requestParameter>
+            <requestItemParameter source="preset_id" name="id" />
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Select stream">
+        <browseRequest url="/RadioBrowse" resultType="BrowseMenu" type="selectStream">
+        <requestItemParameter source="preset_id" name="id" />
+        <requestParameter>c=selectStream</requestParameter>
+      </browseRequest>
+        </menuEntry>
+        <menuEntry displayName="Add preset" minimumSchemaVersion="11" >
+          <request url="/SetPreset" type="preset" preset_name="preset_name" preset_url="streamUrl" preset_image="image">
+            <requestItemParameter name="name"  source="preset_name" />
+            <requestItemParameter name="url"   source="streamUrl" />
+            <requestItemParameter name="image" source="image" optional="true" />
+          </request>
+        </menuEntry>
+        
+		<menuEntry displayName="on TIDAL: %s">
+          <textItemSubstitution attribute="displayName" source="artist" />
+          <searchRequest url="/Search" type="searchOn" resultType="Search" service="Tidal" view="artists" subtitleParameter="expr">
+            <requestItemParameter name="expr" source="artist" />
+          </searchRequest>
+        </menuEntry>
+
+        <menuEntry displayName="on TIDAL: %s">
+          <textItemSubstitution attribute="displayName" source="title2" />
+          <searchRequest url="/Search" type="searchOn" resultType="Search" service="Tidal" view="songs" subtitleParameter="expr">
+            <requestItemParameter name="expr" source="title2" />
+          </searchRequest>
+        </menuEntry>
+
+      </menuGroup>
+    </menuGroup>
+  </menu>
+</service>
+
+<service name="Tidal" displayname="TIDAL" icon="/Sources/images/TidalIcon.png" type="CloudService" hasStableBrowse="true">
+<menu>
+  <search prompt="Search TIDAL..." parameterName="expr" hasSuggestions="true">
+	<menuGroup context="Search" minimumSchemaVersion="2">
+	  <menuEntry displayName="Artists">
+		<browseRequest url="/Artists" resultType="Artist" />
+	  </menuEntry>
+	  <menuEntry displayName="Albums">
+		<browseRequest url="/Albums" resultType="Album" />
+	  </menuEntry>
+	  <menuEntry displayName="Songs">
+		<browseRequest url="/Songs" resultType="Song" />
+	  </menuEntry>
+	  <menuEntry displayName="Playlists">
+		<browseRequest url="/Playlists" resultType="Playlist" />
+	  </menuEntry>
+	</menuGroup>
+	<browseRequest url="/Search" resultType="Search" />
+  </search>
+  <menuGroup id="Tidal-New" displayName="New">
+	<menuEntry displayName="New Songs" inlineRows="5">
+	  <browseRequest url="/Songs" resultType="Song">
+		<requestParameter>category=new</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="New Playlists" inlineRows="5">
+	  <browseRequest url="/Playlists" resultType="Playlist">
+		<requestParameter>category=new</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="New Albums" inlineRows="1">
+	  <browseRequest url="/Albums" resultType="Album">
+		<requestParameter>category=new</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+  </menuGroup>
+  <menuGroup displayName="TIDAL Rising"  minimumSchemaVersion="19">
+	<menuEntry displayName="Albums" inlineRows="2">
+	  <browseRequest url="/Albums" resultType="Album">
+		<requestParameter>category=rising</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Songs" inlineRows="15">
+	  <browseRequest url="/Songs" resultType="Song">
+		<requestParameter>category=rising</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+  </menuGroup>
+  <menuGroup id="Tidal-Recommendations" displayName="Recommendations">
+	<menuEntry displayName="Recommended Songs" inlineRows="5">
+	  <browseRequest url="/Songs" resultType="Song">
+		<requestParameter>category=recommended</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Recommended Playlists" inlineRows="5">
+	  <browseRequest url="/Playlists" resultType="Playlist">
+		<requestParameter>category=recommended</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Recommended Albums" inlineRows="1">
+	  <browseRequest url="/Albums" resultType="Album">
+		<requestParameter>category=recommended</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+  </menuGroup>
+  <menuGroup displayName="Popular">
+	<menuEntry displayName="Popular Songs" inlineRows="5">
+	  <browseRequest url="/Songs" resultType="Song">
+		<requestParameter>category=top</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Popular Albums" inlineRows="1">
+	  <browseRequest url="/Albums" resultType="Album">
+		<requestParameter>category=top</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+  </menuGroup>
+  
+<menuGroup displayName="Dansk" minimumSchemaVersion="19">
+	<menuEntry displayName="Songs" inlineRows="5">
+		<browseRequest url="/Songs" resultType="Song">
+			<requestParameter>category=local</requestParameter>
+		</browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Playlists" inlineRows="5">
+		<browseRequest url="/Playlists" resultType="Playlist">
+			<requestParameter>category=local</requestParameter>
+		</browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Albums" inlineRows="1">
+		<browseRequest url="/Albums" resultType="Album">
+			<requestParameter>category=local</requestParameter>
+		</browseRequest>
+	</menuEntry>
+</menuGroup>
+
+  <genreGroup displayName="Moods" minimumSchemaVersion="20">
+	<browseRequest url="/Genres" resultType="Genre">
+	  <requestParameter>category=moods</requestParameter>
+	</browseRequest>
+	<menuEntry displayName="Playlists">
+	  <browseRequest url="/Playlists" resultType="Playlist">
+		<genreItemParameter name="mood" source="genreid"/>
+	  </browseRequest>
+	</menuEntry>
+  </genreGroup>
+  <genreGroup displayName="Genres" minimumSchemaVersion="20">
+	<browseRequest url="/Genres" resultType="Genre" />
+	<menuEntry displayName="New Songs" inlineRows="5">
+	  <browseRequest url="/Songs" resultType="Song">
+		<genreItemParameter name="genre" source="genreid"/>
+		<requestParameter>category=new</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="New Playlists" inlineRows="5">
+	  <browseRequest url="/Playlists" resultType="Playlist">
+		<genreItemParameter name="genre" source="genreid"/>
+		<requestParameter>category=new</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="New Albums" inlineRows="1">
+	  <browseRequest url="/Albums" resultType="Album">
+		<genreItemParameter name="genre" source="genreid"/>
+		<requestParameter>category=new</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+  </genreGroup>
+  <menuGroup id="Tidal-Favourites" context="Favourites" displayName="My Music">
+	<menuEntry displayName="My Mix" inlineRows="5">
+	  <browseRequest url="/Playlists" resultType="Playlist">
+		<requestParameter>category=mymix</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Songs" inlineRows="5">
+	  <sort name="sort" default="name" minimumSchemaVersion="19">
+		<value name="name" displayName="A → Z" />
+		<value name="recent" displayName="Date added" />
+		<value name="album" displayName="Album" />
+		<value name="artist" displayName="Artist" />
+	  </sort>
+	  <browseRequest url="/Songs" resultType="Song">
+		<requestParameter>category=FAVOURITES</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Playlists" inlineRows="5">
+	  <sort name="sort" default="name" minimumSchemaVersion="19">
+		<value name="name" displayName="A → Z" />
+		<value name="recent" displayName="Date added" />
+	  </sort>
+	  <browseRequest url="/Playlists" resultType="Playlist">
+		<requestParameter>category=FAVOURITES</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="My Playlists" inlineRows="5">
+	  <sort name="sort" default="name" minimumSchemaVersion="19">
+		<value name="name" displayName="A → Z" />
+		<value name="recent" displayName="Date added" />
+	  </sort>
+	  <browseRequest url="/Playlists" resultType="Playlist" myPlaylistsFilter="myPlaylists=1" />
+	</menuEntry>
+	<menuEntry displayName="Artists" inlineRows="5">
+	  <sort name="sort" default="name" minimumSchemaVersion="19">
+		<value name="name" displayName="A → Z" />
+		<value name="recent" displayName="Date added" />
+	  </sort>
+	  <browseRequest url="/Artists" resultType="Artist">
+		<requestParameter>category=FAVOURITES</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Albums" inlineRows="1">
+	  <sort name="sort" default="name" minimumSchemaVersion="19">
+		<value name="name" displayName="A → Z" />
+		<value name="recent" displayName="Date added" />
+		<value name="artist" displayName="Artist" />
+		<value name="date" displayName="Release date" />
+	  </sort>
+	  <browseRequest url="/Albums" resultType="Album">
+		<requestParameter>category=FAVOURITES</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+  </menuGroup>
+  <inlineEntry displayName="Recent Favourites" minimumSchemaVersion="19" inlineRows="1">
+	<browseRequest url="/Albums" resultType="Album">
+	  <requestParameter>category=FAVOURITES</requestParameter>
+	  <requestParameter>inline=1</requestParameter>
+	  <requestParameter>sort=recent</requestParameter>
+	</browseRequest>
+  </inlineEntry>
+  <menuGroup id="Tidal-Artist" context="Artist">
+	<menuEntry displayName="Info">
+	  <browseRequest url="/Info" type="info" resultType="Info" xmlRequestParameter="format=xml">
+		<requestParameter>service=Tidal</requestParameter>
+		<requestItemParameter name="artistid" />
+		<requestItemParameter name="artist" optional="true" />
+		<requestItemParameter name="artistpicture" optional="true" />
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Top Tracks" inlineRows="5">
+	  <browseRequest url="/Songs" resultType="Song">
+		<requestItemParameter name="artistid" />
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Albums" inlineRows="1">
+	  <browseRequest url="/Albums" resultType="Album">
+		<requestItemParameter name="artistid" />
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="EPs &amp; Singles" inlineRows="5">
+	  <browseRequest url="/Albums" resultType="Album">
+		<requestItemParameter name="artistid" />
+		<requestParameter>category=EPSANDSINGLES</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Similar Artists" inlineRows="5">
+	  <browseRequest url="/Artists" resultType="Artist">
+		<requestItemParameter name="artistid" />
+		<requestParameter>category=related</requestParameter>
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Favourite">
+	  <disableOnAttribute name="isFavourite" />
+	  <request url="/AddFavourite" type="favourite" subtype="add">
+		<requestItemParameter name="artistid" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Remove favourite">
+	  <enableOnAttribute name="isFavourite" />
+	  <request url="/DeleteFavourite" type="favourite" subtype="delete">
+		<requestItemParameter name="artistid" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Add top tracks to queue">
+	  <request url="/Add" type="addAll" subtype="last">
+		<requestItemParameter name="artistid" />
+		<requestParameter>playnow=-1</requestParameter>
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Related artists radio">
+	  <request url="/Play" type="playRadio">
+		<requestItemParameter source="similarstationid" name="url" />
+	  </request>
+	</menuEntry>
+  </menuGroup>
+  <menuGroup id="Tidal-Album" context="Album">
+	<menuEntry displayName="Info">
+	  <browseRequest url="/Info" type="info" resultType="Info" xmlRequestParameter="format=xml">
+		<requestParameter>service=Tidal</requestParameter>
+		<requestItemParameter name="albumid" />
+		<requestItemParameter name="artist" optional="true" />
+		<requestItemParameter name="album" optional="true" />
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Favourite">
+	  <disableOnAttribute name="isFavourite" />
+	  <request url="/AddFavourite" type="favourite" subtype="add">
+		<requestItemParameter name="albumid" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Remove favourite">
+	  <enableOnAttribute name="isFavourite" />
+	  <request url="/DeleteFavourite" type="favourite" subtype="delete">
+		<requestItemParameter name="albumid" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Play now">
+	  <request url="/Add" type="add" subtype="now">
+		<requestItemParameter name="albumid" />
+		<requestParameter>playnow=1</requestParameter>
+        <requestParameter>clear=0</requestParameter>
+		<requestParameter>shuffle=0</requestParameter>
+		<requestParameter>where=nextAlbum</requestParameter>
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Shuffle">
+	  <request url="/Add" type="add" subtype="shuffle">
+	    <requestItemParameter name="albumid" />
+	    <requestParameter>playnow=1</requestParameter>
+	    <requestParameter>shuffle=1</requestParameter>
+	    <requestParameter>where=nextAlbum</requestParameter>
+  	  </request>
+    </menuEntry>
+	<menuEntry displayName="Add next">
+	  <request url="/Add" type="addAll" subtype="next">
+		<requestItemParameter name="albumid" />
+		<requestParameter>playnow=-1</requestParameter>
+		<requestParameter>where=nextAlbum</requestParameter>
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Add last">
+	  <request url="/Add" type="addAll" subtype="last">
+		<requestItemParameter name="albumid" />
+		<requestParameter>playnow=-1</requestParameter>
+		<requestParameter>where=last</requestParameter>
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Add to playlist…" minimumSchemaVersion="13">
+	  <browseRequest url="/AddToPlaylistOptions" type="addtoplaylist" resultType="AddToPlaylistOptions">
+		<requestItemParameter name="albumid" />
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Go to artist" minimumSchemaVersion="14">
+	  <contextRequest url="/Artists" resultType="Artist" type="gotoartist">
+		 <requestItemParameter name="artistid"/>
+	  </contextRequest>
+	</menuEntry>
+  </menuGroup>
+  <menuGroup context="Song">
+	<menuEntry displayName="Favourite">
+	  <disableOnAttribute name="isFavourite" />
+	  <request url="/AddFavourite" type="favourite" subtype="add">
+		<requestItemParameter name="songid" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Remove favourite">
+	  <enableOnAttribute name="isFavourite" />
+	  <request url="/DeleteFavourite" type="favourite" subtype="delete">
+		<requestItemParameter name="songid" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Play now">
+	  <request url="/Add" type="add" subtype="now">
+		<requestItemParameter source="filename" name="file" />
+		<requestParameter>playnow=1</requestParameter>
+        <requestParameter>clear=0</requestParameter>
+		<requestParameter>where=next</requestParameter>
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Add next">
+	  <request url="/Add" type="add" subtype="next">
+		<requestItemParameter source="filename" name="file" />
+		<requestParameter>playnow=-1</requestParameter>
+		<requestParameter>where=next</requestParameter>
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Add last">
+	  <request url="/Add" type="add" subtype="last">
+		<requestItemParameter source="filename" name="file" />
+		<requestParameter>playnow=-1</requestParameter>
+		<requestParameter>where=last</requestParameter>
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Add to playlist…" minimumSchemaVersion="7">
+	  <browseRequest url="/AddToPlaylistOptions" type="addtoplaylist" resultType="AddToPlaylistOptions">
+		<requestItemParameter name="songid" />
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Track radio">
+	  <request url="/Play" type="playRadio">
+		<requestItemParameter source="trackstationid" name="url" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Related artists radio">
+	  <request url="/Play" type="playRadio">
+		<requestItemParameter source="similarstationid" name="url" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Go to album" minimumSchemaVersion="14">
+	  <contextRequest url="/Albums" resultType="Album" type="gotoalbum">
+		 <requestItemParameter name="albumid"/>
+	  </contextRequest>
+	</menuEntry>
+	<menuEntry displayName="Go to artist" minimumSchemaVersion="14">
+	  <contextRequest url="/Artists" resultType="Artist" type="gotoartist">
+		 <requestItemParameter name="artistid"/>
+	  </contextRequest>
+	</menuEntry>
+  </menuGroup>
+  <menuGroup id="Tidal-Playlist" context="Playlist" minimumSchemaVersion="3">
+	<menuEntry displayName="Songs">
+	  <browseRequest url="/Songs" resultType="Song">
+		<requestItemParameter name="playlistid" />
+	  </browseRequest>
+	</menuEntry>
+	<menuEntry displayName="Play now">
+	  <request url="/Add" type="add" subtype="now">
+	    <requestItemParameter name="playlistid" />
+	    <requestItemParameter name="playlist" />
+	    <requestParameter>playnow=1</requestParameter>
+        <requestParameter>clear=0</requestParameter>
+		<requestParameter>shuffle=0</requestParameter>
+	  </request>
+    </menuEntry>
+    <menuEntry displayName="Shuffle">
+	  <request url="/Add" type="add" subtype="shuffle">
+	    <requestItemParameter name="playlistid" />
+	    <requestParameter>playnow=1</requestParameter>
+	    <requestParameter>shuffle=1</requestParameter>
+      </request>
+    </menuEntry>
+    <menuEntry displayName="Add next">
+      <request url="/Add" type="add" subtype="next">
+        <requestItemParameter name="playlistid" />
+        <requestParameter>playnow=-1</requestParameter>
+        <requestParameter>where=next</requestParameter>
+      </request>
+    </menuEntry>
+    <menuEntry displayName="Add last">
+      <request url="/Add" type="add" subtype="last">
+        <requestItemParameter name="playlistid" />
+        <requestParameter>playnow=-1</requestParameter>
+        <requestParameter>where=last</requestParameter>
+      </request>
+    </menuEntry>
+	<menuEntry displayName="Favourite">
+	  <disableOnAttribute name="isFavourite" />
+	  <disableOnAttribute name="deletePlaylist" />
+	  <disableOnAttribute name="mymix" />
+	  <request url="/AddFavourite" type="favourite" subtype="add">
+		<requestItemParameter name="playlistid" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Remove favourite">
+	  <enableOnAttribute name="isFavourite" />
+	  <request url="/DeleteFavourite" type="favourite" subtype="delete">
+		<requestItemParameter name="playlistid" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Add preset" minimumSchemaVersion="27">
+	  <request url="/SetPreset" type="preset" preset_name="playlist" preset_url="preset_url" preset_image="image">
+		<requestItemParameter name="url" source="preset_url"/>
+		<requestItemParameter name="name" source="playlist"/>
+		<requestItemParameter name="image" optional="true" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Delete" minimumSchemaVersion="4">
+	  <enableOnAttribute name="deletePlaylist" />
+	  <confirmAction text="Delete playlist: %s?">
+		<textItemSubstitution attribute="text" source="playlist" />
+	  </confirmAction>
+	  <request url="/DeleteFavourite" type="delete">
+		<requestItemParameter name="playlistid" />
+		<requestItemParameter name="deletePlaylist" />
+	  </request>
+	</menuEntry>
+  </menuGroup>
+  <menuGroup context="Genre">
+	<menuEntry displayName="Play">
+	  <request url="/Add" type="play">
+		<requestItemParameter name="genre" source="genreid"/>
+		<requestParameter>playnow=1</requestParameter>
+		<requestParameter>nextlist=1</requestParameter>
+		<requestParameter>listindex=0</requestParameter>
+	  </request>
+	</menuEntry>
+  </menuGroup>
+  <menuGroup context="Playqueue">
+	<menuGroup context="Song">
+	<menuEntry displayName="Favourite">
+	  <disableOnAttribute name="isFavourite" />
+	  <request url="/AddFavourite" type="favourite" subtype="add">
+		<requestItemParameter name="songid" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Remove favourite">
+	  <enableOnAttribute name="isFavourite" />
+	  <request url="/DeleteFavourite" type="favourite" subtype="delete">
+		<requestItemParameter name="songid" />
+	  </request>
+	</menuEntry>
+	  <menuEntry displayName="Add to playlist…" minimumSchemaVersion="7">
+		<browseRequest url="/AddToPlaylistOptions" type="addtoplaylist" resultType="AddToPlaylistOptions">
+		  <requestItemParameter name="songid" />
+		</browseRequest>
+	  </menuEntry>
+	  <menuEntry displayName="Info">
+		<browseRequest url="/Info" type="info" resultType="Info">
+		  <requestParameter>service=Tidal</requestParameter>
+		  <requestItemParameter name="albumid" />
+		  <requestItemParameter name="artist" optional="true" />
+		  <requestItemParameter name="album" optional="true" />
+		  <requestItemParameter name="albumcover" optional="true" />
+		</browseRequest>
+	  </menuEntry>
+	</menuGroup>
+	<menuGroup context="NowPlaying">
+	<menuEntry displayName="Favourite">
+	  <disableOnAttribute name="isFavourite" />
+	  <request url="/AddFavourite" type="favourite" subtype="add">
+		<requestItemParameter name="songid" />
+	  </request>
+	</menuEntry>
+	<menuEntry displayName="Remove favourite">
+	  <enableOnAttribute name="isFavourite" />
+	  <request url="/DeleteFavourite" type="favourite" subtype="delete">
+		<requestItemParameter name="songid" />
+	  </request>
+	</menuEntry>
+	  <menuEntry displayName="Add preset" minimumSchemaVersion="11" >
+		<request url="/SetPreset" type="preset" preset_name="title1" preset_url="streamUrl" preset_image="stationImage">
+		  <requestItemParameter name="name"  source="title1" />
+		  <requestItemParameter name="url"   source="streamUrl" />
+		  <requestItemParameter name="image" source="stationImage" optional="true" />
+		</request>
+	  </menuEntry>
+	  <menuEntry displayName="Add to playlist…" minimumSchemaVersion="7">
+		<browseRequest url="/AddToPlaylistOptions" type="addtoplaylist" resultType="AddToPlaylistOptions">
+		  <requestItemParameter name="songid" />
+		</browseRequest>
+	  </menuEntry>
+	  <menuEntry displayName="Track radio">
+		<request url="/Play" type="playRadio">
+		  <requestItemParameter source="trackstationid" name="url" />
+		</request>
+	  </menuEntry>
+	  <menuEntry displayName="Related artists radio">
+		<request url="/Play" type="playRadio">
+		  <requestItemParameter source="similarstationid" name="url" />
+		</request>
+	  </menuEntry>
+	  <menuEntry displayName="Go to album" minimumSchemaVersion="14">
+		<contextRequest url="/Albums" resultType="Album" type="gotoalbum">
+		  <requestItemParameter name="albumid"/>
+		</contextRequest>
+	  </menuEntry>
+	  <menuEntry displayName="Go to artist" minimumSchemaVersion="14">
+		<contextRequest url="/Artists" resultType="Artist" type="gotoartist">
+		   <requestItemParameter name="artistid"/>
+		</contextRequest>
+	  </menuEntry>
+	  <menuEntry displayName="Info">
+		<browseRequest url="/Info" type="info" resultType="Info">
+		  <requestParameter>service=Tidal</requestParameter>
+		  <requestItemParameter name="albumid" />
+		  <requestItemParameter name="artist" optional="true" />
+		  <requestItemParameter name="album" optional="true" />
+		  <requestItemParameter name="albumcover" optional="true" />
+		</browseRequest>
+	  </menuEntry>
+	</menuGroup>
+  </menuGroup>
+</menu>
+<artworkRequest url="/Artwork">
+  <requestItemParameter optional="true" name="albumid" />
+  <requestItemParameter optional="true" name="songid" />
+  <requestItemParameter optional="true" name="artistid" />
+  <requestItemParameter optional="true" name="playlistid" />
+</artworkRequest>
+</service>
+
+<service name="Airable" displayname="Radio" type="RadioService" hasStableBrowse="true" icon="/Sources/images/BluOSRadioIcon.png">
+<menu>
+	<menuGroup mainMenu="true">
+		<search prompt="Search stations and podcasts" parameterName="expr">
+			<menuGroup minimumSchemaVersion="2">
+				<menuEntry displayName="Stations">
+					<browseRequest url="/RadioBrowse" resultType="BrowseMenu">
+						<requestParameter>c=station</requestParameter>
+					</browseRequest>
+				</menuEntry>
+				<menuEntry displayName="Podcasts">
+					<browseRequest url="/RadioBrowse" resultType="BrowseMenu" >
+						<requestParameter>c=podcast</requestParameter>
+					</browseRequest>
+				</menuEntry>
+			</menuGroup>
+		</search>
+		<menuEntry displayName="Top Level">
+			<browseRequest url="/RadioBrowse" resultType="BrowseMenu" />
+		</menuEntry>
+	</menuGroup>
+
+	<menuGroup context="Item">
+
+		<menuEntry displayName="Favourite">
+			<disableOnAttribute name="is_preset" />
+			<request url="/AddFavourite" type="favourite" subtype="add">
+				<requestItemParameter source="preset_id" name="url" />
+			</request>
+		</menuEntry>
+		<menuEntry displayName="Remove favourite">
+			<enableOnAttribute name="is_preset" />
+			<request url="/DeleteFavourite" type="favourite" subtype="delete">
+				<requestItemParameter source="preset_id" name="url" />
+			</request>
+		</menuEntry>
+
+		<menuEntry displayName="Add preset" minimumSchemaVersion="27">
+			<enableOnAttribute name="preset_url" />
+			<request url="/SetPreset" type="preset" preset_name="title1" preset_url="preset_url" preset_image="image">
+				<requestItemParameter name="url" source="preset_url"/>
+				<requestItemParameter name="name" source="title1"/>
+				<requestItemParameter name="image" optional="true" />
+			</request>
+		</menuEntry>
+		<menuEntry displayName="Info">
+			<enableOnAttribute name="hasInfo" />
+			<browseRequest url="/Info" type="info" resultType="Info">
+				<requestItemParameter name="url" source="URL" />
+			</browseRequest>
+		</menuEntry>
+		<menuEntry displayName="Info">
+			<enableOnAttribute name="hasInfo" />
+			<browseRequest url="/Info" type="info" resultType="Info">
+				<requestItemParameter name="url" source="filename" />
+			</browseRequest>
+		</menuEntry>
+        <menuEntry displayName="Play now">
+          <request url="/Add" type="add" subtype="now">
+            <requestItemParameter source="filename" name="file" />
+            <requestParameter>playnow=1</requestParameter>
+            <requestParameter>clear=0</requestParameter>
+            <requestParameter>where=next</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add next">
+          <request url="/Add" type="add" subtype="next">
+            <requestItemParameter source="filename" name="file" />
+            <requestParameter>playnow=-1</requestParameter>
+            <requestParameter>where=next</requestParameter>
+          </request>
+        </menuEntry>
+        <menuEntry displayName="Add last">
+          <request url="/Add" type="add" subtype="last">
+            <requestItemParameter source="filename" name="file" />
+            <requestParameter>playnow=-1</requestParameter>
+            <requestParameter>where=last</requestParameter>
+          </request>
+        </menuEntry>
+	</menuGroup>
+	<menuGroup context="Playqueue">
+		<menuGroup context="Song">
+			<menuEntry displayName="Info">
+				<browseRequest url="/Info" type="info" resultType="Info">
+					<requestItemParameter name="url" source="songid"  />
+					<requestItemParameter name="service" />
+				</browseRequest>
+			</menuEntry>
+		</menuGroup>
+		<menuGroup context="NowPlaying">
+
+			<menuEntry displayName="Favourite">
+				<disableOnAttribute name="is_preset" />
+				<request url="/Action" type="favourite" subtype="add">
+					<requestParameter>action=addFavourite</requestParameter>
+					<requestItemParameter name="url" source="preset_id" />
+			</request>
+			</menuEntry>
+			<menuEntry displayName="Remove favourite">
+				<enableOnAttribute name="is_preset" />
+				<request url="/Action" type="favourite" subtype="delete">
+					<requestParameter>action=deleteFavourite</requestParameter>
+					<requestItemParameter  name="url" source="preset_id" />
+				</request>
+			</menuEntry>
+
+			<menuEntry displayName="Add preset" minimumSchemaVersion="11" >
+				<request url="/SetPreset" type="preset" preset_name="title1" preset_url="preset_url" preset_image="stationImage">
+					<requestItemParameter name="name"  source="title1" />
+					<requestItemParameter name="url"   source="preset_url" />
+					<requestItemParameter name="image" source="stationImage" optional="true" />
+				</request>
+			</menuEntry>
+			<menuEntry displayName="Info">
+				<browseRequest url="/Info" type="info" resultType="Info">
+					<requestItemParameter name="url" source="songid" />
+					<requestItemParameter name="service" />
+				</browseRequest>
+			</menuEntry>
+		</menuGroup>
+	</menuGroup>
+</menu>
+</service>
+
+	<service name="RadioParadise" displayname="Radio Paradise" icon="/Sources/images/RadioParadiseIcon.png" type="RadioService" hasStableBrowse="true" backgroundImage="/Sources/images/RPBackground.png">
+	<menu>
+	  <menuGroup mainMenu="true">
+		<menuEntry displayName="Top Level">
+		  <filter name="quality" displayName="Filter by quality" class="alternative"
+			  default="20" minimumSchemaVersion="35" required="true">
+			<value name="20" displayName="MQA" type="mqa" />
+			<value name="4" displayName="CD Quality" type="cd" />
+		  </filter>
+		  <browseRequest url="/RadioBrowse" resultType="BrowseMenu" />
+		</menuEntry>
+	  </menuGroup>
+		<menuGroup context="Item">
+		  <menuEntry displayName="Add preset" minimumSchemaVersion="27">
+			<request url="/SetPreset" type="preset" preset_name="text" preset_url="URL" preset_image="image">
+			  <requestItemParameter name="url" source="URL"/>
+			  <requestItemParameter name="name" source="text"/>
+			  <requestItemParameter name="image" optional="true" />
+			</request>
+		  </menuEntry>
+		</menuGroup>
+	  <menuGroup context="Playqueue">
+		<menuGroup context="NowPlaying">
+		  <menuEntry displayName="Lyrics">
+			<browseRequest url="/Info" type="info" resultType="BriefInfo">
+			  <requestItemParameter name="lyricsid" />
+			  <requestItemParameter name="service" />
+			</browseRequest>
+		  </menuEntry>
+		  <menuEntry displayName="Info">
+			<browseRequest url="/Info" type="info" resultType="Info">
+			  <requestItemParameter name="infourl" />
+			  <requestItemParameter name="service" />
+			</browseRequest>
+		  </menuEntry>
+		  <menuEntry displayName="Add preset" minimumSchemaVersion="11" >
+			<request url="/SetPreset" type="preset" preset_name="title1" preset_url="streamUrl" preset_image="stationImage">
+			  <requestItemParameter name="name"  source="title1" />
+			  <requestItemParameter name="url"   source="streamUrl" />
+			  <requestItemParameter name="image" source="stationImage" optional="true" />
+			</request>
+		  </menuEntry>
+		  
+		<menuEntry displayName="on TIDAL: %s">
+          <textItemSubstitution attribute="displayName" source="artist" />
+          <searchRequest url="/Search" type="searchOn" resultType="Search" service="Tidal" view="artists" subtitleParameter="expr">
+            <requestItemParameter name="expr" source="artist" />
+          </searchRequest>
+        </menuEntry>
+
+        <menuEntry displayName="on TIDAL: %s">
+          <textItemSubstitution attribute="displayName" source="title2" />
+          <searchRequest url="/Search" type="searchOn" resultType="Search" service="Tidal" view="songs" subtitleParameter="expr">
+            <requestItemParameter name="expr" source="title2" />
+          </searchRequest>
+        </menuEntry>
+
+		</menuGroup>
+	  </menuGroup>
+	</menu>
+  </service>
+  </services>

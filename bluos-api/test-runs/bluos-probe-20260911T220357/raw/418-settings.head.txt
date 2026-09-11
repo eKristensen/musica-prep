@@ -1,0 +1,7 @@
+HTTP/1.1 404 Not Found
+Content-Type: text/plain; charset=utf-8
+X-Content-Type-Options: nosniff
+Date: Fri, 11 Sep 2026 20:05:17 GMT
+Content-Length: 26
+
+# request: GET 192.0.2.11:11001/Settings?id=network&schemaVersion=35

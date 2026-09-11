@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<radiotime service="Capture">
+  <item text="HDMI ARC" id="input2" type="audio" inputType="arc" URL="Capture%3Ahw%3Aimxspdif%2C0%2F1%2F25%2F2%3Fid%3Dinput2" image="/images/capture/ic_tv.png" typeIndex="arc-1"></item>
+</radiotime>

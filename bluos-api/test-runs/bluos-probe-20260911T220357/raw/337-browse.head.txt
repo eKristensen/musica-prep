@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Date: Fri, 11 Sep 2026 20:05:07 GMT
+Content-Length: 161
+
+# request: GET 192.0.2.11:11000/Browse?key=TuneIn%3ABrowseMenu%2F%252FRadioBrowse%253Fservice%3DTuneIn%26url%3Dpresets

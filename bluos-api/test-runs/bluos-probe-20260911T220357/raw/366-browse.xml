@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="composers">
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Al+Rinker" text="Al Rinker" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Alan+Menken" text="Alan Menken" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Alan+Silvestri" text="Alan Silvestri" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Allen+Toussaint" text="Allen Toussaint" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Anders+B" text="Anders B" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Anders+SG" text="Anders SG" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Andrew+Wright" text="Andrew Wright" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Aperture+Science" text="Aperture Science" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Apollo+440" text="Apollo 440" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Art+Garfunkel" text="Art Garfunkel" type="composer"></item>
+</browse>

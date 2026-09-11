@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<radiotime service="Airable">
+  <item text="Most popular stations" type="link" URL="https%3A%2F%02000000003C.airable.io%2Fradio%2Fstations%2Fcharts" key="directory"></item>
+  <item text="Denmark" type="link" URL="https%3A%2F%02000000003C.airable.io%2Fradio%2Fplace%2F4147028435952962" key="directory"></item>
+  <item text="Local stations" type="link" URL="https%3A%2F%02000000003C.airable.io%2Fradio%2Flocal" key="directory"></item>
+  <item text="Podcasts" type="link" URL="https%3A%2F%02000000003C.airable.io%2Fradio%2Fpodcasts" key="directory"></item>
+  <item text="Genres" type="link" URL="https%3A%2F%02000000003C.airable.io%2Fradio%2Fgenres" key="directory"></item>
+  <item text="Location" type="link" URL="https%3A%2F%02000000003C.airable.io%2Fradio%2Fplaces" key="directory"></item>
+</radiotime>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="composers">
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=E.+von+Heitlinger" text="E. von Heitlinger" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Edith+Piaf" text="Edith Piaf" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Elliot+Lurie" text="Elliot Lurie" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Elliot+Willensky" text="Elliot Willensky" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Elmar+Krohn" text="Elmar Krohn" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Elton+John" text="Elton John" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Elvin+Bishop" text="Elvin Bishop" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Ennio+Morricone" text="Ennio Morricone" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Eric+Carmen" text="Eric Carmen" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Eric+Clapton" text="Eric Clapton" type="composer"></item>
+</browse>

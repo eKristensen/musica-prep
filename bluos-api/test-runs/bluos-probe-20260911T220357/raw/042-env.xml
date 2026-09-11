@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alarms supportsEndTime="true">
+  <alarm hour="7" minute="15" days="0000000" duration="60" volume="22" voldb="-53.1" fadein="1" enable="0" id="1" source="The Main Mix" url="RadioParadise:/0:20" service="RadioParadise" image="https://img.radioparadise.com/channels/0/0/cover_512x512/0.jpg" useBackup="true"></alarm>
+</alarms>

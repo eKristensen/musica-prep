@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="screen.xsd" version="1" screenTitle="Music Sources" id="screen-sources" refreshOnPlayerChange="true">
+  <refreshOnStatusChange key="sid" value="51"></refreshOnStatusChange>
+  <menuAction type="add">
+    <action type="webpage" URI="/redirectToCp?href=%2Fservices%3Fnoheader%3D1%26schemaVersion%3D35" title="Music Services" refreshScreen="true"></action>
+  </menuAction>
+  <row id="inputs" title="Inputs" scrollable="true" solidBackground="false">
+    <menuAction text="Customise">
+      <action type="setting" URI="/Settings?id=capture" title="Inputs" refreshScreen="true"></action>
+    </menuAction>
+    <input title="HDMI ARC" icon="/images/capture/ic_tv.png">
+      <action type="player-link" URI="/Play?url=Capture%3Ahw%3Aimxspdif%2C0%2F1%2F25%2F2%3Fid%3Dinput2&amp;title=HDMI+ARC&amp;image=%2Fimages%2Fcapture%2Fic_tv.png" haptic="true"></action>
+      <nowPlayingMatch key="inputId" value="input2"></nowPlayingMatch>
+    </input>
+  </row>
+  <row id="services" title="Music Services" solidBackground="false">
+    <menuAction text="Manage">
+      <action type="webpage" URI="/redirectToCp?href=%2Fservices%3Fnoheader%3D1%26schemaVersion%3D35" title="Music Services" refreshScreen="true"></action>
+    </menuAction>
+    <list>
+      <service icon="/images/ui/Source/LibrarySourceIcon.png" title="Library" isLink="true">
+        <action type="browse" URI="/ui/browseMenuGroup?service=LocalMusic" resultType="screen" title="Library" service="LocalMusic"></action>
+        <nowPlayingMatch key="service" value="LocalMusic"></nowPlayingMatch>
+      </service>
+      <service icon="/images/ui/Source/BluOSRadioSourceIcon.png" title="Radio" isLink="true">
+        <action type="browse" URI="/ui/browseMenuGroup?service=Airable" resultType="screen" title="Radio" service="Airable"></action>
+        <nowPlayingMatch key="service" value="Airable"></nowPlayingMatch>
+      </service>
+      <service icon="/images/ui/Source/RadioParadiseSourceIcon.png" title="Radio Paradise" isLink="true">
+        <action type="browse" URI="/ui/browseMenuGroup?service=RadioParadise" resultType="screen" title="Radio Paradise" service="RadioParadise"></action>
+        <nowPlayingMatch key="service" value="RadioParadise"></nowPlayingMatch>
+      </service>
+      <service icon="/images/ui/Source/SpotifySourceIcon.png" title="Spotify" isLink="false">
+        <action type="player-link" URI="/Play?url=Spotify%3Aplay&amp;title=Spotify&amp;image=%2FSources%2Fimages%2FSpotifyIcon.png" haptic="true"></action>
+      </service>
+      <service icon="/images/ui/Source/TidalSourceIcon.png" title="TIDAL" isLink="true">
+        <action type="browse" URI="/ui/browseMenuGroup?service=Tidal" resultType="screen" title="TIDAL" service="Tidal"></action>
+        <nowPlayingMatch key="service" value="Tidal"></nowPlayingMatch>
+      </service>
+      <service icon="/images/ui/Source/TuneInSourceIcon.png" title="TuneIn" isLink="true">
+        <action type="browse" URI="/ui/browseMenuGroup?service=TuneIn" resultType="screen" title="TuneIn" service="TuneIn"></action>
+        <nowPlayingMatch key="service" value="TuneIn"></nowPlayingMatch>
+      </service>
+    </list>
+  </row>
+</screen>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/Sources/images/TidalIcon.png" serviceName="TIDAL" searchKey="Tidal:Search" type="genres">
+  <item browseKey="Tidal:MG/Moods?genreid=relax" text="Relax" image="/Artwork?service=Tidal&amp;moodsimage=b589ddb1-ef3a-457e-9e00-02000000006e" type="genre"></item>
+  <item browseKey="Tidal:MG/Moods?genreid=party" text="Party" image="/Artwork?service=Tidal&amp;moodsimage=31e61c62-0003-473c-b245-02000000006f" type="genre"></item>
+  <item browseKey="Tidal:MG/Moods?genreid=workout" text="Workout" image="/Artwork?service=Tidal&amp;moodsimage=983e210c-c7fe-4231-be3b-020000000070" type="genre"></item>
+  <item browseKey="Tidal:MG/Moods?genreid=love" text="Love" image="/Artwork?service=Tidal&amp;moodsimage=91847f73-3b9d-42cb-a396-020000000071" type="genre"></item>
+  <item browseKey="Tidal:MG/Moods?genreid=concentrate" text="Focus" image="/Artwork?service=Tidal&amp;moodsimage=2d7e1a2c-7237-41aa-acbe-020000000072" type="genre"></item>
+</browse>

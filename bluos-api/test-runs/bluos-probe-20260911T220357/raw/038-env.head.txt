@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Content-Type: application/xml
+Date: Fri, 11 Sep 2026 20:03:59 GMT
+Content-Length: 424
+
+# request: GET 192.0.2.14:11000/Presets

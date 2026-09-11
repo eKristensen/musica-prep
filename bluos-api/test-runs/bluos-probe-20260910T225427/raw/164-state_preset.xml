@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presets prid="0">
+  <preset id="1" name="RP Main Mix" url="RadioParadise:/0:4" image="https://img.radioparadise.com/source/27/channel_logo/chan_0.png"></preset>
+  <preset id="2" name="Rolig musik" url="/Load?service=Tidal&amp;id=9977e64f-8df5-4967-9219-020000000001" image="/Artwork?service=Tidal&amp;playlistimage=6793e3e6-0a62-4921-8158-020000000002" volume="6"></preset>
+</presets>

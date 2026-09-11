@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Date: Fri, 11 Sep 2026 20:05:11 GMT
+Content-Length: 718
+
+# request: GET 192.0.2.11:11000/Browse?key=LocalMusic%3AS%3AAlbum%2F%252Flibrary%252Fv1%252FAlbums%253Fservice%3DLocalMusic%26limit%3D50%26section%3DD

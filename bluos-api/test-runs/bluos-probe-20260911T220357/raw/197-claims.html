@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Diagnostics</title>
+
+	<link rel="stylesheet" href="css/themes/default/jquery.mobile-1.1.0.min.css" />
+	<link rel="stylesheet" href="css/custom_styles.css">
+	<script src="js/jquery.js"></script>
+	<script src="js/jquery.mobile-1.1.0.min.js"></script>
+	<link rel="stylesheet" href="css/themes/custom/bluesound_custom_theme.min.css" />
+    </head>
+    <body>
+	<div data-role="page" data-theme="a" id="diagnosticspage">
+            <script type="text/javascript">
+                $(document).on('pageinit', '#diagnosticspage', function() {
+                    $("#statistics").on("change", function() {
+                        var state = $(this).val();
+                        $.get( "/statistics", { enable: state });
+                    });
+                });
+            </script>
+	    <div data-role="header" ZgotmplZ>
+                <a href="/" data-icon="back" data-rel="back" data-iconpos="notext"></a>
+	        <h1>Diagnostics</h1>
+                <a href="/" data-icon="home" data-transition="slideup" data-iconpos="notext"></a>
+	    </div>
+	    <div data-role="content">
+			
+		</div>
+
+		<div class="diags-wrap">
+			<div class="ui-grid-a">
+			
+			<div class="ui-block-a">IP Address:</div><div class="ui-block-b">192.0.2.12</div>
+			<div class="ui-block-a">MAC Address:</div><div class="ui-block-b">02:00:00:00:00:0c</div>
+			<div class="ui-block-a">BluOS Version:</div><div class="ui-block-b">4.16.22</div>
+			
+			<div class="ui-block-a">Uptime:</div><div class="ui-block-b">405h52m12s</div>
+			<br><br>
+			
+			<div class="ui-block-a">Total Songs:</div><div class="ui-block-b">1196</div>
+			<div class="ui-block-a"></div><div class="ui-block-b">
+			 <a data-ajax="false" data-role="button" data-mini="true" data-inline="true" href="/delete_index?noheader=0" class="ui-link">Rebuild Index</a>
+			</div></div>
+			
+		</div>
+		
+		<p>Connected Shares:<br>
+			//192.0.2.102/music
+<br>
+		
+		
+			<div class="ui-grid-a">
+				<div class="ui-block-a">Other Players:</div>
+				
+				<div class="ui-block-a"><a href="http://192.0.2.14/diagnostics">Soveværelse</a></div><div class="ui-block-b">192.0.2.14</div>
+				
+				<div class="ui-block-a"><a href="http://192.0.2.11/diagnostics">Stue</a></div><div class="ui-block-b">192.0.2.11</div>
+				
+				<div class="ui-block-a"><a href="http://192.0.2.13/diagnostics">Køkken</a></div><div class="ui-block-b">192.0.2.13</div>
+				
+			</div>
+            
+			<div data-role="fieldcontain" align="center" style="border-bottom-width: 0;">
+				<label for="statistics" style="margin-top: 2px;">Statistics collection:</label>
+				<select name="statistics" id="statistics" data-role="slider" data-inline="true" data-mini="true">
+					<option value="0" selected>Off</option>
+					<option value="1" ZgotmplZ>On</option>
+				</select>
+				<a href="http://www.bluesound.com/privacy-policy" data-transition="slide" data-mini="true" data-inline="true" data-role="button" data-icon="info" data-iconpos="notext" class="ui-link"></a>
+			</div>
+                    
+			<a data-ajax="false" data-role="button" data-mini="true" data-inline="true" style="float:right" href="/reboot?noheader=0" class="ui-link">Reboot</a>
+			
+			<a data-ajax="false" data-role="button" data-mini="true" data-inline="true" style="float:right" href="/apmode?noheader=0" class="ui-link">Force Hotspot Mode</a>
+			
+		
+	    </div>
+	</div>
+    </body>
+</html>

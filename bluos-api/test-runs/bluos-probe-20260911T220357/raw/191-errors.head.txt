@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+X-Sovi-Effective-Language: en
+Date: Fri, 11 Sep 2026 20:04:56 GMT
+Transfer-Encoding: chunked
+
+# request: GET 192.0.2.11:11000/Services?schemaVersion=abc

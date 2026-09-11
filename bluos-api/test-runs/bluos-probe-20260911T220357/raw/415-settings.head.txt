@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Content-Type: text/xml; charset=utf-8
+Date: Fri, 11 Sep 2026 20:05:17 GMT
+Content-Length: 1496
+
+# request: GET 192.0.2.11:11001/Settings?id=library&schemaVersion=35

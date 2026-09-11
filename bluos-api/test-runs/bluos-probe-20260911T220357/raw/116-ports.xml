@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <item id="home" URI="/ui/Home"></item>
+  <item id="recentlyPlayed" URI="/ui/RecentlyPlayed"></item>
+  <item id="news" URI="/ui/News"></item>
+  <item id="favourites" URI="/ui/Favourites"></item>
+  <item id="sources" URI="/ui/Sources"></item>
+  <item id="search" URI="/ui/Search"></item>
+  <item id="nowPlayingContextMenu" URI="/ui/nowPlayingCM" resultType="contextMenu"></item>
+  <item id="queueItemContextMenu" URI="/ui/queueItemCM" resultType="contextMenu"></item>
+  <item id="resolveSoviURL" URI="/ui/resolveSoviURL"></item>
+  <item id="queue" URI="/ui/Queue" resultType="queue"></item>
+  <item id="presets" URI="/ui/presets"></item>
+</configuration>

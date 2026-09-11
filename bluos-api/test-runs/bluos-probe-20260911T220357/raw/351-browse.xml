@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="albums">
+  <item browseKey="LocalMusic:MG/LocalMusic-Album?album=Dansk+Melodi+Grand+Prix+1957-2005&amp;artist=Various+Artists" contextMenuKey="LocalMusic:CM/LocalMusic-Album?album=Dansk+Melodi+Grand+Prix+1957-2005&amp;artist=Various+Artists" playURL="/Add?playnow=1&amp;service=LocalMusic&amp;album=Dansk+Melodi+Grand+Prix+1957-2005&amp;artist=Various+Artists" text="Dansk Melodi Grand Prix 1957-2005" text2="Various Artists" tracks="51" image="/Artwork?service=LocalMusic&amp;album=Dansk+Melodi+Grand+Prix+1957-2005&amp;artist=Various+Artists" type="album"></item>
+</browse>

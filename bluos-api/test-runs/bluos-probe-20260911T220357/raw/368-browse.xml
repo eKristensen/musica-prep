@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="composers">
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Carole+Bayer+Sager" text="Carole Bayer Sager" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Cat+Stevens" text="Cat Stevens" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Christopher+Neil" text="Christopher Neil" type="composer"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Composer?composer=Clark+Anderson" text="Clark Anderson" type="composer"></item>
+</browse>

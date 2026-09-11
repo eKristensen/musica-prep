@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queue offset="0" total="37" id="1193" modified="false">
+  <refreshOnStatusChange key="pid" value="1193"></refreshOnStatusChange>
+  <button text="Save" backgroundColor="#2A2A2A" textColor="#ffffff" icon="/images/ui/btn_save_queue.png">
+    <action type="browse" URI="/AddToPlaylistOptions?saveQueue=1" resultType="SaveQueueOptions" title="Save playlist"></action>
+  </button>
+  <button text="Edit" backgroundColor="#2A2A2A" textColor="#ffffff" icon="/images/ui/btn_edit_queue.png">
+    <action type="deep-link" URI="/edit-queue"></action>
+  </button>
+  <button text="Clear" backgroundColor="#2A2A2A" textColor="#ffffff" icon="/images/ui/btn_clear_queue.png">
+    <action type="player-link" URI="/Clear" refreshScreen="true" haptic="true" notification="Play Queue cleared"></action>
+  </button>
+  <button text="Queue builder mode" backgroundColor="#2A2A2A" textColor="#ffffff" icon="/images/ui/btn_qbm.png">
+    <action type="player-link" URI="/ui/action?CBQ=true" event="qbm_toggle:qbm=true" refreshScreen="true"></action>
+  </button>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A122288231" icon="/Sources/images/TidalIcon.png?style=Default" title="How Many Times" subTitle="Andhim" subSubTitle="Simmer Down" quality="cd" duration="4:27">
+    <action type="player-link" URI="/Play?id=0" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=0" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="0"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A64753254" icon="/Sources/images/TidalIcon.png?style=Default" title="I&#39;m In Control" subTitle="AlunaGeorge" subSubTitle="I Remember" quality="cd" duration="3:29">
+    <action type="player-link" URI="/Play?id=1" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=1" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="1"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A53780764" icon="/Sources/images/TidalIcon.png?style=Default" title="Blind (feat. Emmi) [Radio Edit]" subTitle="Feder" quality="cd" duration="3:14">
+    <action type="player-link" URI="/Play?id=2" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=2" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="2"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A42943871" icon="/Sources/images/TidalIcon.png?style=Default" title="Ain&#39;t Nobody (Loves Me Better)" subTitle="Felix Jaehn" quality="cd" duration="3:06">
+    <action type="player-link" URI="/Play?id=3" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=3" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="3"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A48537288" icon="/Sources/images/TidalIcon.png?style=Default" title="Sugar (feat. Francesco Yates)" subTitle="Robin Schulz" quality="cd" duration="3:39">
+    <action type="player-link" URI="/Play?id=4" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=4" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="4"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A52891347" icon="/Sources/images/TidalIcon.png?style=Default" title="Gold" subTitle="Kiiara" quality="cd" duration="3:46">
+    <action type="player-link" URI="/Play?id=5" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=5" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="5"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A51557046" icon="/Sources/images/TidalIcon.png?style=Default" title="Lay It All on Me (feat. Ed Sheeran)" subTitle="Rudimental" subSubTitle="We the Generation (Deluxe Edition)" quality="cd" duration="4:02">
+    <action type="player-link" URI="/Play?id=6" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=6" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="6"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A177600702" icon="/Sources/images/TidalIcon.png?style=Default" title="Don&#39;t Be so Shy" subTitle="Imany" subSubTitle="The Wrong Kind of War" quality="cd" duration="3:11">
+    <action type="player-link" URI="/Play?id=7" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=7" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="7"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A243118147" icon="/Sources/images/TidalIcon.png?style=Default" title="Stay Lost" subTitle="Joe Hertz" subSubTitle="Chapter One" quality="cd" duration="3:50">
+    <action type="player-link" URI="/Play?id=8" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=8" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="8"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A117920814" icon="/Sources/images/TidalIcon.png?style=Default" title="Moments" subTitle="Kidnap" quality="cd" duration="5:03">
+    <action type="player-link" URI="/Play?id=9" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=9" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="9"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A58439724" icon="/Sources/images/TidalIcon.png?style=Default" title="All My Friends (feat. Tinashe &amp; Chance the Rapper)" subTitle="Snakehips" subSubTitle="All My Friends (The Remixes) (feat. Tinashe &amp; Chance the Rapper)" quality="cd" duration="5:55">
+    <action type="player-link" URI="/Play?id=10" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=10" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="10"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A59413016" icon="/Sources/images/TidalIcon.png?style=Default" title="Who Am I" subTitle="Katy B" subSubTitle="Honey" quality="cd" duration="3:24">
+    <action type="player-link" URI="/Play?id=11" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=11" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="11"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A44327109" icon="/Sources/images/TidalIcon.png?style=Default" title="Something About You" subTitle="Hayden James" quality="cd" duration="3:45">
+    <action type="player-link" URI="/Play?id=12" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=12" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="12"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A39429297" icon="/Sources/images/TidalIcon.png?style=Default" title="Goodbye (feat. Lyse) [Radio Edit]" subTitle="Feder" quality="cd" duration="3:22">
+    <action type="player-link" URI="/Play?id=13" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=13" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="13"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A56290770" icon="/Sources/images/TidalIcon.png?style=Default" title="Missing (feat. Kimberly Anne)" subTitle="Luca Schreiner" quality="cd" duration="3:06">
+    <action type="player-link" URI="/Play?id=14" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=14" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="14"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A50535521" icon="/Sources/images/TidalIcon.png?style=Default" title="Crush" subTitle="Campsite Dream" quality="hd" duration="3:32">
+    <action type="player-link" URI="/Play?id=15" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=15" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="15"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A47097070" icon="/Sources/images/TidalIcon.png?style=Default" title="Rumour Mill (feat. Anne-Marie &amp; Will Heard)" subTitle="Rudimental" quality="cd" duration="4:04">
+    <action type="player-link" URI="/Play?id=16" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=16" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="16"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A48513985" icon="/Sources/images/TidalIcon.png?style=Default" title="Heaven" subTitle="Alex Adair" quality="cd" duration="2:57">
+    <action type="player-link" URI="/Play?id=17" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=17" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="17"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A38014823" icon="/Sources/images/TidalIcon.png?style=Default" title="You Know You Like It" subTitle="DJ Snake" quality="cd" duration="4:07">
+    <action type="player-link" URI="/Play?id=18" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=18" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="18"></nowPlayingMatch>
+  </item>
+  <item image="/Artwork?service=Tidal&amp;songid=Tidal%3A58126772" icon="/Sources/images/TidalIcon.png?style=Default" title="Fragile" subTitle="Kygo" quality="hd" duration="3:51">
+    <action type="player-link" URI="/Play?id=19" haptic="true"></action>
+    <contextMenu type="browse" URI="/ui/queueItemCM?id=19" resultType="contextMenu"></contextMenu>
+    <nowPlayingMatch key="song" value="19"></nowPlayingMatch>
+  </item>
+</queue>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="screen.xsd" version="1" screenTitle="Home" id="screen-home" refreshOnPlayerChange="true">
+  <refreshOnStatusChange key="prid" value="1"></refreshOnStatusChange>
+  <menuAction type="settings">
+    <action type="deep-link" URI="/settings"></action>
+  </menuAction>
+  <row id="teaser" scrollable="true" solidBackground="false" noReorder="true">
+    <teaser id="add-service" title="Add your Music Service" body="BluOS supports a broad number of music services." backgroundImage="/images/ui/ic_teaser_add_service.png" closable="true">
+      <action type="webpage" URI="/redirectToCp?href=%2Fservices%3Fnoheader%3D1%26schemaVersion%3D35"></action>
+      <button text="Add Music Service" backgroundColor="#00a4cb" textColor="#ffffff">
+        <action type="webpage" URI="/redirectToCp?href=%2Fservices%3Fnoheader%3D1%26schemaVersion%3D35"></action>
+      </button>
+    </teaser>
+    <teaser id="qbm-education" title="Queue Builder Mode" body="This BluOS version adds an enhanced way of creating &amp; managing your Play Queues and Playlists within BluOS." backgroundImage="/images/ui/ic_teaser_queue_builder.png" closable="true">
+      <action type="deep-link" URI="/qbm-education"></action>
+      <button text="Explore Queue Builder Mode" backgroundColor="#00a4cb" textColor="#ffffff">
+        <action type="deep-link" URI="/qbm-education"></action>
+      </button>
+    </teaser>
+  </row>
+  <row id="mostUsed" title="Most Used" scrollable="true" solidBackground="false">
+    <source icon="/images/capture/ic_tv.png" title="HDMI ARC">
+      <button text="Play" backgroundColor="#43a4ce" textColor="#ffffff">
+        <action type="player-link" URI="/Play?url=Capture%3Ahw%3Aimxspdif%2C0%2F1%2F25%2F2%3Fid%3Dinput2" haptic="true"></action>
+      </button>
+      <button text="Settings" backgroundColor="#292D2F" textColor="#ffffff" icon="/image/icon_settings.png">
+        <action type="setting" URI="/Settings?id=capture-input2"></action>
+      </button>
+      <action type="player-link" URI="/Play?url=Capture%3Ahw%3Aimxspdif%2C0%2F1%2F25%2F2%3Fid%3Dinput2" haptic="true"></action>
+      <nowPlayingMatch key="inputId" value="input2"></nowPlayingMatch>
+    </source>
+    <source icon="/images/ui/Source/TidalLogo.png">
+      <button text="My Music" backgroundColor="#ffffff" textColor="#1e2223">
+        <action type="browse" URI="/ui/Favourites?service=Tidal&amp;singleService=1&amp;title=My+Music" resultType="screen" title="My Music" service="Tidal"></action>
+      </button>
+      <button text="New" backgroundColor="#292D2F" textColor="#ffffff">
+        <action type="browse" URI="/ui/browseMenuGroup?service=Tidal&amp;menuGroupId=Tidal-New" resultType="screen" title="New"></action>
+      </button>
+      <action type="browse" URI="/ui/browseMenuGroup?service=Tidal" resultType="screen" title="TIDAL" service="Tidal"></action>
+    </source>
+    <source icon="/images/ui/Source/RadioParadiseLogo.png">
+      <button text="Play Main Mix" backgroundColor="#f8cc82" textColor="#1e2223">
+        <action type="player-link" URI="/Play?url=RadioParadise%3A" haptic="true"></action>
+      </button>
+      <button text="Browse" backgroundColor="#292D2F" textColor="#ffffff">
+        <action type="browse" URI="/ui/browseMenuGroup?service=RadioParadise" resultType="screen" title="Radio Paradise" service="RadioParadise"></action>
+      </button>
+      <action type="browse" URI="/ui/browseMenuGroup?service=RadioParadise" resultType="screen" title="Radio Paradise" service="RadioParadise"></action>
+    </source>
+  </row>
+  <row id="presets" title="Presets" solidBackground="true">
+    <menuAction text="View All">
+      <action type="browse" URI="/ui/presets" resultType="screen" title="Presets"></action>
+    </menuAction>
+    <smallThumbnail title="Sunday Chill Mix: Ministry of Sound" icon="/Artwork?service=Tidal&amp;playlistimage=f8601f52-6d31-43bd-97a7-020000000002">
+      <action type="player-link" URI="/Preset?id=1" haptic="true"></action>
+    </smallThumbnail>
+    <smallThumbnail icon="/images/ui/ic_small_thumbnail_add.png">
+      <action type="deep-link" URI="/add-preset"></action>
+    </smallThumbnail>
+  </row>
+  <row id="recent-stations" title="Recent Stations" scrollable="true" solidBackground="false">
+    <menuAction text="Clear">
+      <action type="player-link" URI="/ui/clearUsageHistory?stations=1" refreshScreen="true" haptic="true"></action>
+    </menuAction>
+    <largeThumbnail image="https://img.radioparadise.com/channels/0/0/cover_512x512/0.jpg" title="The Main Mix" icon="/Sources/images/RadioParadiseIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FPlay%3Furl%3DRadioParadise%253A%252F0%253A20%26title1%3DThe%2BMain%2BMix%26image%3Dhttps%253A%252F%252Fimg.radioparadise.com%252Fchannels%252F0%252F0%252Fcover_512x512%252F0.jpg" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FPlay%3Furl%3DRadioParadise%253A%252F0%253A20%26title1%3DThe%2BMain%2BMix%26image%3Dhttps%253A%252F%252Fimg.radioparadise.com%252Fchannels%252F0%252F0%252Fcover_512x512%252F0.jpg" haptic="true"></playAction>
+      <nowPlayingMatch key="streamUrl" value="RadioParadise:/0:20"></nowPlayingMatch>
+    </largeThumbnail>
+    <largeThumbnail image="https://img.radioparadise.com/channels/0/0/cover_512x512/0.jpg" title="The Main Mix (CD)" icon="/Sources/images/RadioParadiseIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FPlay%3Furl%3DRadioParadise%253A%252F0%253A4%26title1%3DThe%2520Main%2520Mix%26image%3Dhttps%253A%252F%252Fimg.radioparadise.com%252Fchannels%252F0%252F0%252Fcover_512x512%252F0.jpg" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FPlay%3Furl%3DRadioParadise%253A%252F0%253A4%26title1%3DThe%2520Main%2520Mix%26image%3Dhttps%253A%252F%252Fimg.radioparadise.com%252Fchannels%252F0%252F0%252Fcover_512x512%252F0.jpg" haptic="true"></playAction>
+      <nowPlayingMatch key="streamUrl" value="RadioParadise:/0:4"></nowPlayingMatch>
+    </largeThumbnail>
+    <largeThumbnail image="/Artwork?service=Tidal&amp;albumid=366537329" title="My Name Radio" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FPlay%3Furl%3DTidal%253Aradio%253Atrack%252F366537361%26image%3D%252FArtwork%253Fservice%253DTidal%2526albumid%253D366537329" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FPlay%3Furl%3DTidal%253Aradio%253Atrack%252F366537361%26image%3D%252FArtwork%253Fservice%253DTidal%2526albumid%253D366537329" haptic="true"></playAction>
+      <nowPlayingMatch key="streamUrl" value="Tidal:radio:track/366537361"></nowPlayingMatch>
+    </largeThumbnail>
+    <largeThumbnail image="https://img.radioparadise.com/channels/0/0/cover_512x512/0.jpg" title="The Main Mix (MQA)" icon="/Sources/images/RadioParadiseIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FPlay%3Furl%3DRadioParadise%253A%26title1%3DThe%2520Main%2520Mix%26image%3Dhttps%253A%252F%252Fimg.radioparadise.com%252Fchannels%252F0%252F0%252Fcover_512x512%252F0.jpg" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FPlay%3Furl%3DRadioParadise%253A%26title1%3DThe%2520Main%2520Mix%26image%3Dhttps%253A%252F%252Fimg.radioparadise.com%252Fchannels%252F0%252F0%252Fcover_512x512%252F0.jpg" haptic="true"></playAction>
+      <nowPlayingMatch key="streamUrl" value="RadioParadise:"></nowPlayingMatch>
+    </largeThumbnail>
+  </row>
+  <row id="recent" title="Recently Played" scrollable="true" solidBackground="false">
+    <menuAction text="View All">
+      <action type="browse" URI="/ui/RecentlyPlayed" resultType="screen" title="Recently Played"></action>
+    </menuAction>
+    <largeThumbnail image="/Artwork?service=Tidal&amp;playlistimage=f8601f52-6d31-43bd-97a7-020000000002" objectType="playlist" title="Sunday Chill Mix: Ministry of Sound" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="browse" URI="/ui/browseContext?service=Tidal&amp;title=Sunday+Chill+Mix%3A+Ministry+of+Sound&amp;type=Playlist&amp;url=%2FPlaylists%3Fservice%3DTidal%26playlist%3DSunday%2BChill%2BMix%253A%2BMinistry%2Bof%2BSound%26playlistid%3Df6bddb25-a5dc-4658-993d-020000000001" resultType="screen" title="Sunday Chill Mix: Ministry of Sound" service="Tidal"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FLoad%3Fservice%3DTidal%26name%3DSunday%2BChill%2BMix%253A%2BMinistry%2Bof%2BSound%26id%3Df6bddb25-a5dc-4658-993d-020000000001" haptic="true"></playAction>
+      <contextMenu type="browse" URI="/ui/ContextMenu?context=Playlist&amp;image=%2FArtwork%3Fservice%3DTidal%26playlistimage%3Df8601f52-6d31-43bd-97a7-020000000002&amp;isFavourite=1&amp;playlist=Sunday+Chill+Mix%3A+Ministry+of+Sound&amp;playlistid=f6bddb25-a5dc-4658-993d-020000000001&amp;preset_url=%2FLoad%3Fservice%3DTidal%26id%3Df6bddb25-a5dc-4658-993d-020000000001&amp;service=Tidal&amp;title=Sunday+Chill+Mix%3A+Ministry+of+Sound&amp;noFavCMItems=1" resultType="contextMenu"></contextMenu>
+    </largeThumbnail>
+    <largeThumbnail image="/Artwork?service=Tidal&amp;songid=Tidal%3A140768093" objectType="song" title="Peace of Mind" subTitle="AK • Peace of Mind" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A140768093" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A140768093" haptic="true"></playAction>
+      <contextMenu type="browse" URI="/ui/ContextMenu?album=Peace+of+Mind&amp;albumid=140768092&amp;artist=AK&amp;artistid=15706940&amp;context=Song&amp;filename=Tidal%3A140768093&amp;isFavourite=1&amp;service=Tidal&amp;similarstationid=Tidal%3Aradio%3Aartist%2F15706940&amp;songid=Tidal%3A140768093&amp;title=Peace+of+Mind&amp;trackstationid=Tidal%3Aradio%3Atrack%2F140768093&amp;noFavCMItems=1" resultType="contextMenu"></contextMenu>
+    </largeThumbnail>
+    <largeThumbnail image="/Artwork?service=Tidal&amp;songid=Tidal%3A106600734" objectType="song" title="Traust" subTitle="Heilung • Futha" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A106600734" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A106600734" haptic="true"></playAction>
+      <contextMenu type="browse" URI="/ui/ContextMenu?album=Futha&amp;albumid=106600730&amp;artist=Heilung&amp;artistid=4656760&amp;context=Song&amp;filename=Tidal%3A106600734&amp;isFavourite=1&amp;service=Tidal&amp;similarstationid=Tidal%3Aradio%3Aartist%2F4656760&amp;songid=Tidal%3A106600734&amp;title=Traust&amp;trackstationid=Tidal%3Aradio%3Atrack%2F106600734&amp;noFavCMItems=1" resultType="contextMenu"></contextMenu>
+    </largeThumbnail>
+    <largeThumbnail image="https://images.tidal.com/0/EIAFGIAFIMACKMAC/CAEaJDQ2MTI4MTUxLzhlOWYvNDJhMC84ZjgwLzlmMjY3ZDViZWZlZRokYmUyMDA4ODQvZDliOC80MjA1L2IzM2IvZWI0YzMxNWFjODM4GiRkODVmOTkwMS83OWNhLzRmMDcvODQ5OC9mODc1Zjk5ZmFmYWQiATIqByNEOERCRjEwAg?token=[REDACTED-value-2]" objectType="playlist" title="My Mix 2" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="browse" URI="/ui/browseContext?service=Tidal&amp;title=My+Mix+2&amp;type=Playlist&amp;url=%2FPlaylists%3Fservice%3DTidal%26playlist%3DMy%2BMix%2B2%26playlistid%3Dmix%253A00221fe70fc48ccb410e4f67956209" resultType="screen" title="My Mix 2" service="Tidal"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FLoad%3Fservice%3DTidal%26name%3DMy%2BMix%2B2%26id%3Dmix%253A00221fe70fc48ccb410e4f67956209" haptic="true"></playAction>
+      <contextMenu type="browse" URI="/ui/ContextMenu?context=Playlist&amp;image=https%3A%2F%2Fimages.tidal.com%2F0%2FEIAFGIAFIMACKMAC%2FCAEaJDQ2MTI4MTUxLzhlOWYvNDJhMC84ZjgwLzlmMjY3ZDViZWZlZRokYmUyMDA4ODQvZDliOC80MjA1L2IzM2IvZWI0YzMxNWFjODM4GiRkODVmOTkwMS83OWNhLzRmMDcvODQ5OC9mODc1Zjk5ZmFmYWQiATIqByNEOERCRjEwAg%3Ftoken%3D46d73575b3a1f5f93961b247d0181c8da7e80133&amp;mymix=1&amp;playlist=My+Mix+2&amp;playlistid=mix%3A00221fe70fc48ccb410e4f67956209&amp;preset_url=%2FLoad%3Fservice%3DTidal%26id%3Dmix%3A00221fe70fc48ccb410e4f67956209&amp;service=Tidal&amp;title=My+Mix+2&amp;noFavCMItems=1" resultType="contextMenu"></contextMenu>
+    </largeThumbnail>
+    <largeThumbnail image="/Artwork?service=Tidal&amp;songid=Tidal%3A118256186" objectType="song" title="Daydreaming" subTitle="Marion • Daydreaming" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A118256186" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A118256186" haptic="true"></playAction>
+      <contextMenu type="browse" URI="/ui/ContextMenu?album=Daydreaming&amp;albumid=118256185&amp;artist=Marion&amp;artistid=31563632&amp;context=Song&amp;filename=Tidal%3A118256186&amp;isFavourite=1&amp;service=Tidal&amp;similarstationid=Tidal%3Aradio%3Aartist%2F31563632&amp;songid=Tidal%3A118256186&amp;title=Daydreaming&amp;trackstationid=Tidal%3Aradio%3Atrack%2F118256186&amp;noFavCMItems=1" resultType="contextMenu"></contextMenu>
+    </largeThumbnail>
+    <largeThumbnail image="/Artwork?service=Tidal&amp;songid=Tidal%3A92063044" objectType="song" title="Nightfall (feat. 4lienetic)" subTitle="Andy Leech • Nightfall (feat. 4lienetic)" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%020000000009" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%020000000009" haptic="true"></playAction>
+      <contextMenu type="browse" URI="/ui/ContextMenu?album=Nightfall+%28feat.+4lienetic%29&amp;albumid=92063043&amp;artist=Andy+Leech&amp;artistid=8995825&amp;context=Song&amp;filename=Tidal%3A92063044&amp;isFavourite=1&amp;service=Tidal&amp;similarstationid=Tidal%3Aradio%3Aartist%2F8995825&amp;songid=Tidal%3A92063044&amp;title=Nightfall+%28feat.+4lienetic%29&amp;trackstationid=Tidal%3Aradio%3Atrack%2F92063044&amp;noFavCMItems=1" resultType="contextMenu"></contextMenu>
+    </largeThumbnail>
+    <largeThumbnail image="/Artwork?service=Tidal&amp;songid=Tidal%3A482411348" objectType="song" title="Moral Compass" subTitle="Metric • Romanticize The Dive" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A482411348" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A482411348" haptic="true"></playAction>
+      <contextMenu type="browse" URI="/ui/ContextMenu?album=Romanticize+The+Dive&amp;albumid=482411342&amp;artist=Metric&amp;artistid=65040&amp;context=Song&amp;filename=Tidal%3A482411348&amp;isFavourite=1&amp;service=Tidal&amp;similarstationid=Tidal%3Aradio%3Aartist%2F65040&amp;songid=Tidal%3A482411348&amp;title=Moral+Compass&amp;trackstationid=Tidal%3Aradio%3Atrack%2F482411348&amp;noFavCMItems=1" resultType="contextMenu"></contextMenu>
+    </largeThumbnail>
+    <largeThumbnail image="/Artwork?service=Tidal&amp;songid=Tidal%3A170920666" objectType="song" title="Ki Ru A Kill" subTitle="Hiroyuki Sawano • KILL LA KILL ORIGINAL SOUNDTRACK" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A170920666" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A170920666" haptic="true"></playAction>
+      <contextMenu type="browse" URI="/ui/ContextMenu?album=KILL+LA+KILL+ORIGINAL+SOUNDTRACK&amp;albumid=170920649&amp;artist=Hiroyuki+Sawano&amp;artistid=4298402&amp;context=Song&amp;filename=Tidal%3A170920666&amp;service=Tidal&amp;similarstationid=Tidal%3Aradio%3Aartist%2F4298402&amp;songid=Tidal%3A170920666&amp;title=Ki+Ru+A+Kill&amp;trackstationid=Tidal%3Aradio%3Atrack%2F170920666&amp;noFavCMItems=1" resultType="contextMenu"></contextMenu>
+    </largeThumbnail>
+    <largeThumbnail image="/Artwork?service=Tidal&amp;songid=Tidal%3A173221394" objectType="song" title="A Thief&#39;s End" subTitle="Henry Jackman • Uncharted 4: A Thief&#39;s End (Original Soundtrack)" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A173221394" haptic="true"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26file%3DTidal%253A173221394" haptic="true"></playAction>
+      <contextMenu type="browse" URI="/ui/ContextMenu?album=Uncharted+4%3A+A+Thief%27s+End+%28Original+Soundtrack%29&amp;albumid=173221393&amp;artist=Henry+Jackman&amp;artistid=3700901&amp;context=Song&amp;filename=Tidal%3A173221394&amp;isFavourite=1&amp;service=Tidal&amp;similarstationid=Tidal%3Aradio%3Aartist%2F3700901&amp;songid=Tidal%3A173221394&amp;title=A+Thief%27s+End&amp;trackstationid=Tidal%3Aradio%3Atrack%2F173221394&amp;noFavCMItems=1" resultType="contextMenu"></contextMenu>
+    </largeThumbnail>
+    <largeThumbnail image="/Artwork?service=Tidal&amp;albumcover=e9e6bf7e-9d45-45e4-b0e8-02000000000a" objectType="album" title="KPop Demon Hunters (Soundtrack from the Netflix Film)" subTitle="KPop Demon Hunters Cast" icon="/Sources/images/TidalIcon.png?style=Default">
+      <action type="browse" URI="/ui/browseContext?service=Tidal&amp;title=KPop+Demon+Hunters+%28Soundtrack+from+the+Netflix+Film%29&amp;type=Album&amp;url=%2FAlbums%3Fservice%3DTidal%26albumid%3D441821356" resultType="screen" title="KPop Demon Hunters (Soundtrack from the Netflix Film)" service="Tidal"></action>
+      <playAction type="player-link" URI="/ui/prf?u=%2FAdd%3Fplaynow%3D1%26service%3DTidal%26albumid%3D441821356" haptic="true"></playAction>
+      <contextMenu type="browse" URI="/ui/ContextMenu?album=KPop+Demon+Hunters+%28Soundtrack+from+the+Netflix+Film%29&amp;albumid=441821356&amp;artist=KPop+Demon+Hunters+Cast&amp;artistid=62075546&amp;context=Album&amp;service=Tidal&amp;title=KPop+Demon+Hunters+%28Soundtrack+from+the+Netflix+Film%29&amp;noFavCMItems=1" resultType="contextMenu"></contextMenu>
+    </largeThumbnail>
+  </row>
+  <row id="LocalMusic-myPlaylists" title="Library: Playlists" scrollable="true" solidBackground="false">
+    <fetch url="/ui/myPlaylistsRow?service=LocalMusic" itemType="largeThumbnail" unlikely="true"></fetch>
+    <menuAction text="View All">
+      <action type="browse" URI="/ui/BrowseObjects?browseIndex=4&amp;menuGroupId=LocalMusic&amp;service=LocalMusic&amp;type=Playlist&amp;url=%2Flibrary%2Fv1%2FPlaylists%3Fimported%3D1%26service%3DLocalMusic%26myPlaylists%3D1" resultType="screen" title="Playlists"></action>
+    </menuAction>
+  </row>
+  <row id="Tidal-myPlaylists" title="TIDAL: My Playlists" scrollable="true" solidBackground="false">
+    <fetch url="/ui/myPlaylistsRow?service=Tidal" itemType="largeThumbnail"></fetch>
+    <menuAction text="View All">
+      <action type="browse" URI="/ui/BrowseObjects?browseIndex=3&amp;menuGroupId=Tidal-Favourites&amp;service=Tidal&amp;type=Playlist&amp;url=%2FPlaylists%3Fservice%3DTidal%26myPlaylists%3D1" resultType="screen" title="My Playlists"></action>
+    </menuAction>
+  </row>
+  <customiseScreen text="Customise Home">
+    <action type="deep-link" URI="/customise-screen" title="Customise Home" refreshScreen="true"></action>
+  </customiseScreen>
+</screen>

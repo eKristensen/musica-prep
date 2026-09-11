@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Content-Length: 1324
+Content-Type: application/xml
+Date: Fri, 11 Sep 2026 20:07:02 GMT
+X-Sovi-Effective-Language: en
+
+# request: GET 192.0.2.14:11000/Status

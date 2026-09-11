@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="genres">
+  <item browseKey="LocalMusic:MG/Genres?genre=Alternative" text="Alternative" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Children%27s" text="Children&#39;s" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Classical" text="Classical" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Easy+Listening" text="Easy Listening" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Electronic" text="Electronic" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Eurovision" text="Eurovision" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=International" text="International" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=New+Age" text="New Age" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Pop" text="Pop" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Rock" text="Rock" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Rock%2FPop" text="Rock/Pop" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Soundtrack" text="Soundtrack" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Stage+%26+Screen" text="Stage &amp; Screen" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Stage+Musicals" text="Stage Musicals" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Test" text="Test" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Unclassifiable" text="Unclassifiable" type="genre"></item>
+  <item browseKey="LocalMusic:MG/Genres?genre=Unknown" text="Unknown" type="genre"></item>
+</browse>

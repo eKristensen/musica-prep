@@ -1,0 +1,7 @@
+HTTP/1.1 301 Moved Permanently
+Content-Type: text/html; charset=utf-8
+Location: http://192.0.2.11:11004/library/v1/Artwork?album=Heaven&artist=Alex+Adair&service=LocalMusic
+Date: Fri, 11 Sep 2026 20:05:00 GMT
+Content-Length: 139
+
+# request: GET 192.0.2.11:11000/Artwork?service=LocalMusic&album=Heaven&artist=Alex%20Adair

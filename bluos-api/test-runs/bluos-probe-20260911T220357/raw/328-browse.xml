@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/Sources/images/BluOSRadioIcon.png" serviceName="Radio" searchKey="Airable:Search" type="items" nextKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenres%253Fp%253D2">
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F7625851453747601" text="Children-Kids" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F1980926793999970" text="Classical" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F5203943644650281" text="College" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F2960638262331486" text="Comedy" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F4549569578841329" text="Country" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F3531998843420297" text="Decades" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F1087725375778973" text="Education" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F5615540951956064" text="Electronic Dance" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F4517083698417992" text="Folk" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F9543168084230275" text="Freeform-Eclectic" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F2109087887220084" text="Hip-Hop Rap" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F5755660091526807" text="Jazz" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F4064656799659133" text="Light-Easy" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F7815991302020849" text="Musicals" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F4259184787981212" text="News" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F4511392239481211" text="Old Time Radio" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F5797228447161615" text="Oldies" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F7708312818314881" text="Pop" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F6590954788029194" text="Public-Community" type="link"></item>
+  <item browseKey="Airable:BrowseMenu/%2FRadioBrowse%3Fservice=Airable&amp;url=https%253A%252F%252F7818664144.airable.io%252Fradio%252Fgenre%252F7673478994984180" text="Reggae" type="link"></item>
+</browse>

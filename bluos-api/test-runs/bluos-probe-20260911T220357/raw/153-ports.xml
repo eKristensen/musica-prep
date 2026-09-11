@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="screen.xsd" version="1" screenTitle="Presets" id="screen-presets" refreshOnPlayerChange="true" ìsPresets="true">
+  <refreshOnStatusChange key="prid" value="1"></refreshOnStatusChange>
+  <menuAction type="add">
+    <action type="deep-link" URI="/add-preset" refreshScreen="true"></action>
+  </menuAction>
+  <list>
+    <item image="/Artwork?service=Tidal&amp;playlistimage=f8601f52-6d31-43bd-97a7-020000000002" title="Sunday Chill Mix: Ministry of Sound" counter="1" solidBackground="true">
+      <action type="player-link" URI="/Preset?id=1" haptic="true"></action>
+      <contextMenu type="browse" URI="/ui/ContextMenu?id=1&amp;image=%2FArtwork%3Fservice%3DTidal%26playlistimage%3Df8601f52-6d31-43bd-97a7-020000000002&amp;name=Sunday+Chill+Mix%3A+Ministry+of+Sound&amp;type=preset&amp;url=%2FLoad%3Fservice%3DTidal%26id%3Df6bddb25-a5dc-4658-993d-020000000001" resultType="contextMenu" title="Sunday Chill Mix: Ministry of Sound"></contextMenu>
+    </item>
+  </list>
+  <footer text="Reorder Presets" type="reorder">
+    <action type="deep-link" URI="/reorder-presets?url=%2FPresets%2Fedit%3Fprid%3D1" title="Reorder Presets" refreshScreen="true"></action>
+  </footer>
+</screen>

@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Date: Fri, 11 Sep 2026 20:05:12 GMT
+Content-Length: 756
+
+# request: GET 192.0.2.11:11000/Browse?key=LocalMusic%3AMG%2FGenres%3Fgenre%3DClassical

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="albums">
+  <item browseKey="LocalMusic:MG/LocalMusic-Album?album=3.0&amp;artist=Safri+Duo" contextMenuKey="LocalMusic:CM/LocalMusic-Album?album=3.0&amp;artist=Safri+Duo" playURL="/Add?playnow=1&amp;service=LocalMusic&amp;album=3.0&amp;artist=Safri+Duo" text="3.0" text2="Safri Duo" tracks="10" image="/Artwork?service=LocalMusic&amp;album=3.0&amp;artist=Safri+Duo" type="album"></item>
+</browse>

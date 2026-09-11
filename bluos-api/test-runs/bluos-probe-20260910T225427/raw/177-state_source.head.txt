@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Content-Type: application/xml
+Date: Thu, 10 Sep 2026 20:54:45 GMT
+Content-Length: 60
+
+# request: GET 192.0.2.11:11000/Play?url=Capture%3Ahw%3Aimxspdif%2C0%2F1%2F25%2F2%3Fid%3Dinput2

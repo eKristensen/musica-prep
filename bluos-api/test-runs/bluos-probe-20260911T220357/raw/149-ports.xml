@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contextMenu image="/Artwork?service=Tidal&amp;songid=Tidal%3A48513985" subTitle="Alex Adair • Heaven" title="Heaven" version="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="screen.xsd">
+  <item icon="/images/ui/cm_favourite_add.png" text="Favourite">
+    <action type="player-link" URI="/AddFavourite?service=Tidal&amp;songid=Tidal%3A48513985" refreshScreen="true" haptic="true" notification="Added to favourites" notificationIcon="/images/ui/cm_favourite_add.png"></action>
+  </item>
+  <item icon="/images/ui/cm_addtoplaylist.png" text="Add to playlist…">
+    <action type="browse" URI="/AddToPlaylistOptions?service=Tidal&amp;songid=Tidal%3A48513985" resultType="AddToPlaylistOptions" title="Add to playlist…" service="Tidal"></action>
+  </item>
+  <item icon="/images/ui/cm_playRadio.png" text="Track radio">
+    <action type="player-link" URI="/ui/prf?u=%2FPlay%3Fservice%3DTidal%26url%3DTidal%253Aradio%253Atrack%02000000003B" haptic="true"></action>
+  </item>
+  <item icon="/images/ui/cm_playRadio.png" text="Related artists radio">
+    <action type="player-link" URI="/ui/prf?u=%2FPlay%3Fservice%3DTidal%26url%3DTidal%253Aradio%253Aartist%252F6081277" haptic="true"></action>
+  </item>
+  <item icon="/images/ui/cm_gotoalbum.png" text="Go to album">
+    <action type="browse" URI="/ui/browseContext?service=Tidal&amp;title=Heaven&amp;type=Album&amp;url=%2FAlbums%3Falbumid%3D48513984%26service%3DTidal" resultType="screen" title="Heaven" service="Tidal"></action>
+  </item>
+  <item icon="/images/ui/cm_gotoartist.png" text="Go to artist">
+    <action type="browse" URI="/ui/browseContext?service=Tidal&amp;title=Alex+Adair&amp;type=Artist&amp;url=%2FArtists%3Fartistid%3D6081277%26service%3DTidal" resultType="screen" title="Alex Adair" service="Tidal"></action>
+  </item>
+  <item icon="/images/ui/cm_info.png" text="Info">
+    <action type="browse" URI="/Info?album=Heaven&amp;albumid=48513984&amp;artist=Alex+Adair&amp;service=Tidal" resultType="Info" title="Info" service="Tidal"></action>
+  </item>
+</contextMenu>

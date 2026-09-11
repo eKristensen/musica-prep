@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings pageId="managePlaylists" schemaVersion="35">
+	<menuGroup id="managePlaylists" displayName="Manage Playlists" icon="/images/settings/ic_manage_playlist.png">
+		<setting id="restorePlaylists" name="restorePlaylists" displayName="Restore Playlists" url="http://192.0.2.11:80/upload_playlists_api" icon="/images/settings/ic_restoreplaylist.png" class="upload" explanation="Restore your BluOS Playlists from your phone or cloud storage by selecting a previously saved &amp;quot;.json&amp;quot; file."></setting>
+	</menuGroup>
+</settings>

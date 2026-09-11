@@ -1,0 +1,7 @@
+HTTP/1.1 301 Moved Permanently
+Content-Type: text/html; charset=utf-8
+Location: http://192.0.2.11:11001/Settings?schemaVersion=35
+Date: Fri, 11 Sep 2026 20:04:06 GMT
+Content-Length: 88
+
+# request: GET 192.0.2.11:11000/Settings?schemaVersion=35

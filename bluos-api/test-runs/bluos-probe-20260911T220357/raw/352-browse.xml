@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<browse serviceIcon="/images/LibraryIcon.png" serviceName="Library" searchKey="LocalMusic:Search" type="albums">
+  <item browseKey="LocalMusic:MG/LocalMusic-Album?album=Empty+Room+%28Trailer+Version%29&amp;artist=Zack+Hemsey" contextMenuKey="LocalMusic:CM/LocalMusic-Album?album=Empty+Room+%28Trailer+Version%29&amp;artist=Zack+Hemsey" playURL="/Add?playnow=1&amp;service=LocalMusic&amp;album=Empty+Room+%28Trailer+Version%29&amp;artist=Zack+Hemsey" text="Empty Room (Trailer Version)" text2="Zack Hemsey" tracks="1" image="/Artwork?service=LocalMusic&amp;album=Empty+Room+%28Trailer+Version%29&amp;artist=Zack+Hemsey" type="album"></item>
+  <item browseKey="LocalMusic:MG/LocalMusic-Album?album=En+Lille+Pose+St%C3%B8j&amp;artist=Kim+Larsen" contextMenuKey="LocalMusic:CM/LocalMusic-Album?album=En+Lille+Pose+St%C3%B8j&amp;artist=Kim+Larsen" playURL="/Add?playnow=1&amp;service=LocalMusic&amp;album=En+Lille+Pose+St%C3%B8j&amp;artist=Kim+Larsen" text="En Lille Pose Støj" text2="Kim Larsen" tracks="25" image="/Artwork?service=LocalMusic&amp;album=En+Lille+Pose+St%C3%B8j&amp;artist=Kim+Larsen" type="album"></item>
+</browse>

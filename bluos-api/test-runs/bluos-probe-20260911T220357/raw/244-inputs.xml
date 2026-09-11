@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<radiotime service="Capture">
+  <item text="Spotify" id="Spotify" type="audio" URL="Spotify%3Aplay" serviceType="CloudService" image="/Sources/images/SpotifyIcon.png"></item>
+</radiotime>
