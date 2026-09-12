@@ -60,3 +60,19 @@ Waydroid the app is never killed or pushed out of memory the way it is on a
 phone, so it discovers once and then keeps a warm list for as long as it stays
 open. The good impression may be entirely that, and the discovery itself may
 not have been as quick as I remember.
+
+-----
+
+Work out what a player's actual identity is. The note I was reading says "the
+id is the player's MAC and it's the cache key a controller dedupes on", but
+that does not match the captures: /SyncStatus carries id="<ip>:<port>" plus a
+separate mac attribute, and <slave> entries use a bare IP as id. So id is an
+address, not a MAC, at least on this firmware.
+
+The underlying question stands either way. A player with both Ethernet and
+Wi-Fi has a different MAC per interface, so "the MAC" is ambiguous on a player
+that has both. Does the mac attribute report the active interface or one fixed
+value, and does it change when a player is moved from wired to wireless? If
+anything really does dedupe on it, that decides whether a player survives the
+move as the same player or becomes a second one. Test on a player that has run
+on both.
