@@ -41,8 +41,11 @@ for two seconds.** Nothing is listening and nothing is sent in that window: the
 socket is opened by the subscribe, and the first LSDP query goes out after it.
 
 Presumably the delay exists to let the Wi-Fi driver actually start delivering
-multicast after the lock is taken. Whatever the reason, it is a fixed two
-seconds on every discovery.
+multicast after the lock is taken. Whatever the reason, it is a flat two seconds
+on every discovery **that takes the lock** — and **none at all** on one that does
+not. There is no middle setting and no shortening of it: the branch either runs
+or it does not, which is why the measured times fall into two groups rather than
+onto a spread.
 
 ### The gate is `isWifiEnabled()`, not "is Wi-Fi in use"
 
