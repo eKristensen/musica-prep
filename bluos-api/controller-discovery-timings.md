@@ -14,9 +14,14 @@ there, and is referred to from here rather than copied.
 the static-responder experiment. Keeping them apart means a later correction in
 one place does not quietly rewrite the observations here.
 
-Four players. Three VLANs on `ek-arm`, which previously ran
-`udp-broadcast-relay-redux` on UDP 11430 and during these tests sometimes ran
-`lsdp-static serve` instead. One player is on Wi-Fi; the rest are wired.
+Four players, all on one VLAN. One of them is on Wi-Fi; the rest are wired.
+
+What varies between runs is where the *controller* sits. On the players' own
+VLAN it reaches them directly. On any other VLAN its traffic is routed, and
+LSDP's broadcasts only cross the boundary because `ek-arm` forwards them —
+`udp-broadcast-relay-redux` on UDP 11430 before these tests, and during some of
+them `lsdp-static serve` in its place. The *discovery path* column of each run
+says where that run's controller was and what answered it.
 
 Confidence markers follow `bluos-http-api.md`: **[V hardware]** observed
 directly here, **[U]** unverified — a claim about behaviour that has not been
@@ -32,7 +37,7 @@ markers are not used for it.
 |---|---|
 | **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App from Play Store, version not recorded. **Background usage allowed** for the BluOS app |
 | **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002`. App from Play Store, version not recorded. **No battery-saver restrictions** on the BluOS app |
-| **Waydroid** | LineageOS-based Waydroid image (exact version not recorded), minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
+| **Waydroid** | LineageOS 20 — Android 13 — image `20-20260403-VANILLA-waydroid_x86_64`, minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
 | **iPhone** | an iPhone 16-series, exact model not recorded; iOS current as of a week before these tests, version not recorded |
 | **Windows** | BluOS Controller 4.16.0 (Electron) |
 | **Linux** | [`bluos-controller-linux`](https://gitlab.com/zquestz/bluos-controller-linux) — the same official 4.16.0 Electron app, repackaged as an AppImage |
