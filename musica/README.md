@@ -55,9 +55,7 @@ sense. The hope is to avoid death by dependency.
 maintenance.
 
 Each of these is worked out in depth in
-[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md). It is worth reading before
-changing anything structural — each decision records what was chosen, why, and
-the specific signal that would justify revisiting it.
+[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md).
 
 ---
 
