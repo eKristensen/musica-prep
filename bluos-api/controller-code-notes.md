@@ -218,8 +218,8 @@ able to reach the players it is about to declare missing.
 
 ## Corrections to earlier guesses
 
-**The multicast lock is acquired.** An earlier hypothesis in `FINDINGS.md` was
-that the Wi-Fi penalty might come from the app *not* holding a
+**The multicast lock is acquired.** An earlier hypothesis in this work, since
+removed, was that the Wi-Fi penalty might come from the app *not* holding a
 `WifiManager.MulticastLock`, since Android filters non-directed packets without
 one. That is wrong: the app declares `CHANGE_WIFI_MULTICAST_STATE` in its
 manifest, creates a lock named `"PlayerDiscoveryManager"`, acquires it on

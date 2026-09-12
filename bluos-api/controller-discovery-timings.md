@@ -1,12 +1,18 @@
 # Controller discovery timings
 
 How long a BluOS controller takes to show every player, measured on real
-devices. **This file is the data.** The interpretation lives in
-[`lsdp-static/FINDINGS.md`](lsdp-static/FINDINGS.md), and explanations traced to
-the Android app's own code live in
-[`controller-code-notes.md`](controller-code-notes.md). Keeping them apart
-means a later correction to the reasoning does not quietly rewrite the
-observations.
+devices. **This file holds the measurements and what each run shows** — the
+conditions a run was taken under, the numbers it produced, and the reading those
+numbers support.
+
+Two neighbouring files lean on it and neither restates it.
+[`controller-code-notes.md`](controller-code-notes.md) carries the causes behind
+these numbers once one can be traced to a line in a shipping app, read out of
+the Android and Windows builds; a *why* that is answered from code belongs
+there, and is referred to from here rather than copied.
+[`lsdp-static/FINDINGS.md`](lsdp-static/FINDINGS.md) carries only the verdict on
+the static-responder experiment. Keeping them apart means a later correction in
+one place does not quietly rewrite the observations here.
 
 Four players. Three VLANs on `ek-arm`, which previously ran
 `udp-broadcast-relay-redux` on UDP 11430 and during these tests sometimes ran
