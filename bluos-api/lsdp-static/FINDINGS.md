@@ -115,6 +115,13 @@ number, which is corroboration rather than coincidence.
 Both were on wired LAN throughout, so the Wi-Fi comparison above has never been
 run against them.
 
+**And that 5–6 s is not discovery either.** `staticPlayers.txt` makes the
+desktop builds use a configured address list and skip discovery entirely
+(§12.3). With it in place and mDNS and LSDP both switched off, only the listed
+players appeared — so the file took effect — and startup was no faster. Removing
+discovery outright did not move the number. The desktop is at least stable once
+up: none of the list-emptying seen on Android.
+
 ## Corrections this file has been through
 
 Recorded rather than quietly edited, because the wrong version was acted on for
@@ -234,22 +241,28 @@ where discovery is unavoidable, to prefer the unicast `R` query over broadcast.
 
 ## The measurements that would close this
 
-1. **`staticPlayers.txt` on the desktop** (§12.3), which makes the desktop apps
-   skip discovery entirely. If Windows still takes 5–6 s, its delay is
-   definitively not discovery. Path and format are in the data file's companion
-   notes below.
+1. **A Bonjour browser app on the Fairphone over the same Wi-Fi**, which
+   separates "the Android app" from "Android" as the cause of the Wi-Fi penalty.
+   Minutes of work, and it is the last question about the cause that is still
+   open.
 2. **`--query R` against a real player**, which would settle claim `C-19` and, if
    the Wi-Fi hypothesis holds, demonstrate the protocol-level way around it.
 
-Everything else that was on this list has been answered. `sniff` remains useful
-for one optional question — whether the app's floor is spent before or after it
-sends its query — and for confirming which interface a phone used, which is all
-that still separates the two suspect runs from the rest.
+Everything else that was on this list has been answered — including
+`staticPlayers.txt`, which showed the desktop delay is not discovery. `sniff`
+remains useful for one optional question, whether the app's floor is spent
+before or after it sends its query, and for confirming which interface a phone
+used, which is all that still separates the two suspect runs from the rest.
 
-### Where `staticPlayers.txt` lives
+### Where `staticPlayers.txt` lives, and what it is actually for
 
 Documented by **Bluesound Professional** for the remote-subnet case, and
-independently **[V]** in the client code (§12.3).
+independently **[V]** in the client code (§12.3). **It does not make startup
+faster** — that was tested, see above — and the vendor scopes it narrowly:
+**Windows and macOS only**, and explicitly not for grouping players or grouping
+across subnets. It is a professional-install feature for reaching players the
+network hides, not a performance setting, and it is unavailable on Android where
+the problem actually is.
 
 | platform | path |
 |---|---|
@@ -263,9 +276,13 @@ One comma-separated line of `ip:port`, no spaces:
 192.168.0.1:11000,192.168.0.2:11000,192.168.0.3:11000
 ```
 
-The port matters: it is how a multi-zone chassis such as a CI580 is addressed,
-each node on its own port (`:11000,:11010,:11020,:11030`) at one address.
-Players listed here are used directly, **with no discovery at all**.
+The vendor's own example is one address with four ports —
+`<ip>:11000,:11010,:11020,:11030` — which is a **four-zone chassis**, not four
+players. The specification agrees: LSDP class 0x0003 is "BluOS Player, secondary
+node in a multi-zone chassis (e.g. CI580)", and §12.2 notes the SRV port is how
+a CI580's four nodes are told apart on one address. Players listed here are used
+directly, **with no discovery at all** — which is exactly what made it a useful
+test even though it is useless as a fix.
 
 Sources: [How to Discover and Control Players from a Remote
 Subnet](https://support.bluesoundprofessional.com/hc/en-us/articles/360060411413-How-to-Discover-and-Control-Players-from-a-Remote-Subnet)

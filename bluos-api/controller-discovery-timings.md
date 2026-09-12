@@ -73,6 +73,7 @@ All on 2026-09-12, in the order given.
 | R9 | **iPhone** | **Wi-Fi**, and separately wired with Wi-Fi off | players directly, same VLAN | **not timed** — impression only | **instant, no "Discovering…" at all** | **always, on either link** |
 | D1 | Windows | wired LAN | with and without `lsdp-static serve` | counted | 5–6 s from launch | — |
 | D2 | Linux AppImage | wired LAN | with and without `lsdp-static serve` | counted | 5–6 s from launch, no measurable difference | — |
+| D3 | Windows | wired LAN | **`staticPlayers.txt`, with mDNS and LSDP discovery disabled** | counted | **no faster than before** | only the listed players appear |
 
 ### R6 is the result that matters
 
@@ -216,6 +217,46 @@ players promptly. A browser that holds a multicast lock and finds them
 instantly, while the BluOS app does not, points at the app. Both failing equally
 points at the platform. Either way the network is already excluded, by R9.
 
+### D3: the desktop delay is not discovery either
+
+`staticPlayers.txt` makes the desktop controllers use a configured address list
+and skip discovery entirely (§12.3). With it in place and **mDNS and LSDP
+discovery both switched off**, only the listed players appear — so the file
+plainly took effect — and startup is **no faster than before**.
+
+That closes the desktop half of the question the same way R8 closed the Android
+half. **The 5–6 seconds is not discovery.** Discovery was removed outright and
+the number did not move, so whatever the desktop app spends that time on, it is
+not finding players.
+
+The desktop is at least stable once up: none of the list-emptying seen on
+Android **[V hardware]**.
+
+### `staticPlayers.txt` is built for a different problem
+
+The vendor's own page scopes it narrowly:
+
+> This method is not meant for grouping players and is not designed to support
+> grouping multiple players across different subnets.
+>
+> This setup can be performed only using the Windows or macOS version of the
+> BluOS Controller app.
+
+So: **Windows and macOS only** — not Android, which is where the problem
+actually is. The Linux AppImage is the Windows build repackaged and may well
+read the same file, but that is outside what the vendor supports and untested
+here **[U]**.
+
+The documented example line, `<ip>:11000,<ip>:11010,<ip>:11020,<ip>:11030`, is
+one address with four ports, which is a **four-zone chassis** rather than four
+separate players. That reading is corroborated by the specification: LSDP class
+0x0003 is "BluOS Player, secondary node in a multi-zone chassis (e.g. CI580)",
+and §12.2 notes the SRV port is "how a CI580's four nodes are told apart on one
+address".
+
+It is a professional-install feature for reaching players across subnets, not a
+startup optimisation. Worth trying, and it does not help here.
+
 ### R3 is now suspect
 
 R3 was recorded as "wired", but R6 makes it likely the phones were **actually
@@ -354,6 +395,8 @@ Established **[V hardware]**:
 - A static LSDP responder does not change the Android timing either; what it
   changes is that players arrive together rather than one or two at a time.
 - The Xiaomi Mi 9 does not bring up USB Ethernet in airplane mode at all.
+- The desktop's 5–6 s is **not discovery**: bypassing discovery entirely with
+  `staticPlayers.txt` does not shorten it (D3). The desktop is stable once up.
 - **iOS does not have the Wi-Fi problem at all**, on the same network and the
   same players, which rules the network and the access point out as the cause.
 
@@ -370,6 +413,9 @@ Not established:
   running, and whether the ~30 s / ~50 s marks are fixed.
 - Whether the desktop apps would also improve with Wi-Fi off — they were on
   wired LAN throughout, so the comparison has not been run.
+- What the desktop spends its 5–6 s on, now that discovery is excluded.
+- Whether the Linux AppImage reads `staticPlayers.txt`; the vendor supports the
+  file on Windows and macOS only.
 
 ## Next measurements
 
