@@ -45,7 +45,8 @@ To find out *why* discovery is slow or flaky rather than working around it,
 `lsdp-static/` measures it — how long a round takes, and how often a round
 comes back short — and can answer LSDP queries itself from a static player
 list, which is how to tell an unreliable network apart from an unreliable
-protocol.
+protocol. Measured controller timings are logged in
+`controller-discovery-timings.md`.
 
 Note the labels it assigned (A, B, C, D) — they are how every later report
 refers to each player, and `A` is the one that gets the single-player tests.

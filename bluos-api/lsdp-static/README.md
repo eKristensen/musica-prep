@@ -15,13 +15,15 @@ the spread, which is the number that actually decides this — "two to three
 seconds, consistently" is a different product from "usually fast, sometimes
 never".
 
-**That question now has an answer.** Answering instantly changes *how* the
-players appear — all at once instead of trickling in — and it puts a phone on
-another VLAN in the same position as one sitting on the players' own segment. It
-does not change *when* the list is complete: 3–5 s on Android from the Players
-tab, 5–6 s on the desktop from launch, with every answer already in hand. See
-[`FINDINGS.md`](FINDINGS.md) for the measurements and for `sniff`, which settles
-what the apps are actually waiting for.
+**That question now has an answer: no.** Answering instantly changes *how* the
+players appear — all at once instead of trickling in — but not *when* the list is
+complete: 3–5 s on Android over Wi-Fi, 5–6 s on the desktop from launch.
+
+What did change it was the link. On a cable with Wi-Fi explicitly disabled, the
+same app on the same phones showed every player in about a second, every run.
+[`FINDINGS.md`](FINDINGS.md) is the reasoning, including the corrections it has
+been through; [`../controller-discovery-timings.md`](../controller-discovery-timings.md)
+is the measurement log.
 
 Written against `../bluos-http-api.md` §12.1. `selftest` checks the encoder
 against the real Bluesound Node N130 announce captured in that section, byte for
