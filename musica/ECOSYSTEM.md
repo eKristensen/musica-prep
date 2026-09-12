@@ -5,9 +5,10 @@ well that many of them come nowhere near my own requirements. This is the
 result: everything that can in one way or another interact with BluOS players.
 
 It is a list of links, not descriptions — visit a project if you want to know
-what it does. A note is added only where one is needed to explain why an entry
-is on the list at all. Which of these were candidates for replacing the
-official app, and how they fared, is in [MOTIVATION.md](MOTIVATION.md).
+what it does. The only note is where a project is closed source, since that is
+the one thing you cannot find out by following the link. Which of these were
+candidates for replacing the official app, and how they fared, is in
+[MOTIVATION.md](MOTIVATION.md).
 
 There may well be more at [github.com/topics/bluos](https://github.com/topics/bluos).
 
@@ -16,8 +17,8 @@ There may well be more at [github.com/topics/bluos](https://github.com/topics/bl
 * [BluOS NAD remote](https://github.com/crwsolutions/BluOsNadRemote)
 * [BlueSound Controller](https://github.com/rdOxalis/bluesoundplayer)
 * [BluRemote](https://apps.apple.com/dk/app/bluremote-bluos-controller/id6444855562) — closed source
-* [bluos-controller-linux](https://gitlab.com/zquestz/bluos-controller-linux) — the official Windows app repackaged for Linux
-* [bs-bashpatch](https://github.com/frafra/bs-bashpatch) — a script that repackages the official app as a Linux AppImage
+* [bluos-controller-linux](https://gitlab.com/zquestz/bluos-controller-linux)
+* [bs-bashpatch](https://github.com/frafra/bs-bashpatch)
 
 ## Home Assistant integrations
 
