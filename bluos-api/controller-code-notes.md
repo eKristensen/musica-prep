@@ -147,8 +147,10 @@ record has aged out.
 `PlayerDiscoveryState` is a **process-wide singleton** (`INSTANCE`, `LOCK`,
 `getInstance()`) whose `allPlayers` is a plain in-memory `Map`. It outlives any
 fragment, any screen and any discovery subscription, and it dies with the
-process — or when something calls `reset()`, which `MainActivity.onNoPlayersFound`
-and `PlayerDiscoveryManager.lambda$init$0` both do.
+process — or when something calls `reset()`, which `MainActivity.onNoPlayersFound`,
+`PlayerDiscoveryManager.lambda$init$0` and, less obviously,
+`analytics.DeviceLogger.start` all do: the telemetry component runs its own
+discovery to inventory the user's players and resets the shared state to do it.
 
 **Nothing persists the list.** The only player written to storage is the
 selected one: `PlayerManager.persistAndBroadcastSelectedMaster` puts a single
