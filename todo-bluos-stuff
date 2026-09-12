@@ -73,3 +73,18 @@ What is missing is the link where it is actually used. bluos-api cites this
 source as "2015 forum" for several claims (C-10, C-32 among them) without a
 URL, so the reference for those rows lives in a different folder under a
 different name. Worth putting the archive URL next to the source name there.
+
+-----
+
+IPv6. The protocol side is already documented in bluos-api and does not need
+redoing: LSDP is IPv4-only with the first-party filtering as evidence (§12.1),
+mDNS A records only with IPv6 ignored, and the one third-party claim that LSDP
+carries IPv6 is recorded and rejected.
+
+What is not written down anywhere is Musica's own position, and it is two
+questions, not one. Player addresses have to be IPv4 because the devices are,
+but config.example.yaml only says "IP addresses only" without saying that is a
+device constraint. The listen address is a separate matter that BluOS does not
+decide: listen: "0.0.0.0:8080" is IPv4-only as written, and whether [::]:8080
+works, or the browser can reach the server over IPv6, is unstated. Decide and
+document both.
