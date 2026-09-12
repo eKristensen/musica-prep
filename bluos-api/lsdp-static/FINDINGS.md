@@ -63,6 +63,15 @@ instead of broadcast, which sidesteps Wi-Fi broadcast handling entirely. No
 shipping client sends one. `lsdp-static serve` answers them, and Musica could
 send them.
 
+**The cause being open does not make the effect open.** Whether the penalty
+lives in the app, in Android's Wi-Fi stack, or in the access point is unsettled
+and may stay that way — but the observable fact needs none of that resolved:
+**used over Wi-Fi, the BluOS Controller is much worse than over a cable**, in
+both speed and reliability. Nor is the cause this project's to chase. Other
+multi-room systems do not behave this way, so the problem is evidently solvable;
+solving it inside somebody else's app or inside Android is not a thing Musica is
+expected to do. What Musica can do is not depend on the part that fails.
+
 ## What the static responder did change
 
 Players arrive **together** instead of one or two at a time, and the relay's
@@ -144,6 +153,19 @@ but tap again — so it may matter more than any of the timings here. And the ap
 demonstrably holds the whole list well enough to render it instantly on demand,
 then discards it on a timer anyway.
 
+## 1.0–1.5 s is not a target to match
+
+The wired figure is the best case anyone gets from the BluOS app, and it is
+worth asking why it should be accepted at all. **Nothing requires it.** R8
+settles that: with a responder answering in microseconds, the number does not
+move, so the second is not the network, not the protocol, and not the players.
+It is overhead, and there is no technical account of what it buys.
+
+A list of players the controller already knows should appear in the time it
+takes to draw it. The right target is not "as good as the app on a cable" — it
+is **no wait at all**, with the network touched only to confirm what is already
+on screen.
+
 ## What this means for Musica
 
 The justification is intact, and the reason for it is sharper.
@@ -151,7 +173,9 @@ The justification is intact, and the reason for it is sharper.
 A phone is on Wi-Fi in real life. Over Wi-Fi, discovery costs 3–5 seconds and
 fails to complete about one run in five, and nothing done to the network side —
 a relay, a static responder answering in microseconds — changed either number.
-Broadcast discovery on Wi-Fi is simply not dependable.
+Broadcast discovery on Wi-Fi is simply not dependable. On a cable it costs
+1.0–1.5 s instead, which is better and still more than a list the app already
+holds should ever cost.
 
 A controller that keeps its own player list does not discover at all on the path
 that matters, so none of this applies to it. The BluOS app already does exactly

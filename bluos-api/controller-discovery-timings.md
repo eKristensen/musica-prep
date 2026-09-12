@@ -282,7 +282,11 @@ Established **[V hardware]**:
   on three devices now, including one with no Google Play services and a
   different app version, so it is not a property of one phone or one build.
 - That remaining second is **the app's own** and not the protocol's: answering
-  instantly does not shorten it (R8).
+  instantly does not shorten it (R8). Nothing measured here requires it to exist.
+- Used over Wi-Fi, the app is much worse than over a cable, in both speed and
+  reliability. *Why* is not established — app, Android's Wi-Fi stack, or the
+  access point are all consistent with the data — but the effect does not depend
+  on settling that.
 - A player on Wi-Fi answers a query no slower than one on a cable.
 - The app empties its own player list after roughly 30–50 seconds sitting idle,
   and refills it in under a second on a tap — with every discovery mechanism
