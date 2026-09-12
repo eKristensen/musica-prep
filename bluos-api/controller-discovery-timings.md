@@ -340,7 +340,9 @@ empties the list is not the players being unreachable.
 
 **It refills with no discovery mechanism running.** With LSDP and mDNS both off,
 a tap repopulates the whole list in under a second — nothing could have been
-discovered in that second by either protocol.
+discovered in that second by either protocol. The app remembers the players'
+*addresses* separately from the list it emptied, and asks each one directly over
+HTTP; see [`controller-code-notes.md`](controller-code-notes.md).
 
 **The timings are not arbitrary, and neither is the refill.** The app's own
 constants account for the ~30 s and ~50 s marks exactly, for why players age out

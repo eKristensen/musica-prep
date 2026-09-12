@@ -201,19 +201,80 @@ And `PlayersFragment.startDiscovery()` — which runs when the player screen is
 opened — calls `setKeepStalePlayers(false)` and then `markAllPlayersAsSeen()`
 before it subscribes to anything.
 
-**So the instant list is not a cache being consulted. It is the live list being
-told it was just seen.** Every player's `lastSeen` is stamped to *now*, nothing
-qualifies as stale, and the list renders from memory with no network involved —
-which is why it appears in under a second with every discovery mechanism
-switched off, and why the players shown need not still exist. The stamp is
+**So while the list still exists, it is not a cache being consulted — it is the
+live list being told it was just seen.** Every player's `lastSeen` is stamped to
+*now*, nothing qualifies as stale, and the list renders from memory with no
+network involved, so the players shown need not still exist. The stamp is
 applied without checking anything.
 
 The decay follows from the same two numbers. After that stamp nothing refreshes
 `lastSeen` unless an announce actually arrives; at 16 s every player qualifies
-as stale; the 30 s check runs `removeStalePlayers()` and empties the map; 20 s
-after that the "no players found" runnable fires. Tap again and
-`markAllPlayersAsSeen()` repopulates the screen instantly, and the cycle
-restarts.
+as stale; the 30 s check runs `removeStalePlayers()`, which really does delete
+them — `iterator.remove()` on `allPlayers`, plus `selectablePlayers.remove(p)`
+— and 20 s after that the "no players found" runnable fires, whereupon
+`MainActivity.onNoPlayersFound()` calls `reset()` and clears what is left.
+
+## So how does a tap bring them back? **[V official]**
+
+Not from the player list, which by then is genuinely empty —
+`markAllPlayersAsSeen()` would have nothing to iterate over. **The app keeps a
+second registry, and the staleness sweep never touches it.**
+
+`PlayerDiscoveryManager.mKnownHosts` is a `Set<Host>` — addresses only, no
+player data. Every `SyncStatus` the app ever receives adds its host to it. And
+`createObservable()`, which is what a fragment subscribes to when it starts
+discovery, is built like this:
+
+```java
+Observable.defer(this::replayCachedSyncStatuses)   // empty: cleared on the last dispose
+    .doOnNext(s -> { mKnownHosts.add(s.getHost());
+                     cachedSyncStatuses.put(s.getHost(), s); })
+    .doOnDispose(() -> cachedSyncStatuses.clear())
+    .share()
+    .startWith(Observable.defer(() -> {            // ← runs FIRST, on every subscribe
+        List<Observable<SyncStatus>> probes = new ArrayList<>(mKnownHosts.size());
+        synchronized (mKnownHosts) {
+            for (Host h : mKnownHosts)
+                probes.add(getSingleSyncStatus(h)   // PlayerManager.createForHost(h)
+                              .onErrorResumeNext(   //   .syncStatus().take(1)
+                                  t -> { mKnownHosts.remove(h); return Observable.empty(); }));
+        }
+        return Observable.merge(probes);
+    }));
+```
+
+**The refill is a unicast HTTP request to each remembered address, in parallel,
+before any discovery runs at all.** Four `/SyncStatus` requests to four live
+players on a LAN come back in well under a second, each one going through
+`PlayerDiscoveryState.update(SyncStatus)`, which is what rebuilds the list. No
+broadcast is involved, which is exactly why switching every discovery mechanism
+off changes nothing about it.
+
+`mKnownHosts` is cleared in only two circumstances: the whole set goes when the
+network changes (`lambda$init$0`, logged as *"Network changed to [%s]. Clearing
+cache of previously discovered players"*, which also calls `reset()`), and a
+single host is dropped when its own request fails. Nothing ages it out.
+
+### Why the two behave differently
+
+This is the inconsistency, and it is not an accident of timing — the two
+registries answer different questions and expire on different evidence:
+
+| | `PlayerDiscoveryState.allPlayers` | `PlayerDiscoveryManager.mKnownHosts` |
+|---|---|---|
+| holds | the full player records the UI renders | addresses, nothing else |
+| refreshed by | an LSDP or mDNS sighting stamping `lastSeen` | any `SyncStatus` reply |
+| expires after | 16 s without a sighting, swept at 30 s | never on a timer |
+| cleared by | the sweep, or `reset()` | a network change, or that host failing |
+
+So **"No Player Found" means "nothing has announced itself lately", not "nothing
+is reachable"** — and the app can disprove its own message in under a second,
+using addresses it never forgot, the moment someone asks it to look.
+
+Both refill paths exist and cover different starting states: if the sweep has
+not run yet and the process still holds the list, `markAllPlayersAsSeen()` makes
+it appear instantly with no network at all; if the sweep has emptied it, the
+known-host probes rebuild it from live replies.
 
 ### Why it is intermittent, and why a swipe is not a guarantee
 
