@@ -2283,7 +2283,13 @@ Controllers accept only the four player classes: the check is
 
 **Timing.** Steady-state announce every 57 s ± 6 s. Query responses are delayed
 0–750 ms at random. A node hearing a query for a class it advertises answers
-after that delay and resets its announce timer. Node IDs are unique per node,
+after that delay and resets its announce timer. **The reply delay is confirmed
+on hardware [V hardware]:** 20 broadcast query rounds against four players
+(N130-class, one on Wi-Fi and three wired) gave 80 first-answer times with a
+pooled mean of 390 ms and a median of 393, against the 375/375 a uniform
+0–750 ms draw predicts, with all four players drawing from the same
+distribution and no difference attributable to a player's own link. Run bundle:
+`test-runs/lsdp-measure-20260912T185206Z/`. Node IDs are unique per node,
 not per interface, and are the correct cache key. A single announcement may be
 split across several messages when it cannot hold all of a node's info — the
 CI580 is the cited case.
@@ -2368,6 +2374,43 @@ The desktop controllers read a `staticPlayers.txt` file from their user-data
 directory: a comma-separated list of player addresses, each optionally
 `ip:port`. Players listed there are used directly, with no discovery. This is
 the right approach for a server-side client on a known network.
+
+**It is also documented by the vendor**, which the code-level reading above did
+not make clear. Bluesound Professional publishes it as the way to reach players
+from a remote subnet, with the Windows path and the file format:
+
+| | |
+|---|---|
+| Path (Windows) | `C:\Users\<user>\AppData\Roaming\BluOS Controller\staticPlayers.txt` |
+| Format | one comma-separated line of `ip:port`, no spaces |
+| Vendor example | `192.168.0.1:11000,192.168.0.1:11010,192.168.0.1:11020,192.168.0.1:11030` |
+
+The example is **one address with four ports**, which is a four-zone chassis
+rather than four players — consistent with class `0x0003` and with the SRV-port
+note in §12.2, both of which exist because a CI580's four nodes share an
+address. For a single-zone player the vendor says to list only `<ip>:11000`.
+
+Two limits are stated outright, and both matter when judging what this feature
+is for:
+
+> This method is not meant for grouping players and is not designed to support
+> grouping multiple players across different subnets.
+>
+> This setup can be performed only using the Windows or macOS version of the
+> BluOS Controller app.
+
+So it is unavailable on Android, and it is a reachability feature for
+professional installs rather than a general configuration mechanism.
+
+**It does not make startup faster [V hardware].** Tested on Windows with mDNS
+and LSDP discovery both disabled: only the listed players appeared, confirming
+the file took effect, and startup was no faster than with discovery running.
+Whatever the desktop controller spends its first several seconds on, finding
+players is not it. See `controller-discovery-timings.md`.
+
+Source: [How to Discover and Control Players from a Remote
+Subnet](https://support.bluesoundprofessional.com/hc/en-us/articles/360060411413-How-to-Discover-and-Control-Players-from-a-Remote-Subnet),
+Bluesound Professional.
 
 ---
 

@@ -149,6 +149,45 @@ That inference is now **partly restored, at a smaller size**. Running
 milliseconds — did not move its 1.0–1.5 s at all. So there *is* an app-side
 floor; it is about a second rather than about four.
 
+## Where the 0–750 ms comes from, and why it exists
+
+The figure is quoted often enough in these notes to be worth sourcing.
+
+**Provenance.** It is stated in `../bluos-http-api.md` §12.1 under "Timing", in a
+section marked **[V]**, alongside the 57 s ± 6 s announce cycle and the rule
+that a node answering a query also resets its announce timer. That paragraph
+reads as vendor-specification language rather than something inferred from
+client code, and §12.1 refers to "the vendor document" a few paragraphs later
+for the address-length field. The sources table lists exactly one vendor spec,
+the *BluOS Custom Integration API* v1.7 (09/04/2025). **Whether the LSDP timing
+comes from that document or from a separate Lenbrook LSDP specification is not
+recorded** — worth pinning down, since it is the only number here that the
+measurements are checked against.
+
+**Corroborated on hardware** regardless of which document it came from: 20
+rounds against four players gave a pooled mean of 390 ms and a median of 393,
+against the 375/375 a uniform 0–750 ms draw predicts, with all four players
+drawing from the same distribution
+([`../test-runs/lsdp-measure-20260912T185206Z/`](../test-runs/lsdp-measure-20260912T185206Z/))
+**[V hardware]**.
+
+**Why a player waits at all** is not stated anywhere in the repository, so what
+follows is inference **[U]**. A broadcast query reaches every node at once. If
+they all answered immediately they would transmit simultaneously on a shared
+medium, which on consumer Wi-Fi means collisions, retries and lost answers —
+the precise failure the protocol exists to avoid, since LSDP was built because
+multicast discovery was unreliable enough to generate product returns (§12).
+Spreading the answers randomly across a window fixes that, and the same
+technique is standard elsewhere: mDNS requires a randomised 20–120 ms delay
+before responding, for the same reason.
+
+The size of the window is the interesting part. 750 ms is roughly six times
+mDNS's, which looks generous until it is set against the documented system
+limit of **64 players**: 64 answers spread over 750 ms average about 12 ms
+apart, which is a sensible spacing for small datagrams on a busy wireless
+network. The number reads like it was chosen for a full-sized system, and a
+four-player house pays the same price for a spread it does not need.
+
 ## The wait, decomposed
 
 Three rounds of measurement now separate cleanly:
