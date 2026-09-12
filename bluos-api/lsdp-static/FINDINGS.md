@@ -2,15 +2,18 @@
 
 **Reliability: yes, visibly.** With a static responder answering instantly, the
 four players appear in the Android app **all at once** instead of trickling in
-one at a time.
+one or two at a time.
 
-**Timing: no.** The full list still takes 3–4 seconds to appear, and the desktop
-app is unchanged at 5–6 seconds. The answers are on the wire in milliseconds;
-the wait is somewhere else.
+**Timing: no.** The full list still takes 3–5 seconds, and the desktop app is
+unchanged at 5–6 seconds. The answers are on the wire in milliseconds, and the
+app is already on screen showing its cached player while the other three wait.
+The wait is not discovery.
 
-Early testing, 2026-09-12, four players, three VLANs on `ek-arm`, with
+Testing from 2026-09-12 onward, four players, three VLANs on `ek-arm`, with
 `lsdp-static` v1.0. Confidence markers follow `bluos-http-api.md`:
-**[V hardware]** observed directly here, **[U]** unverified — test first.
+**[V hardware]** observed directly here, **[U]** unverified — test first. Later
+rounds have corrected earlier ones; where that happened it is called out rather
+than quietly edited.
 
 ---
 
@@ -31,47 +34,68 @@ startup because on the desktop the app stays running and discovery happens once.
 
 ## Android **[V hardware]**
 
-Two phones, deliberately different:
+Three network positions have now been tested, on two phones:
 
-| phone | network position | discovery source |
+| # | position | discovery source | time to full list |
+|---|---|---|---|
+| 1 | different VLAN from the players | the static responder on `ek-arm` | 3–4 s |
+| 2 | same VLAN as the players, Wi-Fi | the players directly | 3–4 s |
+| 3 | **same layer 2 as the players, wired** (USB Ethernet) | the players directly | 3–5 s |
+
+**Nothing about the network path changes the answer.** Cross-VLAN through a
+static responder, same subnet over Wi-Fi, and same segment over cable all land
+in the same three-to-five seconds. Whether the app even uses the USB Ethernet
+interface is unconfirmed **[U]** — but since wired and wireless agree, it does
+not matter much either way.
+
+### The shape of the wait, which is the real finding
+
+On the wired same-segment test, pressing the player-list button, five times
+back to back:
+
+- **4 times out of 5**: the **previously selected player is already on screen**,
+  with no wait at all. The other three appear **together, about 4 seconds
+  later**.
+- **1 time out of 5**: previously selected player instant, then two more, then
+  the last one about a second after those.
+
+The first part is the important half. **The app shows the last-selected player
+instantly**, which means it has that player cached and does not discover it at
+all. The network is therefore demonstrably fine at t ≈ 0 — the app is on screen
+and usable with one player before a single discovery answer could have arrived.
+
+The other three then wait about four seconds. They cannot be waiting for the
+protocol: measured on the same segment, all four announces are in hand within
+750 ms at worst, and within milliseconds against a static responder. So roughly
+three seconds of the wait is the app holding results it already has **[U]** —
+which matches the "forced wait time" noted independently in
+`musica/MOTIVATION.md`.
+
+### This corrects the earlier explanation in this file
+
+An earlier draft blamed the one-by-one trickle on the players' random 0–750 ms
+reply delay. **That does not survive this data**: 750 ms is comfortably inside
+the app's own four-second hold, so a spread that small cannot produce a visible
+trickle.
+
+The account that fits all three tests is simpler. The app renders its list on
+its own schedule, around three to four seconds in. Anything that has arrived by
+then appears together; anything still in flight appears when it lands.
+
+| setup | when answers arrive | what the screen does |
 |---|---|---|
-| A | different VLAN from the players | the static responder on `ek-arm` |
-| B | **same VLAN as the players** | the players themselves, directly |
+| static responder | all within ms | all together |
+| same segment, real players | all within 750 ms | all together, ~4 s in |
+| the old UDP broadcast relay | spread out, some lost and only recovered by the t = 1, 2, 3, 5, 7, 10 s query retries | trickles in, one or two at a time |
 
-**No difference in timing between them.** Both take 3–4 seconds from the
-Players tab to a full list, with all four players present 9 times out of 10,
-testing back to back.
+So the trickle was the **relay** losing and delaying datagrams past the app's
+render, not the players' reply delay. And the static responder's real
+contribution is now clear: it gets every answer in well before the app's
+deadline, every time. That is exactly "a positive result in reliability, a
+negative result in timing".
 
-That equivalence is the useful part: **a static LSDP responder puts a phone on
-another VLAN in the same position as a phone sitting on the players' own
-subnet** — and whatever instability the `udp-broadcast-relay-redux` setup was
-contributing is gone with it.
-
-### The one clear improvement: all at once, not one by one
-
-Before the static responder, players "almost always show up one-by-one,
-sometimes two at once". With it, they appear together.
-
-That is a real quality difference even though the total time did not move, and
-the mechanism is measurable rather than mysterious. A real player delays its
-answer by a random 0–750 ms (§12.1), independently per player, so four players
-answer spread across most of a second — which is exactly what a list filling in
-one entry at a time looks like. The static responder answers for all four in one
-burst at 0 ms, wins the race against their own announces, and the app has the
-whole list in one go.
-
-Measured on the wire, the same responder, the only difference being the reply
-delay:
-
-| responder behaviour | time to all four players |
-|---|---|
-| `--delay-ms 0-750`, imitating real players | 279–743 ms, median 671 |
-| `--delay-ms 0` (the default) | ~0 ms, every round |
-
-**A prediction this makes [U]:** phone B, talking to real players directly,
-should *still* trickle, because those players still draw their own 0–750 ms.
-If both phones show the list appearing all at once, this explanation is wrong.
-Watching the two side by side settles it in one try.
+The 1-in-5 variant — two, then one more a second later — says the render is not
+a single fixed timer in every case, and is unexplained **[U]**.
 
 ## Desktop: Windows and Linux **[V hardware]**
 
@@ -97,18 +121,25 @@ desktop client uses both, and nothing here shows which one it acted on **[U]**.
 |---|---|
 | on the wire, real players | ~640 ms median, ~730 ms p95 |
 | on the wire, static responder | ~0 ms |
-| **Android, Players tab → full list** | **3–4 s** |
+| **Android, Players tab → cached player** | **instant** |
+| **Android, Players tab → full list** | **3–5 s** |
 | **Windows / Linux, launch → full list** | **5–6 s** |
 
-Three to four seconds pass on Android with every answer already in hand. Making
-discovery instant removed the trickle and it removed the relay's unreliability,
-and it moved the total wait by nothing measurable.
+Three to five seconds pass on Android with every answer already in hand — and
+with the app already on screen and usable, showing the player it had cached.
+Making discovery instant removed the trickle and removed the relay's
+unreliability, and it moved the total wait by nothing measurable.
 
 **A faster responder cannot fix a slow client.** The discovery process in the
 Android app is as slow as it ever was — which is the thing that motivated Musica
 in the first place, and this is now measured rather than assumed. A controller
 that keeps its own player list and does not rediscover on every launch is the
 only thing that removes this wait.
+
+The app itself demonstrates the fix, on one player. It shows the last-selected
+player instantly, from cache, with no discovery — and then makes the other three
+wait four seconds. **Musica's design target is simply to do for every player
+what the BluOS app already does for one.**
 
 ## Loose ends
 
@@ -128,8 +159,13 @@ comparison.
 1. **`staticPlayers.txt` on the desktop** — see below. If the app still takes
    5–6 seconds with discovery skipped entirely, the delay is definitively not
    discovery, and the desktop half of this question is closed.
-2. **Watch both phones side by side** for trickle versus all-at-once, to confirm
-   or kill the explanation above.
+2. **`lsdp-static sniff` while pressing the player-list button.** Run it on the
+   players' segment; it answers nothing and prints every datagram with a
+   timestamp. Compare when the announces actually arrived against when the
+   screen filled. If the answers are all in at 700 ms and the last three players
+   appear at 4 s, the app's own delay is measured rather than inferred, and this
+   whole question is closed. The source address also says which interface the
+   phone really asked from.
 3. **Time the old baseline**, ten Players-tab presses with the relay and no
    static responder, to fill in the missing row.
 4. **`--query R` at a real player**, to settle claim `C-19`. Unrelated to timing,

@@ -684,6 +684,81 @@ fn describe(node: &Node, red: &Redactor) -> String {
     format!("{} [{}] {} {}", red.ip(node.addr), hex(&red.node_id(&node.id)), name, classes.join("+"))
 }
 
+/// Watch the segment and print every LSDP datagram, decoded and timestamped.
+/// Answers nothing, so it changes nothing -- which is the point: it says when a
+/// client asked, when the answers actually arrived, and which address asked.
+/// Compare those timestamps against when a controller's screen fills and the
+/// difference is the client's own, not the network's.
+fn sniff(sock: &UdpSocket, red: &Redactor, run_for: Option<Duration>) -> Result<(), String> {
+    let start = Instant::now();
+    let mut prev: Option<Instant> = None;
+    let mut buf = [0u8; 65_535];
+    loop {
+        if let Some(limit) = run_for {
+            let left = limit.saturating_sub(start.elapsed());
+            if left.is_zero() {
+                return Ok(());
+            }
+            sock.set_read_timeout(Some(left)).map_err(|e| e.to_string())?;
+        }
+        let (n, from) = match sock.recv_from(&mut buf) {
+            Ok(v) => v,
+            Err(e)
+                if e.kind() == std::io::ErrorKind::WouldBlock
+                    || e.kind() == std::io::ErrorKind::TimedOut =>
+            {
+                continue;
+            }
+            Err(e) => return Err(format!("recv: {e}")),
+        };
+        let now = Instant::now();
+        let delta = prev.map(|p| now.duration_since(p).as_secs_f64()).unwrap_or(0.0);
+        prev = Some(now);
+        let head = format!(
+            "{}  +{:>6.3}  {:<22}",
+            &now_stamp()[11..23],
+            delta,
+            red.sockaddr(from)
+        );
+        match parse(&buf[..n]) {
+            Err(e) => println!("{head} unparseable ({e})"),
+            Ok(msgs) => {
+                let mut first = true;
+                for m in msgs {
+                    let lead = if first { head.clone() } else { " ".repeat(head.len()) };
+                    first = false;
+                    match m {
+                        Msg::Query { unicast_reply, classes } => {
+                            let c: Vec<String> =
+                                classes.iter().map(|x| format!("0x{x:04X}")).collect();
+                            println!(
+                                "{lead} {} query   classes [{}]",
+                                if unicast_reply { 'R' } else { 'Q' },
+                                c.join(",")
+                            );
+                        }
+                        Msg::Announce(node) => {
+                            println!("{lead} A announce {}", describe(&node, red));
+                        }
+                        Msg::Delete { id, classes } => {
+                            let c: Vec<String> =
+                                classes.iter().map(|x| format!("0x{x:04X}")).collect();
+                            println!(
+                                "{lead} D delete   {} classes [{}]",
+                                hex(&red.node_id(&id)),
+                                c.join(",")
+                            );
+                        }
+                        Msg::Unhandled { kind } => {
+                            println!("{lead} ? type 0x{kind:02X} (not a type this tool knows)");
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 // ---------------------------------------------------------------------------
 // redaction
 // ---------------------------------------------------------------------------
@@ -1993,6 +2068,7 @@ USAGE
   lsdp-static serve    [--config FILE] [--player SPEC].. [options]
   lsdp-static discover [options]            one real discovery round -> a config file
   lsdp-static measure  [options]            time discovery repeatedly, report spread
+  lsdp-static sniff    [options]            watch and decode traffic, answering nothing
   lsdp-static selftest                      check the codec against captured packets
   lsdp-static version                       print the version
 
@@ -2028,6 +2104,15 @@ SERVE
                        (default 250; a broadcast relay duplicates queries)
   --quiet              log queries only, not every datagram sent
   --dry-run            print what would be announced, then exit
+
+SNIFF
+  --for N              stop after N seconds (default: until interrupted)
+
+  Prints every LSDP datagram with a timestamp and the gap since the previous
+  one.  Run it on the players' segment, press the controller's player-list
+  button, and compare when the answers actually arrived against when the screen
+  filled: whatever is left over is the client's own delay, not the network's.
+  The source address also says which interface a phone really asked from.
 
 DISCOVER / MEASURE
   --timeout N          seconds to listen per round (default 12)
@@ -2071,7 +2156,7 @@ impl Args {
                 "--port" | "--iface" | "--broadcast" | "--config" | "--player" | "--delay-ms"
                     | "--repeat" | "--spacing-ms" | "--interval" | "--reply-scope" | "--min-gap-ms"
                     | "--timeout" | "--rounds" | "--gap" | "--expect" | "--schedule"
-                    | "--query" | "--listen-port" | "--out"
+                    | "--query" | "--listen-port" | "--out" | "--for"
             )
         };
         let mut flags = Vec::new();
@@ -2121,7 +2206,7 @@ impl Args {
             "--player", "--delay-ms", "--repeat", "--spacing-ms", "--interval",
             "--no-startup-burst", "--reply-scope", "--unicast-echo", "--min-gap-ms", "--quiet",
             "--dry-run", "--timeout", "--rounds", "--gap", "--expect", "--schedule",
-            "--all-classes", "--query", "--listen-port", "--redact", "--out",
+            "--all-classes", "--query", "--listen-port", "--redact", "--out", "--for",
         ];
         for (f, _) in &self.flags {
             if !known.contains(&f.as_str()) {
@@ -2357,6 +2442,25 @@ fn run() -> Result<(), String> {
                 }
             ));
             s.run(&sock)
+        }
+        "sniff" => {
+            let sock = bind_socket(listen_port, reuseport)?;
+            let run_for = match args.get("--for") {
+                Some(v) => Some(Duration::from_secs_f64(
+                    v.parse::<f64>().map_err(|_| format!("--for: bad value {v:?}"))?,
+                )),
+                None => None,
+            };
+            println!(
+                "lsdp-static v{VERSION} watching UDP {} -- answering nothing{}",
+                port,
+                match run_for {
+                    Some(d) => format!(", for {:.0} s", d.as_secs_f64()),
+                    None => String::new(),
+                }
+            );
+            println!("{:<12}  {:>7}  {:<22} message", "time (UTC)", "gap s", "from");
+            sniff(&sock, &red, run_for)
         }
         "discover" => {
             let sock = bind_socket(listen_port, reuseport)?;

@@ -16,13 +16,13 @@ seconds, consistently" is a different product from "usually fast, sometimes
 never".
 
 **That question now has an answer.** Answering instantly changes *how* the
-players appear — all at once instead of trickling in one at a time — and it puts
-a phone on another VLAN in the same position as one sitting on the players' own
-subnet. It does not change *when* the list is complete: 3–4 s on Android from
-the Players tab, 5–6 s on the desktop from launch, with every answer already in
-hand. See [`FINDINGS.md`](FINDINGS.md) for the measurements, the mechanism
-behind the trickle, and the one test that would settle what the apps are
-actually waiting for.
+players appear — all at once instead of trickling in — and it puts a phone on
+another VLAN in the same position as one sitting on the players' own segment. It
+does not change *when* the list is complete: 3–5 s on Android from the Players
+tab, 5–6 s on the desktop from launch, with every answer already in hand and the
+app already on screen showing its cached player. See
+[`FINDINGS.md`](FINDINGS.md) for the measurements and for `sniff`, which settles
+what the apps are actually waiting for.
 
 Written against `../bluos-http-api.md` §12.1. `selftest` checks the encoder
 against the real Bluesound Node N130 announce captured in that section, byte for
@@ -291,6 +291,7 @@ firewalled port look identical from here.
 | `--unicast-echo` | also unicast each answer straight back to the querier. Off by default because no real player does it — but it is the one thing that would survive a client whose OS drops broadcast (a macOS Local Network permission denial does exactly that, silently). |
 | `--min-gap-ms 250` | collapse duplicate queries, which a broadcast relay produces by design. |
 | `--dry-run` | print the exact bytes that would be announced, and exit. |
+| `sniff --for N` | watch the segment and decode every datagram, answering nothing. Press a controller's player-list button and compare when the answers arrived against when the screen filled. |
 | `--redact` | replace addresses, node ids and player names in the output with documentation placeholders. Works for `serve`, `measure` and `discover`. |
 | `--out DIR` | `measure`: save the run under `DIR` in an auto-named directory — report plus the raw CSVs. Always redacted, checked afterwards, with the key written beside it. |
 
