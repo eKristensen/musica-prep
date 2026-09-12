@@ -146,9 +146,15 @@ record has aged out.
 
 `PlayerDiscoveryState` is a **process-wide singleton** (`INSTANCE`, `LOCK`,
 `getInstance()`) whose `allPlayers` is a plain in-memory `Map`. It outlives any
-fragment, any screen and any discovery subscription — it dies only with the
-process, which is why swiping the app away is what resets it and merely leaving
-the screen is not.
+fragment, any screen and any discovery subscription, and it dies with the
+process — or when something calls `reset()`, which `MainActivity.onNoPlayersFound`
+and `PlayerDiscoveryManager.lambda$init$0` both do.
+
+**Nothing persists the list.** The only player written to storage is the
+selected one: `PlayerManager.persistAndBroadcastSelectedMaster` puts a single
+string into `SharedPreferences`, and `PlayerManager.init` reads it back through
+`createMasterHostFromPreferences`. That one player therefore survives a real
+process death; the other three cannot.
 
 Two of its methods explain the whole cycle:
 
@@ -180,6 +186,30 @@ as stale; the 30 s check runs `removeStalePlayers()` and empties the map; 20 s
 after that the "no players found" runnable fires. Tap again and
 `markAllPlayersAsSeen()` repopulates the screen instantly, and the cycle
 restarts.
+
+### Why it is intermittent, and why a swipe is not a guarantee
+
+Since the list is only in memory and only the selected master is persisted, an
+instant *full* list after swiping the app away means one thing: **the process
+did not actually die.** Removing a task from Recents usually kills the process,
+but Android does not promise it, and this app ships several services that give
+the system a reason to keep it: `BluOSControllerService` (media control),
+three widget services, and Firebase's `SessionLifecycleService`. A media session
+or a placed widget is exactly the kind of thing that keeps a process resident
+after its task is gone.
+
+So the two behaviours are one code path with different starting state:
+
+| after a swipe | `allPlayers` | what the screen does |
+|---|---|---|
+| process really died | empty — `markAllPlayersAsSeen()` marks nothing | "Discovering…", then whatever discovery finds |
+| process survived | still populated | the whole list, instantly, then the 16/30/20 s decay |
+
+Which of those happens is the system's call, not the app's, and that is why the
+behaviour was hard to provoke on demand. **Confirming it takes one look**:
+`adb shell ps | grep sovi` after the swipe, or the running-services list in
+Developer Options — if the process is still there, the instant list is expected
+**[U]**; this has not been checked against an actual sighting.
 
 The one thing it is *not* is a network problem. The app spends the entire cycle
 able to reach the players it is about to declare missing.

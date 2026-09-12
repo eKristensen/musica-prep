@@ -73,9 +73,12 @@ it.
 Kept because both are easy to fall into again.
 
 **A warm app is not a measurement.** The Android app holds the whole player list
-within a session and renders it instantly, so any run that does not force-close
-the app first measures the cache. Every usable run swipes the app away between
-attempts; one observation was discarded for exactly this reason.
+in memory and renders it instantly, so any run that does not start from a dead
+process measures that instead of discovery. Swiping the app away is the
+intended fix and does not always work — Android decides whether the process
+dies. The reliable tell is the result itself: a warm process produces a list in
+under a second, so a run that took seconds was cold. One observation was
+discarded for exactly this reason.
 
 **A plugged-in adapter is not a wired test.** Two runs were recorded as "wired"
 with the Wi-Fi radio still enabled. That turned out to matter more than expected
