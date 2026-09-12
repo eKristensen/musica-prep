@@ -65,6 +65,15 @@ crosses it.
 **Impact:** this is the single most disruptive issue. It makes the list feel
 unreliable even when every player is online and reachable.
 
+It also makes grouping risky rather than merely slow. The list reflows as
+players come and go, so the entry under my thumb can change between the moment
+I decide to tap and the moment the tap registers, and I have then grouped the
+wrong player. That happens far too often. Recovering means backing out,
+waiting through discovery again and retrying. Reliable grouping needs a list
+that holds still. Creating a group appears to make players disappear as well,
+which slows the step after it further — I have not timed that one, but it
+happens often enough that I have no doubt it is real.
+
 ### 3. The currently selected player is sometimes missing from the list
 
 I can be connected to a player, with working controls and volume, while that
@@ -386,6 +395,12 @@ that matter much less than my primary motivation for starting this project:
    was going. Rather than keep clicking and waiting, why not have one — and
    build it so it is not limited to this one idea, but allows for any shortcut
    I might want in the future?
+
+7) Presets belong to a player, not to me. I added one on a player yesterday
+   and it was not there on another player today. What I want is the playlist I
+   like being startable on whichever player I happen to have selected. In
+   Musica it would not have to be a real BluOS preset at all — the idea is what
+   matters, not the mechanism.
 
 ---
 
