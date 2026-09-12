@@ -35,16 +35,20 @@ markers are not used for it.
 
 | device | detail |
 |---|---|
-| **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App **4.16.3** from the Play Store. **Background usage allowed** for the BluOS app |
-| **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002`. App from Play Store, version not recorded. **No battery-saver restrictions** on the BluOS app |
+| **Fairphone 5 5G** | Android 15 (API 35), build `FP5.VT31.C.114.20260804`. App **4.16.3 build 3224** from the Play Store. **Background usage allowed** for the BluOS app |
+| **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11 (API 30), `RKQ1.200826.002`. App **4.16.2 build 3217** from the Play Store. **No battery-saver restrictions** on the BluOS app |
 | **Waydroid** | LineageOS 20 — Android 13 — image `20-20260403-VANILLA-waydroid_x86_64`, minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
-| **iPhone** | an iPhone 16-series, exact model not recorded; iOS current as of a week before these tests, version not recorded |
+| **iPhone 16** | iOS 26.6.2. BluOS Controller **4.16.2** |
 | **Windows** | BluOS Controller 4.16.0 (Electron) |
 | **Linux** | [`bluos-controller-linux`](https://gitlab.com/zquestz/bluos-controller-linux) — the same official 4.16.0 Electron app, repackaged as an AppImage |
 
 USB Ethernet on the phones is a wired adapter; "Wi-Fi" means the phone's own
 radio. The Waydroid guest is wired throughout — a host bridge, no radio anywhere
 in its path.
+
+All four controllers report a BluOS version of **4.16.22**, which is the
+players' firmware rather than anything about the controller: the number is the
+same across three different controller builds on three operating systems.
 
 ## Method
 
@@ -123,8 +127,10 @@ APKMirror rather than installed from the Play Store. None of that moved the
 number.
 
 The app build is *not* one of the differences: R7 runs 4.16.3, the same version
-the Fairphone runs. Nothing here varies the app version deliberately, so nothing
-here says whether the version matters.
+the Fairphone runs. The Mi 9 runs 4.16.2 — but the two builds' discovery code is
+byte-identical, so no result in this file turns on which of them a device ran.
+See [`controller-code-notes.md`](controller-code-notes.md) for how that was
+checked.
 
 So the fast-on-wire result does not depend on the vendor Android, on Google Play
 services, or on real hardware. The one thing every fast run has in common is a

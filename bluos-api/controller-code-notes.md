@@ -13,6 +13,32 @@ This file explains measurements; it does not add any. **[V official]** is
 `bluos-http-api.md`'s marker for something read out of a first-party Controller
 build, and its legend already names this exact APK.
 
+## Does the read build match the measured ones? **[V official]**
+
+The Android source read here is **4.16.2 build 3217**, which is exactly what the
+Mi 9 ran. The Fairphone and Waydroid ran **4.16.3 build 3224**, so that build
+was compared against it directly, class by class:
+
+- **`com.lenbrook.sovi.discovery` is byte-identical between the two.** All 174
+  methods hash the same, instruction for instruction. Every constant quoted
+  below — the two-second `delaySubscription`, the retry schedule, the staleness
+  and refresh timeouts — is the same code on every Android device measured.
+- The three changed methods in `PlayerDiscoveryFragment` change only a string
+  resource id, each by exactly +1, because a string was added elsewhere in the
+  table. The text on the discovery screen moved; nothing it does moved.
+
+What 4.16.3 actually changes is one feature, tagged `GL #1071` in its own log
+strings: the **deprecation notice** for players losing support. It gains a
+`DeprecationNoticeThrottle` that suppresses the notice for 24 hours per player
+in `SharedPreferences`, a "select another player" button that opens the player
+list with a new `close_on_select` extra so the list closes once a player is
+picked, and a retry path for when the post-upgrade check times out. The rest of
+the diff is the version string in the `User-Agent`, regenerated data-binding
+classes, and resource-id renumbering behind them.
+
+So the build gap between this file and the measurements does not exist for
+anything this file claims.
+
 ---
 
 # Android
