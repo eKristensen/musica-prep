@@ -142,6 +142,48 @@ record has aged out.
 
 ---
 
+## What makes the list appear instantly, and then not **[V official]**
+
+`PlayerDiscoveryState` is a **process-wide singleton** (`INSTANCE`, `LOCK`,
+`getInstance()`) whose `allPlayers` is a plain in-memory `Map`. It outlives any
+fragment, any screen and any discovery subscription — it dies only with the
+process, which is why swiping the app away is what resets it and merely leaving
+the screen is not.
+
+Two of its methods explain the whole cycle:
+
+```java
+boolean isStale(PlayerInfo p) {
+    return currentTimestamp() - p.getLastSeen() > 16000;
+}
+
+void markAllPlayersAsSeen() {                    // logs "Marking all players as seen"
+    for (PlayerInfo p : allPlayers.values())
+        p.setLastSeen(currentTimestamp());
+}
+```
+
+And `PlayersFragment.startDiscovery()` — which runs when the player screen is
+opened — calls `setKeepStalePlayers(false)` and then `markAllPlayersAsSeen()`
+before it subscribes to anything.
+
+**So the instant list is not a cache being consulted. It is the live list being
+told it was just seen.** Every player's `lastSeen` is stamped to *now*, nothing
+qualifies as stale, and the list renders from memory with no network involved —
+which is why it appears in under a second with every discovery mechanism
+switched off, and why the players shown need not still exist. The stamp is
+applied without checking anything.
+
+The decay follows from the same two numbers. After that stamp nothing refreshes
+`lastSeen` unless an announce actually arrives; at 16 s every player qualifies
+as stale; the 30 s check runs `removeStalePlayers()` and empties the map; 20 s
+after that the "no players found" runnable fires. Tap again and
+`markAllPlayersAsSeen()` repopulates the screen instantly, and the cycle
+restarts.
+
+The one thing it is *not* is a network problem. The app spends the entire cycle
+able to reach the players it is about to declare missing.
+
 ## Corrections to earlier guesses
 
 **The multicast lock is acquired.** An earlier hypothesis in `FINDINGS.md` was
@@ -154,6 +196,11 @@ subscribe and releases it on dispose.
 The hypothesis pointed at the right code and drew the wrong conclusion from it.
 The cost is not a missing lock; it is the two-second delay wrapped around
 taking one.
+
+**The instant list is not unicast HTTP to cached addresses.** An earlier guess
+in the measurement log was that a tap might be re-probing known addresses over
+HTTP. It is simpler and stranger than that: the list is already in memory and
+gets its timestamps reset.
 
 **"App or platform?" is answered, for the Wi-Fi penalty.** It is the app: a
 hard-coded delay in the app's own discovery composition, conditional on the

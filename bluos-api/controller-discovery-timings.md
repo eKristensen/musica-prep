@@ -302,9 +302,11 @@ empties the list is not the players being unreachable.
 a tap repopulates the whole list in under a second — nothing could have been
 discovered in that second by either protocol.
 
-**The timings are not arbitrary.** The app's own constants account for the ~30 s
-and ~50 s marks exactly, and for why players age out long before they would next
-announce: see [`controller-code-notes.md`](controller-code-notes.md).
+**The timings are not arbitrary, and neither is the refill.** The app's own
+constants account for the ~30 s and ~50 s marks exactly, for why players age out
+long before they would next announce, and for why a tap restores the list
+without touching the network: see
+[`controller-code-notes.md`](controller-code-notes.md).
 
 ### What this does and does not affect
 
@@ -323,13 +325,11 @@ during it **[U]**.
 
 ### Open questions
 
-The ~30 s and ~50 s marks, and why players age out long before they would next
-announce, are accounted for by the app's own constants in
-[`controller-code-notes.md`](controller-code-notes.md). What still has no answer
-is **what refills the list in under a second with both discovery protocols
-off**: `lsdp-static sniff` would show whether anything goes out on 11430 at all
-at that moment, and if nothing does, the answer is unicast HTTP to addresses the
-app already holds.
+All of it is accounted for by the app's own code — the ~30 s and ~50 s marks,
+why players age out long before they would next announce, and what puts the list
+back on screen in under a second with both discovery protocols off. See
+[`controller-code-notes.md`](controller-code-notes.md). Nothing goes out on the
+network at that moment; the list never left memory.
 
 ### Why it matters more than the timing does
 
