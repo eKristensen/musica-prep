@@ -67,9 +67,11 @@ send them.
 lives in the app, in Android's Wi-Fi stack, or in the access point is unsettled
 and may stay that way — but the observable fact needs none of that resolved:
 **used over Wi-Fi, the BluOS Controller is much worse than over a cable**, in
-both speed and reliability. Nor is the cause this project's to chase. Other
-multi-room systems do not behave this way, so the problem is evidently solvable;
-solving it inside somebody else's app or inside Android is not a thing Musica is
+both speed and reliability. Nor is the cause this project's to chase. A
+Sonos system in the family does not behave this way at all — not measured here,
+and a different product with its own discovery, but enough to show the
+experience is achievable on the same kind of home network and the same phones.
+Solving it inside somebody else's app or inside Android is not a thing Musica is
 expected to do. What Musica can do is not depend on the part that fails.
 
 ## What the static responder did change
@@ -152,6 +154,33 @@ mid-session is a failure the user meets with no cause visible and nothing to do
 but tap again — so it may matter more than any of the timings here. And the app
 demonstrably holds the whole list well enough to render it instantly on demand,
 then discards it on a timer anyway.
+
+## Static LSDP is not the answer either, for a reason the timings do not show
+
+Even if it had been fast, a static player list is the wrong shape of solution,
+and reading `players.conf` is enough to see why: **it goes stale, and it goes
+stale silently.**
+
+An announce carries the player's address, port, name, model and firmware
+version. Every one of those is a copy of something that lives somewhere else,
+kept in step by hand. A firmware update, a renamed room, a player added or
+sold, a DHCP lease that moves — each one leaves the file describing a network
+that no longer exists, with nothing to notice it. Some of that is cosmetic,
+because a controller reads the truth from `/SyncStatus` and the announce only
+ever yields an address and a port (§12). The address is not cosmetic: announce a
+player at an address it has moved from and the controller shows an entry it
+cannot reach.
+
+**And the stale copy wins.** The real players are still answering the same
+queries under the same node ids, after their random 0–750 ms. The static
+responder answers in microseconds, so it arrives first, every time. The better
+it performs, the more reliably its stale data beats the fresh data sitting right
+behind it. A responder that was merely as fast as a real player would at least
+lose the race sometimes.
+
+So the experiment's own tool carries an argument against the approach it was
+built to test: a fast static answer is a fast wrong answer the moment anything
+changes, and nothing in the protocol will tell you it has.
 
 ## 1.0–1.5 s is not a target to match
 

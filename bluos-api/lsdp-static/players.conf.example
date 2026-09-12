@@ -1,5 +1,15 @@
 # lsdp-static player list.
 #
+# A WARNING BEFORE THE FORMAT: everything below is a hand-kept copy of something
+# that lives on the players themselves -- address, port, name, model, firmware
+# version. Nothing keeps it in step. A firmware update, a renamed room, a new or
+# sold player, or a DHCP lease that moves all leave this file describing a
+# network that no longer exists, and nothing will tell you. Worse, the real
+# players answer the same queries under the same node ids after their random
+# 0-750 ms delay, while this responder answers in microseconds -- so a stale
+# entry here arrives first and wins. This is fine for an experiment and a poor
+# basis for anything permanent. See FINDINGS.md.
+#
 #   node <id> <ipv4>      one physical device.  <id> is its MAC -- the node id is
 #                         the cache key a controller uses, so it MUST match the
 #                         MAC the real player announces, or the controller will
