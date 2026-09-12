@@ -56,14 +56,19 @@ players and the same access point serve an iPhone with no delay and no
 "Discovering…" stage at all, on Wi-Fi exactly as on a cable. That removes the
 network, the access point, and Wi-Fi as such from the list of suspects.
 
-What is left is Android's own handling of broadcast, or what the Android app
-does about it. Android filters multicast and broadcast not addressed to the
-device while the Wi-Fi radio is in power save, unless an app holds a
-`WifiManager.MulticastLock`; iOS has no equivalent requirement. That one
-difference would produce precisely this pattern — slow and lossy on Android over
-Wi-Fi, fine on Android over a cable, fine on iOS either way — and it is
-testable in minutes with any Bonjour browser app on the same phone and the same
-Wi-Fi. It remains a hypothesis until someone runs that.
+That much is a result, not a hypothesis: the iPhone and the Mi 9 sit on the same
+Wi-Fi, the same access point and the same players, one variable differs, and the
+outcome flips. And on the iPhone it holds however many times the app is
+restarted, so it is not a warm cache either.
+
+What is still open is *which* Android-side cause: Android's own broadcast
+handling, the app's Android code, or the vendor Wi-Fi stack. One suspect is
+specific enough to name — Android filters multicast and broadcast not addressed
+to the device while the Wi-Fi radio is in power save, unless an app holds a
+`WifiManager.MulticastLock`, and iOS has no equivalent requirement. That one
+difference would produce precisely this pattern, and telling it apart from the
+alternatives takes any Bonjour browser app on the same phone and the same
+Wi-Fi **[U]**.
 
 Everything else that could plausibly have explained the slow runs has now been
 varied without effect.

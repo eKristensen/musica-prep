@@ -179,7 +179,25 @@ incompleteness are **not a property of the network, the access point, or Wi-Fi
 as such**. They belong to the Android side — either to Android's handling of
 multicast and broadcast, or to what the Android app does about it.
 
-### A specific, testable suspect **[U]**
+### R9 is a controlled comparison, not an anecdote
+
+The iPhone and the Mi 9 are on **the same Wi-Fi, the same access point and the
+same players**, and they behave completely differently. One variable changed —
+the operating system — and the outcome flipped. That is a control, and it
+carries a result: **the Wi-Fi penalty is on the Android side [V hardware]**. The
+network, the access point and Wi-Fi as a medium are ruled out, not merely
+suspected.
+
+It also disposes of the cache confound that made an earlier Android observation
+unusable. On the iPhone the players are there immediately **however many times
+the app is restarted**, so this is cold-start behaviour and not a warm cache
+surviving between launches.
+
+### Which Android-side cause, though, is still open **[U]**
+
+What the comparison cannot do is pick between the possible Android-side causes:
+Android's broadcast handling, the app's Android code, or something in the
+vendor Wi-Fi stack. One suspect is specific enough to name.
 
 Android filters multicast and broadcast packets not addressed to the device
 while the Wi-Fi radio is in power save, unless an application holds a
@@ -192,11 +210,11 @@ difference would produce exactly this signature:
 | Android, cable | no Wi-Fi filter in the path | 1.0–1.5 s, always complete |
 | iOS, Wi-Fi | no such filtering | instant, always complete |
 
-This is a hypothesis and nothing here tests it. **The differential test is
-cheap**: run any mDNS or Bonjour browser app on the Fairphone, over the same
-Wi-Fi, and see whether *it* finds the players promptly. A browser that holds a
-multicast lock and finds them instantly, while the BluOS app does not, points at
-the app; both failing equally points at the platform or the access point.
+**The remaining differential test is cheap**: run any mDNS or Bonjour browser
+app on the Fairphone, over the same Wi-Fi, and see whether *it* finds the
+players promptly. A browser that holds a multicast lock and finds them
+instantly, while the BluOS app does not, points at the app. Both failing equally
+points at the platform. Either way the network is already excluded, by R9.
 
 ### R3 is now suspect
 
