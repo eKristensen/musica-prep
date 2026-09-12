@@ -137,12 +137,14 @@ services, or on real hardware. The one thing every fast run has in common is a
 **wired path with no Wi-Fi in it**; the one thing every slow run has in common
 is Wi-Fi.
 
-### R7 is also a better test rig
+### R7 would also make a better test rig
 
-The guest is bridged on the host, so `lsdp-static sniff` can watch the same
-segment from that host and the guest's screen can be recorded there too — query
-out, announces in, and screen filling on one timeline, with no phone and no
-stopwatch. That is what made R8 cheap to run.
+R7 and R8 were timed with a stopwatch, like every other run here. But the guest
+is bridged on the host, so a packet capture on that host sees the same segment
+the guest does, and the guest's screen can be recorded there too — query out,
+announces in, and screen filling on one timeline, with no phone and no
+stopwatch. **Nobody has done this**; it is noted because the rig is already
+standing, not because it produced anything below.
 
 ### R8 puts a floor under it, and the floor is the app
 
@@ -164,7 +166,7 @@ Which gives a clean decomposition of the wait a user actually experiences:
 
 ### On-the-wire measurement, for comparison
 
-[`lsdp-measure-20260912T185206Z/`](lsdp-measure-20260912T185206Z/) — 20 rounds
+[`test-runs/lsdp-measure-20260912T185206Z/`](test-runs/lsdp-measure-20260912T185206Z/) — 20 rounds
 against the four real players from a wired host, all 20 complete:
 
 | | min | median | p95 | max |
@@ -281,9 +283,10 @@ adapter in and the radio on was not a mislabelled wired test — it was measurin
 the wrong variable. Confirm the radio is off, or confirm the interface from the
 source address of the query, or the label is a guess.
 
-The cheap confirmation: `lsdp-static sniff` on the players' segment prints the
-**source address** of the phone's query, which says outright which interface it
-asked from.
+A cheap confirmation exists and **was not used**: `lsdp-static sniff` on the
+players' segment prints the **source address** of every datagram it sees, which
+for a query says outright which interface the phone asked from. R3's label rests
+on nothing better than what was plugged in at the time.
 
 ### R4 versus R6 is unexplained
 
@@ -294,7 +297,8 @@ The likeliest explanation is that **airplane mode did not actually turn Wi-Fi
 off** — Android can keep Wi-Fi enabled inside airplane mode once it has been
 switched on there — so R4 may be another Wi-Fi measurement **[U]**. The
 alternative, that airplane mode itself changes what the app does, is not ruled
-out. `sniff` settles this the same way it settles R3.
+out. Neither was checked, by `sniff` or anything else; the same source-address
+capture that would settle R3 would settle this.
 
 ---
 
