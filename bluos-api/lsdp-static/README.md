@@ -21,13 +21,59 @@ byte, so what goes on the wire is what a real player puts there.
 
 ## Build
 
+Two ways to the same program. Linux only either way — it uses `SO_REUSEPORT` and
+`getifaddrs(3)` directly.
+
+### Without a Rust toolchain, using podman
+
 ```sh
-cargo build --release          # no dependencies; Linux only
-sudo install -m755 target/release/lsdp-static /usr/local/sbin/
-./target/release/lsdp-static selftest
+./build-with-podman.sh
+sudo install -m755 ./lsdp-static /usr/local/sbin/
 ```
 
-Linux only because it uses `SO_REUSEPORT` and `getifaddrs(3)` directly.
+Compiles inside a throwaway `rust:1-alpine` container and copies one binary out.
+Rootless podman is fine: nothing here needs root, and the binary lands owned by
+you. `ENGINE=docker ./build-with-podman.sh` if that is what is installed.
+
+That image targets musl, so the result is **statically linked** — no runtime
+dependencies and nothing that has to stay in step with the host's glibc. The
+image is multi-arch, so an arm64 host builds an arm64 binary with no
+cross-compilation setup. The build runs `selftest` and fails if the wire codec
+is wrong, so a green build means the announce bytes are right on that machine.
+
+Without the script, it is one command:
+
+```sh
+podman run --rm -v "$PWD:/src:Z" -w /src docker.io/library/rust:1-alpine \
+    sh -c 'apk add --no-cache musl-dev && cargo build --release --locked'
+# -> ./target/release/lsdp-static, static, owned by you
+```
+
+`:Z` relabels the mount for SELinux and does nothing where SELinux is not in use.
+
+### Or run it as a container and install nothing
+
+`build-with-podman.sh` leaves an image behind whose entrypoint is the binary.
+LSDP is broadcast on real interfaces, so it needs the host's network namespace:
+
+```sh
+podman run -d --name lsdp-static --network=host \
+    -v /etc/lsdp-static/players.conf:/players.conf:ro,Z \
+    localhost/lsdp-static:built \
+    serve --config /players.conf --iface lan --iface iot --iface guest
+podman logs -f lsdp-static
+```
+
+Port 11430 is unprivileged, so this works rootless too.
+
+### With cargo, if you have it
+
+```sh
+cargo build --release          # no dependencies: a single compile
+./target/release/lsdp-static selftest
+sudo install -m755 target/release/lsdp-static /usr/local/sbin/
+```
+
 `cargo` from Debian/Ubuntu (`apt install cargo`) is new enough, on arm64 too.
 
 ## The experiment, end to end
