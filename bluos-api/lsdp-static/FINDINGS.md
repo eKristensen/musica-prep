@@ -1,297 +1,90 @@
-# Does better LSDP make the controller apps faster?
+# Did a static LSDP responder help?
 
-**No — and the reason has changed twice as the data came in.**
+**No.** `lsdp-static` answers discovery queries instantly, which is as fast as
+the protocol can possibly go, and no controller app showed players any sooner
+for it. It is also, on reflection, the wrong shape of solution even where it
+does work.
 
-Making LSDP answer instantly does not shorten the wait in any controller app.
-What it changes is *how* the players arrive: together, rather than one or two at
-a time. But the wait itself turned out not to be the protocol's, and — as of the
-latest round — probably not the app's either. It looks like the **link**.
-
-All the numbers are in
-[`../controller-discovery-timings.md`](../controller-discovery-timings.md),
-which is the data; this file is the reasoning over it. That file also names the
-devices and numbers the runs — R1–R9 on phones and the Waydroid guest, D1–D3 on
-the desktop — so a run referred to by number here can be looked up there. Confidence markers follow
-`bluos-http-api.md`: **[V hardware]** observed directly here, **[V]** verified
-in client code or a vendor document, **[U]** unverified — a claim about
-behaviour nobody has tested yet.
+This file is the verdict on the experiment. The numbers are in
+[`../controller-discovery-timings.md`](../controller-discovery-timings.md) and
+the causes, read out of the apps themselves, are in
+[`../controller-code-notes.md`](../controller-code-notes.md). Nothing is
+repeated here that lives in either.
 
 ---
 
 ## What the experiment was
 
-`lsdp-static serve` answers LSDP queries instantly from a static player list,
-where a real player waits a random 0–750 ms before answering (`../bluos-http-api.md`
-§12.1) and a UDP broadcast relay adds loss and delay on top. If discovery were the bottleneck, removing it entirely should
-have been visible on screen.
+A real player answers a query after a random 0–750 ms (`../bluos-http-api.md`
+§12.1), and a UDP broadcast relay adds loss and delay on top. `serve` removes
+both: answers go out in microseconds, from a list that cannot be wrong about
+who exists. If discovery were what made players slow to appear, that should have
+been visible on screen.
 
-It was not. The Android app still took 3–5 s over Wi-Fi, and Windows and Linux
-still took 5–6 s from launch, with or without the responder.
+It was not, on any of the three controllers tested. The Android app's wait turned
+out to be a fixed delay in its own code, and the desktop's is not in discovery
+at all.
 
-## What actually moves the number
+## What it did change
 
-| link | time for the remaining players | complete runs |
-|---|---|---|
-| **Android, Wi-Fi** | 3–5 s | about 4 in 5 |
-| **Android, wired, no Wi-Fi in the path** | **1–1.5 s** | **every run, three devices** |
-| Android, wired, **and** a responder answering instantly | **1–1.5 s, unchanged** | every run |
-| **iOS, Wi-Fi or wired** | **instant** (not timed) | **every run** |
-
-That is not a small finding. The same app, the same players, the same second —
-a different link, and discovery stops being a problem.
-
-The wired number now rests on three devices: both phones with Wi-Fi explicitly
-disabled, and a bridged Waydroid guest. That third one carries weight out of
-proportion to being one more run, because it differs in everything except the
-link — LineageOS rather than a vendor Android, **no Google Play services**, a
-different app build (4.16.3 against whatever the Play Store gave the phones),
-and virtualised hardware. None of it moved the number. The fast result is not a
-property of one phone, one Android, one app version, or real hardware.
-
-Two earlier runs were recorded as "wired" when an adapter was plugged in but
-Wi-Fi was never turned off, so they are almost certainly Wi-Fi measurements and
-are filed as such. Nothing rests on them: the wired figure comes from three
-later runs that are not in doubt, and their own numbers match the Wi-Fi rows
-anyway.
-
-### Where the penalty lives **[V hardware]**, and what causes it **[U]**
-
-Broadcast delivery over Wi-Fi to the controller is the weak point, and it is
-**an Android-side weakness, not the network's**. The same house, the same
-players and the same access point serve an iPhone with no delay and no
-"Discovering…" stage at all, on Wi-Fi exactly as on a cable. That removes the
-network, the access point, and Wi-Fi as such from the list of suspects.
-
-That much is a result, not a hypothesis: the iPhone and an Android phone sit on
-the same Wi-Fi, the same access point and the same players, one variable
-differs, and the outcome flips. And on the iPhone it holds however many times the app is
-restarted, so it is not a warm cache either.
-
-Android's battery management is not it either. The app has background usage
-allowed on one phone and no battery-saver restrictions on the other — MIUI's
-aggressive background killing being the obvious suspect — and both still show
-the penalty. That is a different mechanism from the one below: battery
-exemptions govern whether an app may run and use the network in the background,
-while a multicast lock governs whether the Wi-Fi driver hands non-directed
-packets to the host at all. An app can hold every battery exemption going and
-still never see a broadcast.
-
-What is still open is *which* Android-side cause: Android's own broadcast
-handling, the app's Android code, or the vendor Wi-Fi stack. One suspect is
-specific enough to name — Android filters multicast and broadcast not addressed
-to the device while the Wi-Fi radio is in power save, unless an app holds a
-`WifiManager.MulticastLock`, and iOS has no equivalent requirement. That one
-difference would produce precisely this pattern, and telling it apart from the
-alternatives takes any Bonjour browser app on the same phone and the same
-Wi-Fi **[U]**.
-
-Everything else that could plausibly have explained the slow runs has now been
-varied without effect.
-
-This is a hypothesis, not a measurement. It is worth stating because it is
-cheap to test and because it points somewhere useful: **the protocol already has
-a unicast path.** An `R` query (§12.1) asks responders to answer by unicast
-instead of broadcast, which sidesteps Wi-Fi broadcast handling entirely.
-`lsdp-static serve` answers them.
-
-`bluos-http-api.md` §12.1 records that none of the three controllers it was
-built from — Android, Windows and macOS — sends `R`; all three send `Q`. Nothing
-measured here tests that, since no client traffic was ever captured. **And the
-iOS controller is not one of the three**: no iOS client appears in that
-document's sources at all, which is now conspicuous, because iOS is the one
-client that does not have the problem.
-
-**The cause being open does not make the effect open.** Whether the penalty
-lives in the app, in Android's Wi-Fi stack, or in the access point is unsettled
-and may stay that way — but the observable fact needs none of that resolved:
-**used over Wi-Fi, the BluOS Controller is much worse than over a cable**, in
-both speed and reliability. Nor is the cause this project's to chase. The
-same BluOS app on an iPhone, on the same network, does not have the problem at
-all; and a Sonos system in the family does not behave this way either. Neither
-is measured here, but together they settle that the experience is achievable on
-this kind of home network — the BluOS app itself achieves it, just not on
-Android.
-Fixing it inside somebody else's app or inside Android is not something a
-third-party client can do; not depending on the part that fails is.
-
-## What the static responder did change
-
-Players arrive **together** instead of one or two at a time, and the relay's
-unreliability is gone. A phone on another VLAN behaves like one on the players'
-own segment.
+Players arrive **together** rather than one or two at a time, and the
+`udp-broadcast-relay-redux` setup's unreliability goes with it. A phone on
+another VLAN ends up in the same position as one on the players' own segment.
 
 That is a real improvement in how the list fills. It is not an improvement in
-when it is complete.
+when the list is complete, which is what a user waits for.
 
-## Desktop: Windows and Linux **[V hardware]**
+## Why it would be the wrong answer anyway
 
-**5–6 s from launch, unchanged**, with the static responder in place and the
-firewall opened.
+Even a responder that *had* been fast enough is the wrong shape, and reading
+`players.conf` is enough to see why: **it goes stale, and it goes stale
+silently.**
 
-The two are one result. The Linux client repackages the **official Windows
-installer's** Electron app, version **4.16.0** — the exact build
-`bluos-http-api.md` was written from. Same code, two operating systems, same
-number, which is corroboration rather than coincidence.
+Every field in the file — address, port, name, model, firmware version — is a
+hand-kept copy of something that lives on a player. A firmware update, a renamed
+room, a player added or sold, a DHCP lease that moves: each leaves the file
+describing a network that no longer exists, with nothing to notice. Most of that
+is cosmetic, because a controller reads the truth from `/SyncStatus` and an
+announce only ever yields an address and a port (§12). The address is not
+cosmetic — announce a player where it no longer is and the controller shows an
+entry it cannot reach.
 
-Both were on wired LAN throughout, so the Wi-Fi comparison above has never been
-run against them.
+**And the stale copy wins the race.** The real players answer the same queries
+under the same node ids after their random 0–750 ms. This responder answers in
+microseconds, so it arrives first, every time. The better it performs, the more
+reliably its stale data beats the fresh data right behind it. A responder merely
+as fast as a real player would at least lose sometimes.
 
-**And that 5–6 s is not spent waiting for answers.** With `staticPlayers.txt` in
-place and mDNS and LSDP both switched off, only the listed players appeared — so
-the file took effect — and startup was no faster. There were no answers to wait
-for and the wait was the same. It does not follow that the delay is unrelated to
-discovery: the app still showed its "Discovering…" stage with both mechanisms
-off, so the static list looks like an addition to whatever discovery returns
-rather than a replacement for it. A discovery *timer* expiring on its own
-schedule fits everything seen. The desktop is at least stable once up: none of
-the list-emptying seen on Android.
-
-## Two traps this work fell into
-
-Kept because both are easy to fall into again, not as a record of every revision.
-
-**A warm app is not a measurement.** The Android app holds the whole player list
-in a session and renders it instantly, so any run that does not force-close the
-app first measures the cache, not discovery. Every usable run here swipes the app
-away between attempts. One observation was discarded for exactly this reason.
-
-**A plugged-in adapter is not a wired test.** Two runs were recorded as "wired"
-with Wi-Fi still enabled, and their numbers sit with the Wi-Fi rows. Confirm the
-radio is off, or confirm the interface from the source address of the query, or
-the label is a guess.
-
-## The wait, decomposed
-
-Three rounds of measurement now separate cleanly:
-
-| cost | size | what removes it |
-|---|---|---|
-| the app's own floor | **1.0–1.5 s** | nothing on the network side |
-| Wi-Fi, on top of that | **+2 to 4 s**, and one run in five incomplete | a cable |
-| the LSDP protocol itself | none of it — it finishes inside the floor | — |
-
-The last row is the answer to the question this experiment was built to ask. The
-protocol was never the problem, which is why making it instant changed nothing
-anyone can see.
-
-One thing this does *not* say: **a player being on Wi-Fi is fine.** In 20 rounds
-against the real players, the one on Wi-Fi answered with a mean of 373 ms against
-a theoretical 375, faster than two of the three on cable. It is Wi-Fi between the
-*controller* and the network that costs 2–4 seconds, not Wi-Fi at the player.
-
-## Reliability has a second dimension
-
-"Does the list fill" is not the only question. The Android app also **empties
-its own list** after roughly 30–50 seconds sitting idle — showing "Discovering…"
-and then "No Player Found" — and refills it in under a second when tapped. That
-happens with every discovery mechanism switched off, and while the previously
-selected player stays fully controllable. It is written up in
-[`../controller-discovery-timings.md`](../controller-discovery-timings.md).
-
-Two things follow. A slow list fills eventually, but a list that empties itself
-mid-session is a failure the user meets with no cause visible and nothing to do
-but tap again — so it may matter more than any of the timings here. And the app
-demonstrably holds the whole list well enough to render it instantly on demand,
-then discards it on a timer anyway.
-
-## Static LSDP is not the answer either, for a reason the timings do not show
-
-Even if it had been fast, a static player list is the wrong shape of solution,
-and reading `players.conf` is enough to see why: **it goes stale, and it goes
-stale silently.**
-
-An announce carries the player's address, port, name, model and firmware
-version. Every one of those is a copy of something that lives somewhere else,
-kept in step by hand. A firmware update, a renamed room, a player added or
-sold, a DHCP lease that moves — each one leaves the file describing a network
-that no longer exists, with nothing to notice it. Some of that is cosmetic,
-because a controller reads the truth from `/SyncStatus` and the announce only
-ever yields an address and a port (§12). The address is not cosmetic: announce a
-player at an address it has moved from and the controller shows an entry it
-cannot reach.
-
-**And the stale copy wins.** The real players are still answering the same
-queries under the same node ids, after their random 0–750 ms. The static
-responder answers in microseconds, so it arrives first, every time. The better
-it performs, the more reliably its stale data beats the fresh data sitting right
-behind it. A responder that was merely as fast as a real player would at least
-lose the race sometimes.
-
-So the experiment's own tool carries an argument against the approach it was
-built to test: a fast static answer is a fast wrong answer the moment anything
-changes, and nothing in the protocol will tell you it has.
+So the tool built to test the approach carries the argument against it: a fast
+static answer is a fast wrong answer the moment anything changes, and the
+protocol will not tell you it has.
 
 ## 1.0–1.5 s is not a target to match
 
-The wired figure is the best case anyone gets from the BluOS app, and it is
-worth asking why it should be accepted at all. **Nothing requires it.** R8 —
-`lsdp-static serve` answering the wired Waydroid guest instantly — settles that:
-the number does not move, so the second is not the network, not the protocol,
-and not the players.
-It is overhead, and there is no technical account of what it buys.
+With the Android app's two-second delay out of the way, about a second remains,
+and it is worth asking why that should be accepted either. Nothing requires it:
+with a responder answering in microseconds the number does not move, so the
+second is not the network, not the protocol and not the players. A list of
+players a controller already knows should appear in the time it takes to draw
+it.
 
-A list of players the controller already knows should appear in the time it
-takes to draw it. The right target is not "as good as the app on a cable" — it
-is **no wait at all**, with the network touched only to confirm what is already
-on screen.
+## Two traps this work fell into
 
-## What is left, and none of it is pending work
+Kept because both are easy to fall into again.
 
-The question this was built to answer is answered, in both directions: a static
-LSDP responder does not make any controller faster, and it would be the wrong
-answer even if it had. Nothing below changes that, and nothing below needs doing
-before the work is used.
+**A warm app is not a measurement.** The Android app holds the whole player list
+within a session and renders it instantly, so any run that does not force-close
+the app first measures the cache. Every usable run swipes the app away between
+attempts; one observation was discarded for exactly this reason.
 
-Two curiosities remain open, for whoever wants them:
+**A plugged-in adapter is not a wired test.** Two runs were recorded as "wired"
+with the Wi-Fi radio still enabled. That turned out to matter more than expected
+— the app's delay keys on the radio being on, not on which interface carries
+traffic — so the label was not just imprecise, it was measuring the wrong thing.
 
-- **Whether the Wi-Fi penalty belongs to the Android app or to Android.** Any
-  Bonjour browser app on the same phone and the same Wi-Fi would separate them
-  in minutes. It would not change a conclusion — the penalty is real and it is
-  not a third-party client's to fix either way.
-- **Whether a player answers a unicast `R` query**, which would settle claim
-  `C-19` in the specification. That is a protocol question, useful to the spec,
-  and unrelated to any of the timings here.
+## What is left
 
-Both are now largely answered from the app's own code, in
-[`../android-controller-code.md`](../android-controller-code.md), which is where
-code-level explanations live rather than in this file.
-
-Everything else has been answered: `staticPlayers.txt` showed the desktop delay
-is not spent waiting for answers, R8 (instant answers to a wired guest) showed the Android floor
-is the app's own, and R9 (an iPhone on the same Wi-Fi) showed the Wi-Fi penalty
-is Android-side rather than the network's.
-
-### Where `staticPlayers.txt` lives, and what it is actually for
-
-Documented by **Bluesound Professional** for the remote-subnet case, and
-independently **[V]** in the client code (§12.3). **It does not make startup
-faster** — that was tested, see above — and the vendor scopes it narrowly:
-**Windows and macOS only**, and explicitly not for grouping players or grouping
-across subnets. It is a professional-install feature for reaching players the
-network hides, not a performance setting, and it is unavailable on Android where
-the problem actually is.
-
-| platform | path |
-|---|---|
-| Windows | `C:\Users\<you>\AppData\Roaming\BluOS Controller\staticPlayers.txt` |
-| macOS | `~/Library/Application Support/BluOS Controller/staticPlayers.txt` — supported by the vendor, exact path inferred from Electron's conventions **[U]** |
-| Linux AppImage | `~/.config/BluOS Controller/staticPlayers.txt` — not supported by the vendor at all, and untested **[U]** |
-
-One comma-separated line of `ip:port`, no spaces:
-
-```
-192.168.0.1:11000,192.168.0.2:11000,192.168.0.3:11000
-```
-
-The vendor's own example is one address with four ports —
-`<ip>:11000,:11010,:11020,:11030` — which is a **four-zone chassis**, not four
-players. The specification agrees: LSDP class 0x0003 is "BluOS Player, secondary
-node in a multi-zone chassis (e.g. CI580)", and §12.2 notes the SRV port is how
-a CI580's four nodes are told apart on one address. Players listed here are used
-directly, **with no discovery at all** — which is exactly what made it a useful
-test even though it is useless as a fix.
-
-Sources: [How to Discover and Control Players from a Remote
-Subnet](https://support.bluesoundprofessional.com/hc/en-us/articles/360060411413-How-to-Discover-and-Control-Players-from-a-Remote-Subnet)
-(Bluesound Professional) · [`bluos-controller-linux`
-README](https://gitlab.com/zquestz/bluos-controller-linux/-/raw/main/README.md)
+The experiment is finished in both directions. One protocol question remains,
+unrelated to any of the timings: whether a real player answers a unicast `R`
+query, which would settle claim `C-19` in `../bluos-http-api.md`. The tool can
+send one — `measure --query R` — and no shipping controller does.

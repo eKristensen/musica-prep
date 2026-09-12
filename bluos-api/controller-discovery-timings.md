@@ -4,7 +4,7 @@ How long a BluOS controller takes to show every player, measured on real
 devices. **This file is the data.** The interpretation lives in
 [`lsdp-static/FINDINGS.md`](lsdp-static/FINDINGS.md), and explanations traced to
 the Android app's own code live in
-[`android-controller-code.md`](android-controller-code.md). Keeping them apart
+[`controller-code-notes.md`](controller-code-notes.md). Keeping them apart
 means a later correction to the reasoning does not quietly rewrite the
 observations.
 
@@ -200,40 +200,18 @@ unusable. On the iPhone the players are there immediately **however many times
 the app is restarted**, so this is cold-start behaviour and not a warm cache
 surviving between launches.
 
-### Which Android-side cause, though, is still open **[U]**
+### Which Android-side cause — answered from the code
 
-What the comparison cannot do is pick between the possible Android-side causes:
-Android's broadcast handling, the app's Android code, or something in the
-vendor Wi-Fi stack. One suspect is specific enough to name.
+The app delays discovery by a hard-coded two seconds whenever the Wi-Fi radio is
+enabled, whatever interface is actually carrying traffic. That is what the rows
+above are measuring, and it is read out of the app in
+[`controller-code-notes.md`](controller-code-notes.md), which also disposes of
+the multicast-lock guess this section used to carry.
 
-Android filters multicast and broadcast packets not addressed to the device
-while the Wi-Fi radio is in power save, unless an application holds a
-`WifiManager.MulticastLock`. iOS has no equivalent requirement. That single
-difference would produce exactly this signature:
-
-| | broadcast discovery | observed |
-|---|---|---|
-| Android, Wi-Fi, no multicast lock held | filtered or delayed | slow, one in five incomplete |
-| Android, cable | no Wi-Fi filter in the path | 1.0–1.5 s, always complete |
-| iOS, Wi-Fi | no such filtering | instant, always complete |
-
-**Battery management is not the explanation, and is not the same mechanism.**
-The BluOS app is allowed background usage on the Fairphone and is exempt from
-battery-saver restrictions on the Mi 9, and both phones still show the penalty.
-That removes the obvious suspect — Android, and MIUI especially, killing or
-throttling background apps — but it leaves the multicast lock untouched, because
-the two are unrelated: battery exemptions govern whether an app may run and use
-the network in the background, while a `MulticastLock` governs whether the Wi-Fi
-driver passes non-directed packets up to the host at all. An app can hold every
-battery exemption available and still never see a broadcast datagram. The
-emptying-list cycle happens in the foreground anyway, where background limits
-were never in play.
-
-**The remaining differential test is cheap**: run any mDNS or Bonjour browser
-app on the Fairphone, over the same Wi-Fi, and see whether *it* finds the
-players promptly. A browser that holds a multicast lock and finds them
-instantly, while the BluOS app does not, points at the app. Both failing equally
-points at the platform. Either way the network is already excluded, by R9.
+**Battery management is not the explanation.** The app is allowed background
+usage on the Fairphone and exempt from battery-saver restrictions on the Mi 9,
+and both still show the penalty — so Android, and MIUI especially, killing or
+throttling background apps is ruled out.
 
 ### D3: the desktop delay is not waiting for answers
 
@@ -241,48 +219,24 @@ With `staticPlayers.txt` in place and **mDNS and LSDP discovery both switched
 off**, only the listed players appear — so the file took effect — and startup is
 **no faster than before [V hardware]**.
 
-**What that does and does not show.** It does not show the delay is unrelated to
-discovery, because the app still displayed its "Discovering…" stage with both
-mechanisms off. The likelier reading is that the static list is **added to**
-whatever discovery produces rather than replacing it: run discovery, then append
-the file's entries. §12.3 says listed players are used "with no discovery",
-which is the vendor's framing of the feature's purpose, not an observation of
-what the app skips.
-
-What it does show is that the app is not waiting for **answers**. There were
-none to wait for — no discovery mechanism was running — and the wait was the
-same. A timer that expires on its own schedule fits; players arriving does not.
-Untested, and one run settles it: put an empty `staticPlayers.txt` in place with
-both mechanisms off and see whether the "Discovering…" stage still takes the
-same time **[U]**.
+**Why it changed nothing** is settled in the Windows source rather than by the
+vendor's framing of the feature: the file is read by a module that runs
+*alongside* LSDP and Bonjour rather than instead of them, and delivers its
+players on its own three-second timer — see
+[`controller-code-notes.md`](controller-code-notes.md). The measurement stands
+on its own as well: with no discovery mechanism running there were no answers to
+wait for, and the wait was unchanged.
 
 The desktop is at least stable once up: none of the list-emptying seen on
 Android **[V hardware]**.
 
 ### `staticPlayers.txt` is built for a different problem
 
-The vendor's own page scopes it narrowly:
-
-> This method is not meant for grouping players and is not designed to support
-> grouping multiple players across different subnets.
->
-> This setup can be performed only using the Windows or macOS version of the
-> BluOS Controller app.
-
-So: **Windows and macOS only** — not Android, which is where the problem
-actually is. The Linux AppImage is the Windows build repackaged and may well
-read the same file, but that is outside what the vendor supports and untested
-here **[U]**.
-
-The documented example line, `<ip>:11000,<ip>:11010,<ip>:11020,<ip>:11030`, is
-one address with four ports, which is a **four-zone chassis** rather than four
-separate players. That reading is corroborated by the specification: LSDP class
-0x0003 is "BluOS Player, secondary node in a multi-zone chassis (e.g. CI580)",
-and §12.2 notes the SRV port is "how a CI580's four nodes are told apart on one
-address".
-
-It is a professional-install feature for reaching players across subnets, not a
-startup optimisation. Worth trying, and it does not help here.
+Bluesound Professional documents it for reaching players across subnets, scopes
+it to Windows and macOS only — not Android, which is where the problem is — and
+excludes grouping. Path, format and the quoted limits are in
+`bluos-http-api.md` §12.3; what the code does with the file is in
+[`controller-code-notes.md`](controller-code-notes.md).
 
 ### R3 is now suspect
 
@@ -342,23 +296,15 @@ simply kept emptying.
 
 **It empties itself with nothing wrong.** The app declares "No Player Found"
 while it is simultaneously controlling a player over the network. Whatever
-empties the list is not the players being unreachable, because one demonstrably
-is not.
+empties the list is not the players being unreachable.
 
-**It refills with no discovery mechanism running.** With LSDP and mDNS both
-switched off, a tap repopulates the whole list in under a second. Nothing could
-have been discovered in that second by either protocol, so the list must come
-from somewhere the app already had it — or from reaching the players directly at
-addresses it already knew **[U]**. `bluos-http-api.md` §12.1 notes that
-controllers detect departure by *failing to reach* a player rather than by being
-told, which implies the app does probe known addresses; §12.3 shows the desktop
-builds can work from a plain address list with no discovery at all. A cached
-address list plus a unicast HTTP check would explain both the emptying and the
-one-second refill, but nothing here proves it.
+**It refills with no discovery mechanism running.** With LSDP and mDNS both off,
+a tap repopulates the whole list in under a second — nothing could have been
+discovered in that second by either protocol.
 
-**So the app has a cache it does not trust.** It holds the full list well enough
-to render it instantly on demand, and it also throws that list away on a timer
-while sitting idle. Those two behaviours are hard to reconcile from the outside.
+**The timings are not arbitrary.** The app's own constants account for the ~30 s
+and ~50 s marks exactly, and for why players age out long before they would next
+announce: see [`controller-code-notes.md`](controller-code-notes.md).
 
 ### What this does and does not affect
 
@@ -377,17 +323,13 @@ during it **[U]**.
 
 ### Open questions
 
-- What empties the list. A cache lifetime, a failed background refresh, and a
-  discovery-state machine timing out are all consistent with what was seen.
-- Whether the ~30 s and ~50 s marks are fixed. Two observations is not a
-  pattern, though both sightings agree to within the noise of estimating.
-- Whether the 57 s ± 6 s announce cycle is involved. It is the same order of
-  magnitude as the time to disappearance, which is suggestive and nothing more
-  **[U]**.
-- What refills the list in under a second with both discovery protocols off.
-  `lsdp-static sniff` would show whether anything goes out on 11430 at all when
-  the list refills — and if nothing does, the answer is unicast HTTP to cached
-  addresses.
+The ~30 s and ~50 s marks, and why players age out long before they would next
+announce, are accounted for by the app's own constants in
+[`controller-code-notes.md`](controller-code-notes.md). What still has no answer
+is **what refills the list in under a second with both discovery protocols
+off**: `lsdp-static sniff` would show whether anything goes out on 11430 at all
+at that moment, and if nothing does, the answer is unicast HTTP to addresses the
+app already holds.
 
 ### Why it matters more than the timing does
 
@@ -409,9 +351,8 @@ Established **[V hardware]**:
 - That remaining second is **the app's own** and not the protocol's: answering
   instantly does not shorten it (R8). Nothing measured here requires it to exist.
 - Used over Wi-Fi, the app is much worse than over a cable, in both speed and
-  reliability. *Why* is not established — app, Android's Wi-Fi stack, or the
-  access point are all consistent with the data — but the effect does not depend
-  on settling that.
+  reliability. The cause is now read out of the app itself — see
+  [`controller-code-notes.md`](controller-code-notes.md).
 - A player on Wi-Fi answers a query no slower than one on a cable.
 - The app empties its own player list after roughly 30–50 seconds sitting idle,
   and refills it in under a second on a tap — with every discovery mechanism
@@ -423,9 +364,9 @@ Established **[V hardware]**:
   changes is that players arrive together rather than one or two at a time.
 - The Xiaomi Mi 9 does not bring up USB Ethernet in airplane mode at all.
 - The desktop's 5–6 s is not spent waiting for discovery **answers**: with no
-  discovery mechanism running at all, startup took the same time (D3). Whether
-  the app is waiting on a discovery *timer* is a separate question, and open.
-  The desktop is stable once up.
+  discovery mechanism running at all, startup took the same time (D3), and
+  `staticPlayers.txt` never replaced discovery in the first place. The desktop
+  is stable once up.
 - **iOS does not have the Wi-Fi problem at all**, on the same network and the
   same players, which rules the network and the access point out as the cause.
 - Android battery management is not the cause either: the app has background
@@ -434,8 +375,10 @@ Established **[V hardware]**:
 
 Not established:
 
-- **Which interface each of R1–R4 actually used.** This is the big one. R3 and
-  R4 may both be Wi-Fi measurements mislabelled as wired.
+- **Which interface each of R1–R4 actually used** — though it now matters less
+  than it seemed to, since the app's delay keys on the Wi-Fi radio being
+  enabled rather than on which interface carries traffic, and the radio was
+  never switched off in those runs.
 - Whether Waydroid being a few tenths slower than the phones means anything; a
   virtualised display is the dull explanation.
 - **What the iOS controller actually does.** `bluos-http-api.md` is built from
@@ -443,7 +386,8 @@ Not established:
   sources. So the client that behaves best here is the one nothing is known
   about, and claims in that document about what "the clients" do are claims
   about the other three.
-- *What* the app spends its 1.0–1.5 s floor on. R8 establishes that it is
+- *What* the app spends its 1.0–1.5 s floor on, once the two-second delay is
+  out of the picture. R8 establishes that it is
   app-side; it does not say whether the app queries late, renders late, or waits
   deliberately.
 - What empties the list, what refills it in under a second with no discovery
@@ -462,13 +406,10 @@ suspect runs need no redoing — the wired figure rests on three later runs that
 are not in doubt, and R3 and R4's own numbers sit with the Wi-Fi rows, which is
 where they are filed.
 
-Two questions stay open because nobody has looked, not because anything waits on
-them:
+"App or platform?" is no longer one of them: the Wi-Fi penalty is the app's own
+two-second delay. One question stays open because nobody has looked, not because
+anything waits on it:
 
-- **App or platform?** Any mDNS or Bonjour browser app on the Fairphone, over the
-  same Wi-Fi, separates "the BluOS Android app" from "Android" as the cause of
-  the Wi-Fi penalty. Minutes of work. It would not change what the penalty costs
-  or whose job it is.
 - **Does a real player answer a unicast `R` query?** `lsdp-static measure --query R`
   aimed at a player settles claim `C-19` in `bluos-http-api.md`, currently
   INCONCLUSIVE. A protocol question rather than a timing one.

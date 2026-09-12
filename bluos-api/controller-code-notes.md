@@ -1,16 +1,21 @@
-# What the Android controller's code says about the measurements
+# What the controllers' own code says about the measurements
 
-Read out of **BluOS Controller for Android 4.16.2** (`com.lenbrook.sovi.bluesound`,
-APK from APKPure), against the timings in `controller-discovery-timings.md`.
-Everything here is reconstructed from Dalvik bytecode — method and field names
-survive R8 shrinking, and the control flow in the methods below is simple enough
-to read directly. Reproduction notes are at the end.
+Explanations for the numbers in
+[`controller-discovery-timings.md`](controller-discovery-timings.md), read out
+of the shipping apps. Two sources:
+
+| | |
+|---|---|
+| **Android 4.16.2** | `com.lenbrook.sovi.bluesound`, APK from APKPure. Reconstructed from Dalvik bytecode — names survive R8 shrinking and the control flow below is simple enough to read directly |
+| **Windows 4.16.1** | Electron app. Its main process ships **original TypeScript** in adjacent source maps, so this is real source, not decompilation |
 
 This file explains measurements; it does not add any. **[V official]** is
 `bluos-http-api.md`'s marker for something read out of a first-party Controller
 build, and its legend already names this exact APK.
 
 ---
+
+# Android
 
 ## The headline: discovery waits two seconds when Wi-Fi is on **[V official]**
 
@@ -154,7 +159,7 @@ is needed for that part.
 
 ---
 
-## What this does not explain
+## What the Android code does not explain
 
 - **The remaining 1.0–1.5 s** when the delay is skipped. R8 already showed it is
   not the network; nothing found here accounts for it either. Candidates not yet
@@ -170,6 +175,88 @@ is needed for that part.
 - **`PlayerDiscoveryState.update` has a 60 s constant** that was not chased down.
 
 ---
+
+# Windows
+
+Source, not decompilation: the Electron main process ships its original
+TypeScript in source maps. Three discovery modules live in
+`app-main/src/modules/`.
+
+## `staticPlayers.txt` never replaced discovery **[V official]**
+
+`staticPlayersDiscovery.ts` is a **peer of the other two discovery modules**,
+not a substitute for either. `index.ts` builds all three and starts them
+together:
+
+```ts
+const bonjourDiscovery = new BonjourDiscovery();
+const lsdpDiscovery = new LsdpDiscovery();
+const staticPlayersDiscovery = new StaticPlayersDiscovery();
+
+const restartDiscovery = () => {
+  lsdpDiscovery.disable(); lsdpDiscovery.enable();
+  bonjourDiscovery.enable({ ... });
+  staticPlayersDiscovery.enable();
+};
+```
+
+And the module itself does nothing but read a file and push its contents at the
+renderer — **after its own three-second timer**:
+
+```ts
+enable(): void {
+  this.#discoveryTimeout = setTimeout(() => {
+    if (fs.existsSync(staticPlayersFile)) {
+      ... readStaticPlayers(window)       // window.webContents.send("foundStaticPlayers", players)
+    } else {
+      fs.writeFile(staticPlayersFile, "", () => {});
+    }
+  }, 3000);
+}
+```
+
+Three things follow, and together they settle the measurement:
+
+- **It adds players; it never stops discovery.** LSDP and Bonjour run exactly as
+  they would without the file. The reading that the static list is "used
+  directly, with no discovery" describes the vendor's intent for the feature,
+  not the code.
+- **It cannot make startup faster, by construction.** Its players are delivered
+  on a 3-second timer, which is *slower* than a working discovery round. Nothing
+  it does is on the critical path to a player appearing sooner.
+- **It creates an empty `staticPlayers.txt` when none exists**, which is why the
+  file turns up on machines that never used the feature.
+
+## The same LSDP schedule, written out **[V official]**
+
+`lsdpDiscovery.ts`:
+
+```ts
+const msg = Buffer.from([6, 76, 83, 68, 80, 1, 5, 81, 1, 255, 255]);
+const delays = [0, 1, 2, 3, 5, 7, 10];
+for (let d = 0; d < delays.length; d++) {
+  this.#queryTimeouts[d] = setTimeout(..., delays[d] * 1000 + Math.random() * 250);
+}
+```
+
+The buffer is `06 4C 53 44 50 01 05 51 01 FF FF` — §12.1's eleven-byte query,
+byte for byte — and the schedule is the same 0,1,2,3,5,7,10 s with up to 250 ms
+of jitter that the Android app builds out of its `DELAYS` array. Two independent
+clients, one schedule.
+
+`RESTART_DEBOUNCE_MS = 3000` debounces the "Search Again" button, with a comment
+saying each restart tears down and rebinds the socket.
+
+`bonjourDiscovery.ts` has `setInterval(resetBonjour, 10000)` — the ten-second
+rebuild of the whole mDNS browser that §12.2 describes, confirmed here.
+
+## What the Windows code does not explain
+
+**The 5–6 s from launch.** There is no equivalent of Android's two-second
+delay: LSDP queries start at `delays[0] = 0`. So the desktop's wait is not
+inside discovery, which is what the measurement already said. What is left is
+Electron and Vue starting up before the modules run and the UI paints, and that
+is not something this source can be read off — it would have to be timed.
 
 ## Reproducing this
 
@@ -193,7 +280,11 @@ for dex in [DEX(d) for d in apk.get_all_dex()]:
                 print("   ", i.get_name(), i.get_output())
 ```
 
-The classes worth reading are `com.lenbrook.sovi.discovery.PlayerDiscoveryManager`
+For Windows no tooling is needed: the source maps carry the original
+TypeScript, and `app-main/src/modules/` holds the three discovery modules
+directly.
+
+The Android classes worth reading are `com.lenbrook.sovi.discovery.PlayerDiscoveryManager`
 (and its `$LSDPProbeRetry`), `LSDPPlayerDiscoveryOnSubscribe`,
 `JmDNSPlayerDiscoveryOnSubscribe`, `PlayerDiscoveryState`, and
 `com.lenbrook.sovi.bluos4.ui.players.PlayersFragment`. The app logs its own
