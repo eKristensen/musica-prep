@@ -21,6 +21,7 @@ directly, **[U]** unverified.
 | **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App from Play Store, version not recorded **[U]** |
 | **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002`. App from Play Store, version not recorded **[U]** |
 | **Waydroid** | LineageOS-based Waydroid image (exact version not recorded **[U]**), minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
+| **iPhone** | an iPhone 16-series, exact model not recorded **[U]**; iOS current as of a week before these tests **[U]** |
 | **Windows** | BluOS Controller 4.16.0 (Electron) |
 | **Linux** | [`bluos-controller-linux`](https://gitlab.com/zquestz/bluos-controller-linux) — the same official 4.16.0 Electron app, repackaged as an AppImage |
 
@@ -69,6 +70,7 @@ All on 2026-09-12, in the order given.
 | R6 | **both phones** | **Wi-Fi disabled** + USB Ethernet | players directly | **timer** | **≈1 s, a little above** | **always, every run, both devices** |
 | R7 | **Waydroid** (LineageOS, no Google Play, app 4.16.3) | **bridged, wired**, own IP on the players' VLAN | players directly | **timer** | **1.0–1.5 s** | **always, however many times tried** |
 | R8 | **Waydroid**, same as R7 | same as R7 | **`lsdp-static serve` on the players' network**, answering instantly | **timer** | **1.0–1.5 s — no difference** | always |
+| R9 | **iPhone** | **Wi-Fi**, and separately wired with Wi-Fi off | players directly, same VLAN | **not timed** — impression only | **instant, no "Discovering…" at all** | **always, on either link** |
 | D1 | Windows | wired LAN | with and without `lsdp-static serve` | counted | 5–6 s from launch | — |
 | D2 | Linux AppImage | wired LAN | with and without `lsdp-static serve` | counted | 5–6 s from launch, no measurable difference | — |
 
@@ -158,6 +160,43 @@ players, a minimum that low *somewhere* is more likely than not.
 comparable figures, and they say a player on Wi-Fi answers a query no slower
 than one on a cable. Player-side Wi-Fi is not implicated in anything here; the
 Wi-Fi that matters is the link to the **controller**.
+
+### R9: iOS does not have the problem, on either link
+
+On the iPhone the app simply works. Players are there, immediately, with no
+"Discovering…" stage — **the same on Wi-Fi as on a cable with Wi-Fi off**. Only
+the same VLAN was tested, which is enough for the question being asked.
+
+Not timed, so "instant" is an impression rather than a number, and the device
+and iOS version are recorded loosely. It is corroborated by a family member
+running Bluesound from iOS who reports never having seen any of the behaviour
+described on Android — hearsay, and worth having.
+
+**This is the most informative single observation in the file**, because of what
+it removes. The same house, the same players, the same access point, and the
+Wi-Fi penalty does not appear. So the 2–4 seconds and the one-in-five
+incompleteness are **not a property of the network, the access point, or Wi-Fi
+as such**. They belong to the Android side — either to Android's handling of
+multicast and broadcast, or to what the Android app does about it.
+
+### A specific, testable suspect **[U]**
+
+Android filters multicast and broadcast packets not addressed to the device
+while the Wi-Fi radio is in power save, unless an application holds a
+`WifiManager.MulticastLock`. iOS has no equivalent requirement. That single
+difference would produce exactly this signature:
+
+| | broadcast discovery | observed |
+|---|---|---|
+| Android, Wi-Fi, no multicast lock held | filtered or delayed | slow, one in five incomplete |
+| Android, cable | no Wi-Fi filter in the path | 1.0–1.5 s, always complete |
+| iOS, Wi-Fi | no such filtering | instant, always complete |
+
+This is a hypothesis and nothing here tests it. **The differential test is
+cheap**: run any mDNS or Bonjour browser app on the Fairphone, over the same
+Wi-Fi, and see whether *it* finds the players promptly. A browser that holds a
+multicast lock and finds them instantly, while the BluOS app does not, points at
+the app; both failing equally points at the platform or the access point.
 
 ### R3 is now suspect
 
@@ -297,6 +336,8 @@ Established **[V hardware]**:
 - A static LSDP responder does not change the Android timing either; what it
   changes is that players arrive together rather than one or two at a time.
 - The Xiaomi Mi 9 does not bring up USB Ethernet in airplane mode at all.
+- **iOS does not have the Wi-Fi problem at all**, on the same network and the
+  same players, which rules the network and the access point out as the cause.
 
 Not established:
 
@@ -325,7 +366,10 @@ Not established:
 3. **Screen-record the phone** rather than watching it; Android records natively
    and scrubbing the video resolves the tap and each player's appearance to
    about a tenth of a second.
-4. **Try `--query R`.** Its answers come back by **unicast**, which does not
+4. **Run an mDNS/Bonjour browser app on the Fairphone over Wi-Fi**, as the
+   differential test for the multicast-lock hypothesis above. A few minutes, and
+   it separates "the app" from "the platform".
+5. **Try `--query R`.** Its answers come back by **unicast**, which does not
    depend on Wi-Fi broadcast delivery at all. If the Wi-Fi penalty is broadcast
    handling, a unicast query is the protocol-level way around it — and Musica
    can send one even though no shipping client does.

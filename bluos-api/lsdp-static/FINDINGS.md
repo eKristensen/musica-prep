@@ -28,9 +28,10 @@ still took 5–6 s from launch, with or without the responder.
 
 | link | time for the remaining players | complete runs |
 |---|---|---|
-| **Wi-Fi** | 3–5 s | about 4 in 5 |
-| **wired, no Wi-Fi in the path** | **1–1.5 s** | **every run, three devices** |
-| wired, **and** a responder answering instantly | **1–1.5 s, unchanged** | every run |
+| **Android, Wi-Fi** | 3–5 s | about 4 in 5 |
+| **Android, wired, no Wi-Fi in the path** | **1–1.5 s** | **every run, three devices** |
+| Android, wired, **and** a responder answering instantly | **1–1.5 s, unchanged** | every run |
+| **iOS, Wi-Fi or wired** | **instant** (not timed) | **every run** |
 
 That is not a small finding. The same app, the same players, the same second —
 a different link, and discovery stops being a problem.
@@ -49,12 +50,23 @@ the app used. Until that is redone, treat them as Wi-Fi measurements.
 
 ### The leading explanation **[U]**
 
-Broadcast delivery over Wi-Fi to a phone is the weak point — power save,
-DTIM buffering, and access points handling broadcast badly are all well known,
-and LSDP is broadcast by design. On a cable none of that applies.
+Broadcast delivery over Wi-Fi to the controller is the weak point, and it is
+**an Android-side weakness, not the network's**. The same house, the same
+players and the same access point serve an iPhone with no delay and no
+"Discovering…" stage at all, on Wi-Fi exactly as on a cable. That removes the
+network, the access point, and Wi-Fi as such from the list of suspects.
+
+What is left is Android's own handling of broadcast, or what the Android app
+does about it. Android filters multicast and broadcast not addressed to the
+device while the Wi-Fi radio is in power save, unless an app holds a
+`WifiManager.MulticastLock`; iOS has no equivalent requirement. That one
+difference would produce precisely this pattern — slow and lossy on Android over
+Wi-Fi, fine on Android over a cable, fine on iOS either way — and it is
+testable in minutes with any Bonjour browser app on the same phone and the same
+Wi-Fi. It remains a hypothesis until someone runs that.
 
 Everything else that could plausibly have explained the slow runs has now been
-varied without effect. Wi-Fi is the only variable left standing.
+varied without effect.
 
 This is a hypothesis, not a measurement. It is worth stating because it is
 cheap to test and because it points somewhere useful: **the protocol already has
@@ -67,10 +79,12 @@ send them.
 lives in the app, in Android's Wi-Fi stack, or in the access point is unsettled
 and may stay that way — but the observable fact needs none of that resolved:
 **used over Wi-Fi, the BluOS Controller is much worse than over a cable**, in
-both speed and reliability. Nor is the cause this project's to chase. A
-Sonos system in the family does not behave this way at all — not measured here,
-and a different product with its own discovery, but enough to show the
-experience is achievable on the same kind of home network and the same phones.
+both speed and reliability. Nor is the cause this project's to chase. The
+same BluOS app on an iPhone, on the same network, does not have the problem at
+all; and a Sonos system in the family does not behave this way either. Neither
+is measured here, but together they settle that the experience is achievable on
+this kind of home network — the BluOS app itself achieves it, just not on
+Android.
 Solving it inside somebody else's app or inside Android is not a thing Musica is
 expected to do. What Musica can do is not depend on the part that fails.
 
