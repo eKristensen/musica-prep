@@ -5,9 +5,8 @@ four players appear in the Android app **all at once** instead of trickling in
 one or two at a time.
 
 **Timing: no.** The full list still takes 3–5 seconds (timed by counting, ±1 s),
-and the desktop app is unchanged at 5–6 seconds. The answers are on the wire in milliseconds, and the
-app is already on screen showing its cached player while the other three wait.
-The wait is not discovery.
+and the desktop app is unchanged at 5–6 seconds, with every answer on the wire
+in milliseconds. The wait is not discovery.
 
 Testing from 2026-09-12 onward, four players, three VLANs on `ek-arm`, with
 `lsdp-static` v1.0. Confidence markers follow `bluos-http-api.md`:
@@ -51,12 +50,9 @@ a player that is on screen immediately and three that are not there for about
 four seconds; a second of counting error does not touch it. The desktop numbers
 were taken the same way and deserve the same ±1 s.
 
-**Step 5 matters more than it looks.** Swiping the app away means Android kills
-the process, so every run is a genuine cold start — and the previously selected
-player *still* appears instantly. That player is therefore cached **on disk**,
-not merely left in memory from the last run **[U]**. The app persists at least
-one player's address across process death and reads it back before, or instead
-of, discovering anything.
+**Step 5 kills the process**, so every run is a cold start. The currently
+selected player survives it regardless: the cache clear at shutdown does not
+clear that one, so it is restored rather than rediscovered.
 
 ### Tightening it, for the next round
 
@@ -98,17 +94,26 @@ back to back:
 - **1 time out of 5**: previously selected player instant, then two more, then
   the last one about a second after those.
 
-The first part is the important half. **The app shows the last-selected player
-instantly**, which means it has that player cached and does not discover it at
-all. The network is therefore demonstrably fine at t ≈ 0 — the app is on screen
-and usable with one player before a single discovery answer could have arrived.
+The selected player is there because it is **saved**: the cache clear at
+shutdown does not clear the currently selected player. It is not a fast
+discovery, it is not a discovery at all, and no conclusion about discovery
+should be drawn from it.
 
-The other three then wait about four seconds. They cannot be waiting for the
-protocol: measured on the same segment, all four announces are in hand within
-750 ms at worst, and within milliseconds against a static responder. So roughly
-three seconds of the wait is the app holding results it already has **[U]** —
-which matches the "forced wait time" noted independently in
-`musica/MOTIVATION.md`.
+**The measurement is the other three.** They take about four seconds, and they
+cannot be waiting for the protocol: measured on the same segment, all four
+announces are in hand within 750 ms at worst, and within milliseconds against a
+static responder. So roughly three seconds of the wait is the app holding
+results it already has **[U]** — which matches the "forced wait time" noted
+independently in `musica/MOTIVATION.md`.
+
+### What this test cannot measure
+
+**The player icon in the menu only works once there is at least one player.**
+The saved player guarantees that, so the icon is always available and the timer
+can always start — but it also means the run can never observe a list going from
+empty to one. **Nothing in this data says anything about how long the first
+player takes to discover.** Only the timing of the remaining players is usable,
+and every number above should be read that way.
 
 ### This corrects the earlier explanation in this file
 
@@ -160,14 +165,13 @@ desktop client uses both, and nothing here shows which one it acted on **[U]**.
 |---|---|
 | on the wire, real players | ~640 ms median, ~730 ms p95 |
 | on the wire, static responder | ~0 ms |
-| **Android, Players tab → cached player** | **instant** |
-| **Android, Players tab → full list** | **3–5 s** |
+| **Android, Players tab → the remaining players** | **3–5 s** |
 | **Windows / Linux, launch → full list** | **5–6 s** |
 
-Three to five seconds pass on Android with every answer already in hand — and
-with the app already on screen and usable, showing the player it had cached.
-Making discovery instant removed the trickle and removed the relay's
-unreliability, and it moved the total wait by nothing measurable.
+Three to five seconds pass on Android with every answer already in hand. Making
+discovery instant removed the trickle and removed the relay's unreliability, and
+it moved the total wait by nothing measurable. (The saved player is not in that
+row: it is not discovered, so it is not a discovery time.)
 
 **A faster responder cannot fix a slow client.** The discovery process in the
 Android app is as slow as it ever was — which is the thing that motivated Musica
@@ -175,10 +179,10 @@ in the first place, and this is now measured rather than assumed. A controller
 that keeps its own player list and does not rediscover on every launch is the
 only thing that removes this wait.
 
-The app itself demonstrates the fix, on one player. It shows the last-selected
-player instantly, from cache, with no discovery — and then makes the other three
-wait four seconds. **Musica's design target is simply to do for every player
-what the BluOS app already does for one.**
+The app already keeps one player across a restart — the selected one, which its
+shutdown cache clear leaves alone. **Musica's design target is to do that for
+every player**, so a restart restores the whole list instead of one entry and a
+four-second wait.
 
 ## Loose ends
 

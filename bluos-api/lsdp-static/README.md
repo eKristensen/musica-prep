@@ -19,8 +19,7 @@ never".
 players appear — all at once instead of trickling in — and it puts a phone on
 another VLAN in the same position as one sitting on the players' own segment. It
 does not change *when* the list is complete: 3–5 s on Android from the Players
-tab, 5–6 s on the desktop from launch, with every answer already in hand and the
-app already on screen showing its cached player. See
+tab, 5–6 s on the desktop from launch, with every answer already in hand. See
 [`FINDINGS.md`](FINDINGS.md) for the measurements and for `sniff`, which settles
 what the apps are actually waiting for.
 
@@ -168,8 +167,10 @@ first player         1          2        4         9  ms
 all players          6         13       21        34  ms
 ```
 
-`first player` is how long until the app could show something; `all players` is
-when the list stops changing. `announce datagrams` counts every announce heard,
+`first player` is how long until the first announce arrives; `all players` is
+when the last one does. Both are wire times — what a controller does with them
+is its own business, and on Android the app has a saved player on screen before
+either number applies. `announce datagrams` counts every announce heard,
 including the deliberate repeats — if that is far below `players × repeats ×
 queries`, datagrams are being dropped, and that is worth knowing on its own.
 
