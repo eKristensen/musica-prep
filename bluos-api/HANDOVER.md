@@ -270,6 +270,36 @@ Remaining unresolved, and not worth more effort:
 - **Only one input learned**, so C-53 (disabled inputs not selectable) is
   strong but not conclusive. Re-enabling a second input would settle it.
 
+## Fixed in v1.7
+
+**Real MACs and addresses were still leaving in packet dumps.** A discovery
+capture writes each datagram twice, parsed into JSON and again as a `raw_hex`
+string. The parsed copy was redacted; the hex copy was not, and it carried four
+real device MACs and four real player addresses out of
+`test-runs/bluos-probe-20260911T220357`.
+
+Neither the scrubber nor the verifier could have caught it, and no amount of
+pattern tuning would have. On the wire a node id is a bare MAC with no
+separators and no boundary, so `MAC_HEX_RE`'s lookarounds fail inside the longer
+hex run of a dump, and an address is four raw bytes that no dotted-quad pattern
+can match. The bundle was reported clean because the verifier was blind in the
+same place the scrubber was.
+
+Both sides are now structural rather than textual:
+
+- `Redactor.redact_lsdp_packet()` rewrites the identifying fields inside a
+  datagram, and discovery captures redact the bytes *before* parsing them, so
+  the two copies cannot disagree. Placeholders are the same length as what they
+  replace, so the packet stays structurally identical.
+- `verify_bundle` decodes every long hex run and inspects it as a packet, via
+  `_lsdp_identifiers()`.
+
+Eight assertions cover it, including one that asserts the blind spot still
+exists so the note above cannot go stale silently. 134 pass.
+
+The already-published bundle was corrected in place; its `REDACTIONS.md` records
+what was wrong rather than being quietly fixed.
+
 ## Fixed in v1.6
 
 **The harness itself was not shareable.** It embedded a real device MAC, lifted
