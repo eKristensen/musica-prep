@@ -18,13 +18,15 @@ directly, **[U]** unverified.
 
 | | |
 |---|---|
-| **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804` |
-| **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002` |
+| **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App from Play Store, version not recorded **[U]** |
+| **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002`. App from Play Store, version not recorded **[U]** |
+| **Waydroid** | LineageOS-based Waydroid image (exact version not recorded **[U]**), minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
 | **Windows** | BluOS Controller 4.16.0 (Electron) |
 | **Linux** | [`bluos-controller-linux`](https://gitlab.com/zquestz/bluos-controller-linux) — the same official 4.16.0 Electron app, repackaged as an AppImage |
 
 USB Ethernet on the phones is a wired adapter; "Wi-Fi" means the phone's own
-radio.
+radio. The Waydroid guest is wired throughout — a host bridge, no radio anywhere
+in its path.
 
 ## Method
 
@@ -65,6 +67,7 @@ All on 2026-09-12, in the order given.
 | R4 | Fairphone 5 Plus | airplane mode + USB Ethernet | players directly | **timer** | **2.9–3.4 s** | 4 of 5 |
 | R5 | Xiaomi Mi 9 | airplane mode + USB Ethernet | — | — | **Ethernet did not work at all**, no discovery | none |
 | R6 | **both phones** | **Wi-Fi disabled** + USB Ethernet | players directly | **timer** | **≈1 s, a little above** | **always, every run, both devices** |
+| R7 | **Waydroid** (LineageOS, no Google Play, app 4.16.3) | **bridged, wired**, own IP on the players' VLAN | players directly | **timer** | **1.0–1.5 s** | **always, however many times tried** |
 | D1 | Windows | wired LAN | with and without `lsdp-static serve` | counted | 5–6 s from launch | — |
 | D2 | Linux AppImage | wired LAN | with and without `lsdp-static serve` | counted | 5–6 s from launch, no measurable difference | — |
 
@@ -76,6 +79,39 @@ no trickle, nothing to wait for.
 
 Against 3–5 s and one run in five incomplete over Wi-Fi, that is not a
 refinement, it is a different regime.
+
+### R7 confirms R6, and rules out several other explanations
+
+A third device, on a third kind of wired path, lands in the same place: about a
+second, complete every single time. Slightly slower than the phones on cable,
+and that difference is small enough to be the virtualised display rather than
+anything about discovery **[U]**.
+
+What makes R7 worth more than a repeat is everything it differs in. A
+**different Android** (LineageOS, not a vendor build), with **no Google Play
+services at all**, running a **different app version** (4.16.3 from APKMirror,
+where the phones run whatever the Play Store gave them), on **virtualised
+hardware**. None of that moved the number.
+
+So the fast-on-wire result does not depend on the vendor Android, on Google Play
+services, on a particular app build, or on real hardware. The one thing every
+fast run has in common is a **wired path with no Wi-Fi in it**; the one thing
+every slow run has in common is Wi-Fi.
+
+### R7 is also a much better test rig
+
+The guest is bridged on the host, so `lsdp-static sniff` can watch the same
+segment from that host, and the guest's screen can be recorded there too. Query
+out, announces in, and screen filling can finally be put on one timeline —
+without a phone, a stopwatch, or a person counting.
+
+That makes one experiment cheap that was not before: run `lsdp-static serve`
+against this guest and see whether 1.0–1.5 s drops. A real player answers after
+a random 0–750 ms, so roughly a second is about what the protocol alone would
+cost, and there may be very little app-side delay left to find on a good link
+**[U]**. If the number falls to a few hundred milliseconds against a responder
+answering instantly, that is the protocol's cost measured directly; if it stays
+near a second, the remainder is the app's.
 
 ### R3 is now suspect
 
@@ -131,7 +167,9 @@ it.
 
 Established **[V hardware]**:
 
-- Over a cable with Wi-Fi off, discovery takes about a second and never failed.
+- Over a cable with Wi-Fi off, discovery takes about a second and never failed —
+  on three devices now, including one with no Google Play services and a
+  different app version, so it is not a property of one phone or one build.
 - Over Wi-Fi, it takes 3–5 s and fails to complete roughly one run in five.
 - The desktop app takes 5–6 s from launch on both Windows and Linux, and a
   static LSDP responder does not change that.
@@ -143,7 +181,10 @@ Not established:
 
 - **Which interface each of R1–R4 actually used.** This is the big one. R3 and
   R4 may both be Wi-Fi measurements mislabelled as wired.
-- Whether the remaining ~1 s in R6 is discovery, rendering, or something else.
+- Whether the remaining ~1 s in R6 and R7 is the protocol's own 0–750 ms reply
+  delay, rendering, or something else. The Waydroid rig can answer this.
+- Whether Waydroid being a few tenths slower than the phones means anything; a
+  virtualised display is the dull explanation.
 - What causes the vanishing players.
 - Whether the desktop apps would also improve with Wi-Fi off — they were on
   wired LAN throughout, so the comparison has not been run.
@@ -158,7 +199,11 @@ Not established:
 3. **Screen-record the phone** rather than watching it; Android records natively
    and scrubbing the video resolves the tap and each player's appearance to
    about a tenth of a second.
-4. **Try `--query R`.** Its answers come back by **unicast**, which does not
+4. **Run `lsdp-static serve` against the Waydroid guest**, from the host that
+   bridges it, with `sniff` alongside. Instant answers to a wired guest is the
+   cleanest way to separate the protocol's cost from the app's, and it needs
+   neither a phone nor a stopwatch.
+5. **Try `--query R`.** Its answers come back by **unicast**, which does not
    depend on Wi-Fi broadcast delivery at all. If the Wi-Fi penalty is broadcast
    handling, a unicast query is the protocol-level way around it — and Musica
    can send one even though no shipping client does.

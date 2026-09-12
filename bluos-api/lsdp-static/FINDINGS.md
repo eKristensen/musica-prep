@@ -29,11 +29,18 @@ still took 5–6 s from launch, with or without the responder.
 | link | time for the remaining players | complete runs |
 |---|---|---|
 | **Wi-Fi** | 3–5 s | about 4 in 5 |
-| **cable, Wi-Fi explicitly disabled** | **≈1 s** | **every run, both phones** |
+| **wired, no Wi-Fi in the path** | **1–1.5 s** | **every run, three devices** |
 
-That is the finding the latest round produced, and it is not a small one. The
-same app, the same players, the same second — a different link, and discovery
-stops being a problem.
+That is not a small finding. The same app, the same players, the same second —
+a different link, and discovery stops being a problem.
+
+The wired number now rests on three devices: both phones with Wi-Fi explicitly
+disabled, and a bridged Waydroid guest. That third one carries weight out of
+proportion to being one more run, because it differs in everything except the
+link — LineageOS rather than a vendor Android, **no Google Play services**, a
+different app build (4.16.3 against whatever the Play Store gave the phones),
+and virtualised hardware. None of it moved the number. The fast result is not a
+property of one phone, one Android, one app version, or real hardware.
 
 Two earlier runs were recorded as "wired" and are now suspect: an adapter was
 plugged in but Wi-Fi was never turned off, and nothing confirmed which interface
@@ -44,6 +51,9 @@ the app used. Until that is redone, treat them as Wi-Fi measurements.
 Broadcast delivery over Wi-Fi to a phone is the weak point — power save,
 DTIM buffering, and access points handling broadcast badly are all well known,
 and LSDP is broadcast by design. On a cable none of that applies.
+
+Everything else that could plausibly have explained the slow runs has now been
+varied without effect. Wi-Fi is the only variable left standing.
 
 This is a hypothesis, not a measurement. It is worth stating because it is
 cheap to test and because it points somewhere useful: **the protocol already has
@@ -94,6 +104,12 @@ Correction 3 undermines the inference that the app holds results it already has
 for several seconds. Over a cable it does not. That inference is withdrawn
 pending the measurement below.
 
+There may be very little app-side delay to find at all. A real player answers a
+query after a random 0–750 ms, so the 1–1.5 s measured on a wire is roughly what
+the protocol alone costs, plus rendering **[U]**. If that holds, the app is
+about as fast as LSDP allows on a good link, and the entire 3–5 s Wi-Fi figure
+is the link.
+
 ## What this means for Musica
 
 The justification is intact, and the reason for it is sharper.
@@ -111,18 +127,23 @@ is unavoidable, to prefer the unicast `R` query over broadcast.
 
 ## The measurements that would close this
 
-1. **`lsdp-static sniff` beside every run.** It answers nothing and timestamps
-   every datagram. The source address of the phone's query says which interface
-   it really used, which resolves the two suspect runs outright; the gap between
-   the announces arriving and the screen filling says whether anything is being
-   held back.
-2. **Redo the wired runs with Wi-Fi confirmed off**, so the comparison rests on
+1. **`lsdp-static serve` against the bridged Waydroid guest, with `sniff`
+   alongside.** The guest is wired, on the host's bridge, so the query going
+   out, every announce coming back, and the screen filling can all be put on one
+   timeline from that host — no phone, no stopwatch, nobody counting. If 1–1.5 s
+   drops to a few hundred milliseconds when a responder answers instantly, the
+   protocol's cost is measured directly and whatever is left is the app's. This
+   is now the cheapest decisive experiment available.
+2. **`lsdp-static sniff` beside every run.** It answers nothing and timestamps
+   every datagram. The source address of a phone's query says which interface it
+   really used, which resolves the two suspect runs outright.
+3. **Redo the wired runs with Wi-Fi confirmed off**, so the comparison rests on
    confirmed configurations rather than plugged-in adapters.
-3. **`staticPlayers.txt` on the desktop** (§12.3), which makes the desktop apps
+4. **`staticPlayers.txt` on the desktop** (§12.3), which makes the desktop apps
    skip discovery entirely. If Windows still takes 5–6 s, its delay is
    definitively not discovery. Path and format are in the data file's companion
    notes below.
-4. **`--query R` against a real player**, which would settle claim `C-19` and, if
+5. **`--query R` against a real player**, which would settle claim `C-19` and, if
    the Wi-Fi hypothesis holds, demonstrate the way around it.
 
 ### Where `staticPlayers.txt` lives
