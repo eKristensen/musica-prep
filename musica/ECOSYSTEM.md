@@ -61,7 +61,7 @@ completeness.
 * [edda](https://github.com/venjum/edda)
 * [homebridge-bluesound](https://github.com/JayWizz/homebridge-bluesound)
 * [homebridge-bluesound-rest](https://github.com/rryter/homebridge-bluesound-rest)
-* [Controller for Bluesound](https://apps.microsoft.com/detail/9p66hvj9t6tb)
+* [Controller for Bluesound](https://apps.microsoft.com/detail/9p66hvj9t6tb) — closed source
 
 ## Libraries
 
