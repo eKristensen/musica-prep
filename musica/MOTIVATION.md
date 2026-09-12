@@ -30,7 +30,12 @@ of it.
 
 I have only been able to reproduce the problems with the official app on an
 Android phone. The Windows and iOS apps do not appear to have them when I test
-in my setup.
+in my setup. The Windows app does share the slow start — five to six seconds
+from launch to players visible, of which roughly two to three is discovery once
+the window is up — but the list then stays put. The repackaged Linux build
+behaves the same on different hardware, so I take that timing to be simply how
+the desktop app works rather than a fault. I have no Mac, so the Mac app is
+untested.
 
 ---
 
@@ -92,7 +97,9 @@ player. The restriction appears to be based on connection type rather than on
 whether the players are actually reachable.
 
 **Impact:** no remote control of my own equipment on my own network, for no
-technical reason I can identify. It also makes it impossible to build an
+technical reason I can identify. If I forget to pause the music before leaving
+home, fixing that should be no harder from outside the house than it would have
+been on my way out the door. It also makes it impossible to build an
 alternative, potentially more stable, path for the discovery packets over VPN.
 
 ### 7. A full rediscovery whose results are then thrown away
@@ -144,15 +151,20 @@ response and in many cases it would be correct.
   discovery traffic and resolves the players quickly and consistently.
 - **Not one bad device.** The problems move around between players rather than
   sticking to one.
-- **Not the app's logic.** With the same Android app running under Waydroid on
-  a wired laptop, discovery is instant and completely reliable.
 
-  That last comparison is the most informative one. The same app, given a
-  stable wired link and a network stack that isn't power-managing a radio,
-  behaves perfectly. On a phone over Wi-Fi it does not. Wireless multicast
-  loss and mobile power management are genuine constraints — but they are
-  ordinary, expected conditions for a phone app, and the difference in
-  behaviour suggests the controller has very little tolerance for them.
+One comparison I would have put in that list does not belong there. Running the
+same Android app under Waydroid on a wired laptop, discovery is fast and the
+list stays put, and I took that to rule out the app's own logic. I no longer
+think it does. Under Waydroid the app is never killed or pushed out of memory
+the way it is on a phone, so it discovers once and then keeps a warm list for
+as long as it stays open — which may be the whole of what I was seeing, and the
+discovery itself may not have been as quick as I remember. A wired container
+does avoid wireless multicast loss and mobile power management, both of which
+are real constraints, but it also avoids the eviction I now think matters most.
+That needs a measured retest before I rest anything on it.
+
+The comparison I do still lean on is iOS, because that is a phone, with the
+same radio and the same power management, and it does not have the problem.
 
 ---
 
@@ -197,8 +209,10 @@ player is online and reachable.
 
 - **Why desktop is different.** Windows machines, and Waydroid on a laptop,
   have no aggressive radio power management and no wireless multicast
-  filtering. Discovery tends to succeed on the first attempt, so the app's
-  behaviour under lossy conditions is never exercised.
+  filtering, and the app is never evicted from memory. Discovery tends to
+  succeed on the first attempt and the list then simply stays, so the app's
+  behaviour under lossy conditions is never exercised. The initial wait is
+  still there on the desktop — it just only has to be paid once.
 
 What I cannot explain is why the iOS and Android experience is so different so
 many years after the first BluOS controller shipped.
@@ -390,11 +404,12 @@ have tried it and it works *fine*; however, while it is much better than the
 Android app, it is not free of the issues. I still notice the following
 annoyances:
 
-- Relatively slow discovery on app startup (5–6 seconds including app startup).
-  The forced wait that the Android app has seems to be present on the
-  unofficial Linux variant as well. At least the app is not forced out of
-  memory all the time as on Android, so discovery only needs to happen at
-  startup.
+- Relatively slow discovery on app startup (5–6 seconds including app startup,
+  roughly two to three of it discovery once the window is up). The official
+  Windows build times the same, so this is not the repackaging, and the forced
+  wait the Android app has looks like it is present here too. At least the app
+  is not forced out of memory all the time as on Android, so discovery only
+  needs to happen at startup.
 - Unstable when left open for a long time or after standby, though recovery is
   fast.
 - Using LSDP requires a firewall opening, and keeping a UDP port open just for
