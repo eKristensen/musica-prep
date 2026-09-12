@@ -346,14 +346,17 @@ discovered in that second by either protocol.
 constants account for the ~30 s and ~50 s marks exactly, for why players age out
 long before they would next announce, and for why a tap restores the list
 without touching the network: see
-[`controller-code-notes.md`](controller-code-notes.md).
+[`controller-code-notes.md`](controller-code-notes.md). Nothing goes out on the
+network at the moment of the refill — the list never left memory.
 
 ### What this does and does not affect
 
-It does **not** affect the measured runs R1–R8. Every one of those force-closes
-the app between runs — step 5 of the procedure, swipe it out of the app drawer —
-which kills the process and any runtime cache with it. They measure a cold start
-by construction, which is exactly why they are immune to this.
+It does **not** affect the measured runs R1–R8. Every one of those swipes the
+app out of the app drawer between runs, and — as the Method section says — the
+swipe is not what proves the process died; the timing is. A surviving process
+renders the whole list in under a second, so any run that took seconds had
+nothing cached to render. Those runs are cold on the evidence of their own
+numbers, which is what makes them immune to this.
 
 It does mean one loose observation should be treated as unusable: with nothing
 running, the Wi-Fi app on the Fairphone appeared to show all players as fast as
@@ -362,14 +365,6 @@ rather than discovery, since the app was not force-closed between attempts. The
 same session's impression that a cold start is slower, and that the static
 announce therefore helps, is an impression only — `lsdp-static` was not running
 during it **[U]**.
-
-### Open questions
-
-All of it is accounted for by the app's own code — the ~30 s and ~50 s marks,
-why players age out long before they would next announce, and what puts the list
-back on screen in under a second with both discovery protocols off. See
-[`controller-code-notes.md`](controller-code-notes.md). Nothing goes out on the
-network at that moment; the list never left memory.
 
 ### Why it matters more than the timing does
 
