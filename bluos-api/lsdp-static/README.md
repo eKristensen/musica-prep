@@ -1,0 +1,193 @@
+# lsdp-static
+
+A static LSDP responder: it answers BluOS discovery queries on UDP 11430 from a
+list of players in a config file, the way an avahi static service file answers
+mDNS. No BluOS hardware is involved — it speaks for players that are named, not
+found.
+
+It exists to answer one question before any more work goes into Musica:
+
+> **If discovery answers instantly and consistently, is discovery still a
+> problem worth building around?**
+
+So the tool also measures. `measure` runs discovery over and over and reports
+the spread, which is the number that actually decides this — "two to three
+seconds, consistently" is a different product from "usually fast, sometimes
+never".
+
+Written against `../bluos-http-api.md` §12.1. `selftest` checks the encoder
+against the real Bluesound Node N130 announce captured in that section, byte for
+byte, so what goes on the wire is what a real player puts there.
+
+## Build
+
+```sh
+cargo build --release          # no dependencies; Linux only
+sudo install -m755 target/release/lsdp-static /usr/local/sbin/
+./target/release/lsdp-static selftest
+```
+
+Linux only because it uses `SO_REUSEPORT` and `getifaddrs(3)` directly.
+`cargo` from Debian/Ubuntu (`apt install cargo`) is new enough, on arm64 too.
+
+## The experiment, end to end
+
+Run all of this from a host on the **controller's** VLAN, not from `ek-arm`,
+unless you are testing the relay box talking to itself.
+
+**1. Baseline — what discovery costs today, with the relay running.**
+
+```sh
+lsdp-static measure --rounds 20 --expect 3
+```
+
+`--expect 3` is however many players you have; a round stops as soon as it has
+that many, so a round that never gets there burns the full `--timeout` and shows
+up as an incomplete round. That count — complete rounds out of 20 — is the
+headline. The median is the comfortable case; the p95 and the incomplete rounds
+are the ones that make an app feel broken.
+
+**2. Capture the players into a config, while they are still findable.**
+
+```sh
+lsdp-static discover > players.conf      # progress goes to stderr, config to stdout
+```
+
+Or, if discovery is too unreliable to trust for this, ask each player directly —
+`/SyncStatus` only needs the address:
+
+```sh
+./from-syncstatus.sh 192.168.10.10 192.168.10.11 192.168.10.12 > players.conf
+```
+
+Check it over; `players.conf.example` explains every field.
+
+**3. Swap the relay for the static responder on `ek-arm`.**
+
+```sh
+sudo systemctl stop udp-broadcast-relay-bluos
+sudo lsdp-static serve --config players.conf --iface lan --iface iot --iface guest
+```
+
+`lsdp-static.service` is the systemd unit if you want it to survive a reboot.
+Leave the relay stopped: if both run, the relay re-broadcasts these answers onto
+the other VLANs and you are measuring the two together.
+
+**4. Measure again, from the same place as step 1.**
+
+```sh
+lsdp-static measure --rounds 20 --expect 3
+lsdp-static measure --rounds 20 --expect 3 --schedule 0   # one query, no retries
+```
+
+The second one is the interesting variant. The seven-packet query burst at
+t = 0,1,2,3,5,7,10 s exists because UDP is lossy and players take up to 750 ms to
+answer; against a responder that answers immediately, a single query should be
+enough. If `--schedule 0` is reliably fast, discovery is solved and the retry
+schedule is dead weight. If it is not, the loss is on the network, not in the
+protocol, and no amount of client-side cleverness fixes it.
+
+Then open the real BluOS app and see whether it finds the players — the measure
+numbers are the evidence, the app is the sanity check.
+
+## Reading the output
+
+```
+round   7: 3 player(s)    first      2 ms  last     14 ms  (9 announce datagrams)
+
+complete rounds: 20/20 (most players seen in one round: 3)
+                    min     median      p95       max
+first player         1          2        4         9  ms
+all players          6         13       21        34  ms
+```
+
+`first player` is how long until the app could show something; `all players` is
+when the list stops changing. `announce datagrams` counts every announce heard,
+including the deliberate repeats — if that is far below `players × repeats ×
+queries`, datagrams are being dropped, and that is worth knowing on its own.
+
+## The node id trap
+
+The node id is the cache key a controller dedupes on, and it is the player's
+MAC. If `lsdp-static` announces a player under a different id while the real
+player is also announcing, the controller shows that player **twice**.
+
+So: use the real MACs. `discover` and `from-syncstatus.sh` both give you them.
+`node auto <ip>` invents a stable id from the address, which is fine for a
+throwaway test on a network where the real players are asleep or absent, and
+wrong otherwise.
+
+## Cross-subnet, without a relay at all
+
+The protocol has an `R` query (`0x52`): same query, but the responder answers by
+**unicast** to whoever asked, instead of broadcasting. No shipping client sends
+it, and the spec notes this as the one part of LSDP with obvious unrealised
+value.
+
+`lsdp-static serve` answers `R` — including a unicast `R` sent straight at it
+from another subnet, where broadcast never arrives:
+
+```sh
+# from a host with no route to the players' broadcast domain at all
+lsdp-static measure --query R --broadcast <ek-arm-ip> --rounds 10 --expect 3
+```
+
+`--broadcast` here is just "where to send the query", and for `R` that is one
+ordinary unicast address. Add `--listen-port 0` if something else on the client
+already holds 11430; this responder answers to whatever source port asked.
+
+If that works from the guest VLAN, then Musica pointed at one known address gets
+the full player list — node id, class and real port — with no relay, no
+broadcast, and no configured address list. Worth ten minutes of testing before
+concluding that discovery needs infrastructure.
+
+The same command aimed at a **real player** tests something the probe left open.
+`bluos-http-api.md` records claim `C-19` — "an LSDP `R` query sent by unicast is
+answered" — as INCONCLUSIVE, because the control was silent too:
+
+```sh
+lsdp-static measure --query R --broadcast <player-ip> --rounds 5 --timeout 5 -v
+```
+
+An answer settles `C-19` as confirmed, and makes the relay redundant for real.
+Silence confirms nothing by itself — a player that ignores unicast and a
+firewalled port look identical from here.
+
+## Options worth knowing
+
+| Option | Why |
+|---|---|
+| `--repeat 3 --spacing-ms 40` | three copies of every answer, 40 ms apart. UDP is lossy; this is the cheapest available fix. `--repeat 1` to measure without it. |
+| `--delay-ms 0` | a real player waits a random 0–750 ms before answering. This does not. `--delay-ms 400` to see what that delay actually costs. |
+| `--interval 57` | unsolicited announce every 57 s ± 6, the steady-state rate a real player uses. `--interval 0` turns it off, to test query/response alone. |
+| `--reply-scope arrival` | answer only on the subnet the query came from, instead of all three. |
+| `--unicast-echo` | also unicast each answer straight back to the querier. Off by default because no real player does it — but it is the one thing that would survive a client whose OS drops broadcast (a macOS Local Network permission denial does exactly that, silently). |
+| `--min-gap-ms 250` | collapse duplicate queries, which a broadcast relay produces by design. |
+| `--dry-run` | print the exact bytes that would be announced, and exit. |
+
+## What this does not prove
+
+- It says nothing about whether a player is actually **reachable** at the
+  address being announced. Discovery working and control working are two
+  different claims; `/SyncStatus` settles the second.
+- It answers for players that are listed, not players that are there. A player
+  that has changed address, or that is off, is still announced — and a
+  controller only finds out when it tries to talk to it. That is exactly what a
+  static configuration means, and it is the cost being weighed against the
+  saved seconds.
+- The measured numbers are this network's. They are not the number a user on
+  someone else's network gets, which is the whole reason discovery is
+  unreliable in the first place.
+
+## Running next to something else on 11430
+
+`SO_REUSEPORT` is set, so this coexists with another listener on the same port —
+a capture, or `measure` on the same host. One caveat: Linux delivers *broadcast*
+to every such socket but load-balances *unicast* between them, so if `serve` and
+`measure` share a host, unicast `R` answers may land in the wrong process. Test
+`R` from a different machine. `--no-reuseport` turns it off.
+
+`udp-broadcast-relay-redux` uses a raw socket and does not bind 11430, so it
+will not refuse to start alongside this — which is why the systemd unit declares
+`Conflicts=`. They do not fight over the port; they just quietly invalidate each
+other's measurements.
