@@ -67,6 +67,15 @@ the same Wi-Fi, the same access point and the same players, one variable
 differs, and the outcome flips. And on the iPhone it holds however many times the app is
 restarted, so it is not a warm cache either.
 
+Android's battery management is not it either. The app has background usage
+allowed on one phone and no battery-saver restrictions on the other — MIUI's
+aggressive background killing being the obvious suspect — and both still show
+the penalty. That is a different mechanism from the one below: battery
+exemptions govern whether an app may run and use the network in the background,
+while a multicast lock governs whether the Wi-Fi driver hands non-directed
+packets to the host at all. An app can hold every battery exemption going and
+still never see a broadcast.
+
 What is still open is *which* Android-side cause: Android's own broadcast
 handling, the app's Android code, or the vendor Wi-Fi stack. One suspect is
 specific enough to name — Android filters multicast and broadcast not addressed

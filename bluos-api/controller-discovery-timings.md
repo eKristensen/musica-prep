@@ -21,8 +21,8 @@ markers are not used for it.
 
 | | |
 |---|---|
-| **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App from Play Store, version not recorded |
-| **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002`. App from Play Store, version not recorded |
+| **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App from Play Store, version not recorded. **Background usage allowed** for the BluOS app |
+| **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002`. App from Play Store, version not recorded. **No battery-saver restrictions** on the BluOS app |
 | **Waydroid** | LineageOS-based Waydroid image (exact version not recorded), minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
 | **iPhone** | an iPhone 16-series, exact model not recorded; iOS current as of a week before these tests, version not recorded |
 | **Windows** | BluOS Controller 4.16.0 (Electron) |
@@ -214,6 +214,18 @@ difference would produce exactly this signature:
 | Android, cable | no Wi-Fi filter in the path | 1.0–1.5 s, always complete |
 | iOS, Wi-Fi | no such filtering | instant, always complete |
 
+**Battery management is not the explanation, and is not the same mechanism.**
+The BluOS app is allowed background usage on the Fairphone and is exempt from
+battery-saver restrictions on the Mi 9, and both phones still show the penalty.
+That removes the obvious suspect — Android, and MIUI especially, killing or
+throttling background apps — but it leaves the multicast lock untouched, because
+the two are unrelated: battery exemptions govern whether an app may run and use
+the network in the background, while a `MulticastLock` governs whether the Wi-Fi
+driver passes non-directed packets up to the host at all. An app can hold every
+battery exemption available and still never see a broadcast datagram. The
+emptying-list cycle happens in the foreground anyway, where background limits
+were never in play.
+
 **The remaining differential test is cheap**: run any mDNS or Bonjour browser
 app on the Fairphone, over the same Wi-Fi, and see whether *it* finds the
 players promptly. A browser that holds a multicast lock and finds them
@@ -402,6 +414,9 @@ Established **[V hardware]**:
   `staticPlayers.txt` does not shorten it (D3). The desktop is stable once up.
 - **iOS does not have the Wi-Fi problem at all**, on the same network and the
   same players, which rules the network and the access point out as the cause.
+- Android battery management is not the cause either: the app has background
+  usage allowed on the Fairphone and no battery-saver restrictions on the Mi 9,
+  and both still show the penalty.
 
 Not established:
 
