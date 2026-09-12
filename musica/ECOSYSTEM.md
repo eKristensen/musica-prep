@@ -17,6 +17,7 @@ There may well be more at [github.com/topics/bluos](https://github.com/topics/bl
 * [BlueSound Controller](https://github.com/rdOxalis/bluesoundplayer)
 * [BluRemote](https://apps.apple.com/dk/app/bluremote-bluos-controller/id6444855562) — closed source
 * [bluos-controller-linux](https://gitlab.com/zquestz/bluos-controller-linux) — the official Windows app repackaged for Linux
+* [bs-bashpatch](https://github.com/frafra/bs-bashpatch) — a script that repackages the official app as a Linux AppImage
 
 ## Home Assistant integrations
 
@@ -84,4 +85,3 @@ Not projects, but worth reading.
 * [Deep dive into the shell of a Node](https://zensonic.dk/?p=675)
 * [BluOS helpdesk forum thread on the HTTP API](https://web.archive.org/web/20190723114444/https://helpdesk.bluesound.com/discussions/viewtopic.php?t=2293)
 * [Automating a Bluesound NODE with amplifier and Alexa control](https://www.hackster.io/saka/automate-bluesound-s-node-with-amplifier-and-alexa-control-3fbc9e)
-* [bs-bashpatch](https://github.com/frafra/bs-bashpatch)
