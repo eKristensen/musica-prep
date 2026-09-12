@@ -328,12 +328,10 @@ not a solution for me, as I prefer a written and visual format.
 
 ## Wishlist
 
-Beyond the obvious —
+Aside from the obvious —
 [proper Linux support](https://support1.bluesound.com/hc/en-us/community/posts/360033533054-BluOS-controller-app-on-Linux)
-and a reliable Android app — this is what I would want on top of simply being
-able to interact with my players at all, asked for without regard to whether
-anyone has marketed it or how realistic it is. Which of these are reasonable
-to build is settled in [PLAN.md](PLAN.md), not here:
+and a reliable Android app — I have a handful of smaller annoyances and wishes
+that matter much less than my primary motivation for starting this project:
 
 1) On one of my players I use HDMI to get audio from my television. When HDMI
    audio plays, the playback queue is cleared, and I have to decide what to
@@ -365,9 +363,13 @@ to build is settled in [PLAN.md](PLAN.md), not here:
    what it is doing. I am not sure how the UI for that should work, but one
    step at a time.
 
-6) I often go to the same playlist, or the same menu within Tidal in BluOS. My
-   most frequently used list is My Music → Songs in Tidal. Rather than keep
-   clicking and waiting, why not have a shortcut that goes there directly — and
+6) I often go to the same playlist, or the same menu within Tidal in BluOS.
+   Presets cover part of this — a Tidal playlist can be saved as one, and so
+   can a mix — but not the list I use most. My Music → Songs cannot be a
+   preset: a preset has to point at something the service will play on
+   request, and that list is offered for browsing only. A shortcut in the
+   controller has no such constraint, because it only has to remember where I
+   was going. Rather than keep clicking and waiting, why not have one — and
    build it so it is not limited to this one idea, but allows for any shortcut
    I might want in the future?
 
