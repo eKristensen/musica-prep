@@ -248,10 +248,17 @@ excludes grouping. Path, format and the quoted limits are in
 
 ### R3 is now suspect
 
-R3 was recorded as "wired", but R6 makes it likely the phones were **actually
-using Wi-Fi** — an adapter was plugged in, but Wi-Fi was never turned off, and
-nothing confirmed which interface the app used. Treat R3's 3–5 s as a Wi-Fi
-number until it is redone with the interface confirmed.
+R3 was recorded as "wired": an adapter was plugged in, but the Wi-Fi radio was
+never switched off. Its numbers sit with the Wi-Fi rows and that is where they
+are filed.
+
+**A plugged-in adapter is not a wired test**, and the reason is sharper than
+mislabelling. The app's two-second delay keys on the radio being *enabled*, not
+on which interface carries traffic
+([`controller-code-notes.md`](controller-code-notes.md)), so a run with the
+adapter in and the radio on was not a mislabelled wired test — it was measuring
+the wrong variable. Confirm the radio is off, or confirm the interface from the
+source address of the query, or the label is a guess.
 
 The cheap confirmation: `lsdp-static sniff` on the players' segment prints the
 **source address** of the phone's query, which says outright which interface it
