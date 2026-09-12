@@ -253,9 +253,11 @@ wrong otherwise.
 ## Cross-subnet, without a relay at all
 
 The protocol has an `R` query (`0x52`): same query, but the responder answers by
-**unicast** to whoever asked, instead of broadcasting. No shipping client sends
-it, and the spec notes this as the one part of LSDP with obvious unrealised
-value.
+**unicast** to whoever asked, instead of broadcasting. `bluos-http-api.md` §12.1
+records that none of the three controllers it was built from — Android, Windows
+and macOS — sends it, and notes this as the one part of LSDP with obvious
+unrealised value. The iOS controller was never analysed, so it is not covered by
+that claim.
 
 `lsdp-static serve` answers `R` — including a unicast `R` sent straight at it
 from another subnet, where broadcast never arrives:

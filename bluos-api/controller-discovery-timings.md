@@ -424,6 +424,11 @@ Not established:
   R4 may both be Wi-Fi measurements mislabelled as wired.
 - Whether Waydroid being a few tenths slower than the phones means anything; a
   virtualised display is the dull explanation.
+- **What the iOS controller actually does.** `bluos-http-api.md` is built from
+  the Android, Windows and macOS controllers; no iOS client is among its
+  sources. So the client that behaves best here is the one nothing is known
+  about, and claims in that document about what "the clients" do are claims
+  about the other three.
 - *What* the app spends its 1.0–1.5 s floor on. R8 establishes that it is
   app-side; it does not say whether the app queries late, renders late, or waits
   deliberately.

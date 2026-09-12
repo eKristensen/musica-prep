@@ -91,9 +91,15 @@ varied without effect.
 This is a hypothesis, not a measurement. It is worth stating because it is
 cheap to test and because it points somewhere useful: **the protocol already has
 a unicast path.** An `R` query (§12.1) asks responders to answer by unicast
-instead of broadcast, which sidesteps Wi-Fi broadcast handling entirely. No
-shipping client sends one. `lsdp-static serve` answers them, and Musica could
-send them.
+instead of broadcast, which sidesteps Wi-Fi broadcast handling entirely.
+`lsdp-static serve` answers them.
+
+`bluos-http-api.md` §12.1 records that none of the three controllers it was
+built from — Android, Windows and macOS — sends `R`; all three send `Q`. Nothing
+measured here tests that, since no client traffic was ever captured. **And the
+iOS controller is not one of the three**: no iOS client appears in that
+document's sources at all, which is now conspicuous, because iOS is the one
+client that does not have the problem.
 
 **The cause being open does not make the effect open.** Whether the penalty
 lives in the app, in Android's Wi-Fi stack, or in the access point is unsettled
