@@ -9,7 +9,9 @@ latest round — probably not the app's either. It looks like the **link**.
 
 All the numbers are in
 [`../controller-discovery-timings.md`](../controller-discovery-timings.md),
-which is the data; this file is the reasoning over it. Confidence markers follow
+which is the data; this file is the reasoning over it. That file also names the
+devices and numbers the runs — R1–R9 on phones and the Waydroid guest, D1–D3 on
+the desktop — so a run referred to by number here can be looked up there. Confidence markers follow
 `bluos-http-api.md`: **[V hardware]** observed directly here, **[V]** verified
 in client code or a vendor document, **[U]** unverified — a claim about
 behaviour nobody has tested yet.
@@ -60,9 +62,9 @@ players and the same access point serve an iPhone with no delay and no
 "Discovering…" stage at all, on Wi-Fi exactly as on a cable. That removes the
 network, the access point, and Wi-Fi as such from the list of suspects.
 
-That much is a result, not a hypothesis: the iPhone and the Mi 9 sit on the same
-Wi-Fi, the same access point and the same players, one variable differs, and the
-outcome flips. And on the iPhone it holds however many times the app is
+That much is a result, not a hypothesis: the iPhone and an Android phone sit on
+the same Wi-Fi, the same access point and the same players, one variable
+differs, and the outcome flips. And on the iPhone it holds however many times the app is
 restarted, so it is not a warm cache either.
 
 What is still open is *which* Android-side cause: Android's own broadcast
@@ -257,9 +259,10 @@ changes, and nothing in the protocol will tell you it has.
 ## 1.0–1.5 s is not a target to match
 
 The wired figure is the best case anyone gets from the BluOS app, and it is
-worth asking why it should be accepted at all. **Nothing requires it.** R8
-settles that: with a responder answering in microseconds, the number does not
-move, so the second is not the network, not the protocol, and not the players.
+worth asking why it should be accepted at all. **Nothing requires it.** R8 —
+`lsdp-static serve` answering the wired Waydroid guest instantly — settles that:
+the number does not move, so the second is not the network, not the protocol,
+and not the players.
 It is overhead, and there is no technical account of what it buys.
 
 A list of players the controller already knows should appear in the time it
@@ -303,8 +306,9 @@ Two curiosities remain open, for whoever wants them:
   and unrelated to any of the timings here.
 
 Everything else has been answered: `staticPlayers.txt` showed the desktop delay
-is not discovery, R8 showed the Android floor is the app's own, and R9 showed
-the Wi-Fi penalty is Android-side rather than the network's.
+is not discovery, R8 (instant answers to a wired guest) showed the Android floor
+is the app's own, and R9 (an iPhone on the same Wi-Fi) showed the Wi-Fi penalty
+is Android-side rather than the network's.
 
 ### Where `staticPlayers.txt` lives, and what it is actually for
 
