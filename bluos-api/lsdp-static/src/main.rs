@@ -30,6 +30,9 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 #[cfg(not(target_os = "linux"))]
 compile_error!("lsdp-static targets Linux (SO_REUSEPORT and getifaddrs are used directly)");
 
+/// Shown in every report and log banner, so a saved run says what produced it.
+const VERSION: &str = "1.0";
+
 const LSDP_PORT: u16 = 11430;
 const LSDP_HEADER: [u8; 6] = [0x06, b'L', b'S', b'D', b'P', 0x01];
 const MSG_QUERY_BROADCAST: u8 = 0x51; // 'Q' -- responders answer by broadcast
@@ -639,10 +642,10 @@ impl Rng {
     }
 }
 
-fn now_stamp() -> String {
+/// Broken-down UTC: (year, month, day, hour, minute, second, millisecond).
+fn utc_parts() -> (i64, i64, i64, i64, i64, i64, u32) {
     let d = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default();
     let secs = d.as_secs() as i64;
-    let ms = d.subsec_millis();
     let days = secs.div_euclid(86_400);
     let sod = secs.rem_euclid(86_400);
     // civil date from days since epoch (Howard Hinnant's algorithm)
@@ -653,19 +656,23 @@ fn now_stamp() -> String {
     let y = yoe + era * 400;
     let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
     let mp = (5 * doy + 2) / 153;
-    let d_ = doy - (153 * mp + 2) / 5 + 1;
-    let m = if mp < 10 { mp + 3 } else { mp - 9 };
-    let y = if m <= 2 { y + 1 } else { y };
-    format!(
-        "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:03}Z",
-        y,
-        m,
-        d_,
-        sod / 3600,
-        (sod % 3600) / 60,
-        sod % 60,
-        ms
-    )
+    let day = doy - (153 * mp + 2) / 5 + 1;
+    let month = if mp < 10 { mp + 3 } else { mp - 9 };
+    let year = if month <= 2 { y + 1 } else { y };
+    (year, month, day, sod / 3600, (sod % 3600) / 60, sod % 60, d.subsec_millis())
+}
+
+fn now_stamp() -> String {
+    let (y, mo, d, h, mi, sec, ms) = utc_parts();
+    format!("{y:04}-{mo:02}-{d:02}T{h:02}:{mi:02}:{sec:02}.{ms:03}Z")
+}
+
+/// The form used in directory names: 20260912T113923Z.  UTC, and it says so,
+/// because a local stamp is ambiguous twice a year and these are meant to be
+/// filed and read back much later.
+fn file_stamp() -> String {
+    let (y, mo, d, h, mi, sec, _) = utc_parts();
+    format!("{y:04}{mo:02}{d:02}T{h:02}{mi:02}{sec:02}Z")
 }
 
 fn describe(node: &Node, red: &Redactor) -> String {
@@ -1255,6 +1262,13 @@ fn discovery_round(
     Ok(round)
 }
 
+/// Just the times from (round, ms) pairs, sorted, ready for pct().
+fn sorted_times(times: &[(usize, u128)]) -> Vec<u128> {
+    let mut v: Vec<u128> = times.iter().map(|(_, ms)| *ms).collect();
+    v.sort();
+    v
+}
+
 fn pct(sorted: &[u128], p: f64) -> u128 {
     if sorted.is_empty() {
         return 0;
@@ -1321,6 +1335,7 @@ const FIXTURE_CONFIG: &str = concat!(
 );
 
 fn selftest() -> i32 {
+    println!("lsdp-static {VERSION}\n");
     let mut fail = 0;
     let mut check = |name: &str, ok: bool, detail: String| {
         if ok {
@@ -1618,6 +1633,59 @@ first-party client does",
         ),
     );
 
+    // saved-run naming and the report itself
+    check(
+        "the file stamp is a sortable UTC instant: YYYYMMDDTHHMMSSZ",
+        {
+            let t = file_stamp();
+            t.len() == 16
+                && t.ends_with('Z')
+                && t.as_bytes()[8] == b'T'
+                && t.chars().filter(|c| c.is_ascii_digit()).count() == 14
+        },
+        file_stamp(),
+    );
+    {
+        let shared = Redactor::new(true);
+        let node = parse_config(
+            "node 90:76:82:42:74:c4 10.42.7.9\n  service 0x0001 name=\"Stue\" port=11000\n",
+        )
+        .unwrap();
+        let per: Vec<(String, Vec<(usize, u128)>)> =
+            vec![(describe(&node[0], &shared), vec![(1, 40), (2, 700), (3, 120)])];
+        let text = report_markdown(&Measurement {
+            rounds: 3,
+            complete: 3,
+            seen_max: 1,
+            expect: 1,
+            schedule: &[0.0, 1.0],
+            timeout: Duration::from_secs(12),
+            query_kind: MSG_QUERY_BROADCAST,
+            dests: &["192.0.2.255".to_string()],
+            rows: &[(1, 1, 40, 40, 1), (2, 1, 700, 700, 1), (3, 1, 120, 120, 1)],
+            firsts: &[40, 120, 700],
+            alls: &[40, 120, 700],
+            per_node: &per,
+            red: &shared,
+        });
+        check(
+            "a rendered report names the tool version",
+            text.contains(&format!("v{VERSION}")),
+            String::new(),
+        );
+        check(
+            "a rendered report carries no address, MAC or node id",
+            find_unredacted(&text).is_empty(),
+            format!("{:?}", find_unredacted(&text)),
+        );
+        check(
+            "per-player stats are the whole distribution, not just the extremes",
+            text.contains("| min | median | p95 | max |")
+                && text.contains("| 3/3 | 40 | 120 | 700 | 700 |"),
+            text.lines().filter(|l| l.starts_with("| 192.0.2")).collect::<Vec<_>>().join(" / "),
+        );
+    }
+
     // interfaces
     match interfaces() {
         Ok(ifs) => {
@@ -1695,9 +1763,9 @@ struct Measurement<'a> {
     rows: &'a [(usize, usize, u128, u128, usize)],
     firsts: &'a [u128],
     alls: &'a [u128],
-    /// player label -> the round times it was seen at, already rendered with the
+    /// player label -> (round, ms) for every sighting, already rendered with the
     /// report's own redactor
-    per_node: &'a [(String, Vec<u128>)],
+    per_node: &'a [(String, Vec<(usize, u128)>)],
     red: &'a Redactor,
 }
 
@@ -1711,7 +1779,8 @@ fn report_markdown(m: &Measurement) -> String {
     let _ = writeln!(
         s,
         "How long a BluOS controller would wait to see every player, measured with\n\
-         `lsdp-static measure` on {}.\n",
+         `lsdp-static` v{} `measure` on {}.\n",
+        VERSION,
         now_stamp()
     );
     let _ = writeln!(
@@ -1725,6 +1794,7 @@ fn report_markdown(m: &Measurement) -> String {
     let _ = writeln!(s, "## Run\n");
     let _ = writeln!(s, "| setting | value |");
     let _ = writeln!(s, "|---|---|");
+    let _ = writeln!(s, "| tool | `lsdp-static` v{VERSION} |");
     let _ = writeln!(s, "| rounds | {} |", m.rounds);
     let _ = writeln!(
         s,
@@ -1777,23 +1847,31 @@ fn report_markdown(m: &Measurement) -> String {
     }
 
     if !m.per_node.is_empty() {
+        // The summary above only ever shows the fastest and the slowest player of
+        // each round. One player answering consistently late is invisible there.
         let _ = writeln!(s, "## Per player\n");
-        let _ = writeln!(s, "| player | rounds seen | median (ms) | max (ms) |");
-        let _ = writeln!(s, "|---|---:|---:|---:|");
+        let _ = writeln!(s, "| player | rounds seen | min | median | p95 | max |");
+        let _ = writeln!(s, "|---|---:|---:|---:|---:|---:|");
         for (k, times) in m.per_node {
-            let mut v = times.clone();
-            v.sort();
+            let v = sorted_times(times);
             let _ = writeln!(
                 s,
-                "| {} | {}/{} | {} | {} |",
+                "| {} | {}/{} | {} | {} | {} | {} |",
                 k,
                 v.len(),
                 m.rounds,
+                v[0],
                 pct(&v, 0.5),
+                pct(&v, 0.95),
                 v[v.len() - 1]
             );
         }
-        s.push('\n');
+        let _ = writeln!(
+            s,
+            "\nAll times in milliseconds. Every individual sighting is in\n\
+             `observations.csv` next to this file, and every round in `rounds.csv`,\n\
+             so none of this has to be taken on trust or recomputed by hand.\n"
+        );
     }
 
     let _ = writeln!(s, "## Reading these numbers\n");
@@ -1823,17 +1901,100 @@ fn report_markdown(m: &Measurement) -> String {
     s
 }
 
+/// Write one run as a self-contained, publishable directory, named from the
+/// clock the way bluos-probe.py names its bundles -- the caller supplies a
+/// folder and nothing else.  The redaction key goes *next to* the directory,
+/// not inside it, so the directory can be published whole.
+fn write_run(
+    outroot: &str,
+    m: &Measurement,
+    red: &Redactor,
+) -> Result<(), String> {
+    let root = std::path::Path::new(outroot);
+    std::fs::create_dir_all(root).map_err(|e| format!("{outroot}: {e}"))?;
+
+    // Two runs started inside one second get -2, -3 ... and the key file carries
+    // the same discriminator, or the second run would overwrite the first's key
+    // and leave a published directory nobody can map back.
+    let mut tag = file_stamp();
+    let mut dir = root.join(format!("lsdp-measure-{tag}"));
+    let mut n = 1;
+    while dir.exists() {
+        n += 1;
+        tag = format!("{}-{n}", file_stamp());
+        dir = root.join(format!("lsdp-measure-{tag}"));
+    }
+    std::fs::create_dir(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+
+    let mut rounds_csv = String::from("round,players_seen,complete,first_ms,last_ms,announce_datagrams\n");
+    for (i, players, first, last, dg) in m.rows {
+        let complete = if m.expect == 0 || *players >= m.expect { "yes" } else { "no" };
+        let _ = writeln!(rounds_csv, "{i},{players},{complete},{first},{last},{dg}");
+    }
+
+    let mut obs_csv = String::from("round,player,ms\n");
+    let mut obs: Vec<(usize, &str, u128)> = Vec::new();
+    for (label, times) in m.per_node {
+        for (round, ms) in times {
+            obs.push((*round, label.as_str(), *ms));
+        }
+    }
+    obs.sort();
+    for (round, label, ms) in obs {
+        // labels carry no commas, but quote anyway: a player name reaches this
+        // file when the run was not redacted
+        let _ = writeln!(obs_csv, "{round},\"{}\",{ms}", label.replace('"', "''"));
+    }
+
+    let files: [(&str, String); 3] = [
+        ("REPORT.md", report_markdown(m)),
+        ("rounds.csv", rounds_csv),
+        ("observations.csv", obs_csv),
+    ];
+    let mut leaks: Vec<String> = Vec::new();
+    for (name, text) in &files {
+        let path = dir.join(name);
+        std::fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))?;
+        for l in find_unredacted(text) {
+            leaks.push(format!("{name}: {l}"));
+        }
+    }
+
+    println!("\nwrote {}/", dir.display());
+    for (name, text) in &files {
+        println!("  {:<18} {:>7} bytes", name, text.len());
+    }
+    if !leaks.is_empty() {
+        for l in &leaks {
+            println!("  !! possible leak: {l}");
+        }
+        return Err(format!(
+            "{} possible leak(s) -- do not publish this directory until they are explained",
+            leaks.len()
+        ));
+    }
+    println!("  checked: no address, MAC or node id left in any of them");
+
+    // Outside the directory, like the probe's DO-NOT-SHARE-key-<stamp>.json, and
+    // covered by the repository's .gitignore.
+    let keypath = root.join(format!("DO-NOT-SHARE-key-{tag}.txt"));
+    std::fs::write(&keypath, red.key_file()).map_err(|e| format!("{}: {e}", keypath.display()))?;
+    println!("wrote {} -- DO NOT SHARE: it maps the placeholders back", keypath.display());
+    Ok(())
+}
+
 // ---------------------------------------------------------------------------
 // command line
 // ---------------------------------------------------------------------------
 
-const USAGE: &str = r#"lsdp-static -- static LSDP responder for BluOS discovery (UDP 11430)
+const USAGE: &str = r#"lsdp-static vVERSION -- static LSDP responder for BluOS discovery (UDP 11430)
 
 USAGE
   lsdp-static serve    [--config FILE] [--player SPEC].. [options]
   lsdp-static discover [options]            one real discovery round -> a config file
   lsdp-static measure  [options]            time discovery repeatedly, report spread
   lsdp-static selftest                      check the codec against captured packets
+  lsdp-static version                       print the version
 
 COMMON
   --port N             UDP port (default 11430)
@@ -1880,11 +2041,13 @@ DISCOVER / MEASURE
   --redact             replace addresses, node ids and player names in the
                        output with documentation placeholders, the same scheme
                        bluos-probe.py uses
-  --report FILE        measure: write the run to FILE as markdown, ready to
-                       publish.  Always redacted, and checked afterwards for
-                       anything that still looks like an address or a MAC
-  --key FILE           measure: with --report, write the placeholder -> original
-                       mapping here.  DO NOT SHARE this one
+  --out DIR            measure: save the run under DIR, in a directory named
+                       from the clock -- lsdp-measure-<stamp>/ holding REPORT.md,
+                       rounds.csv and observations.csv.  Always redacted, and
+                       checked afterwards for anything that still looks like an
+                       address or a MAC.  The key that maps the placeholders back
+                       is written next to that directory as
+                       DO-NOT-SHARE-key-<stamp>.txt
   --query Q|R          Q (default) asks for a broadcast answer, R for a unicast
                        one back to this socket.  R plus --broadcast <host> is
                        the cross-subnet probe: no broadcast involved at all.
@@ -1908,7 +2071,7 @@ impl Args {
                 "--port" | "--iface" | "--broadcast" | "--config" | "--player" | "--delay-ms"
                     | "--repeat" | "--spacing-ms" | "--interval" | "--reply-scope" | "--min-gap-ms"
                     | "--timeout" | "--rounds" | "--gap" | "--expect" | "--schedule"
-                    | "--query" | "--listen-port" | "--report" | "--key"
+                    | "--query" | "--listen-port" | "--out"
             )
         };
         let mut flags = Vec::new();
@@ -1958,7 +2121,7 @@ impl Args {
             "--player", "--delay-ms", "--repeat", "--spacing-ms", "--interval",
             "--no-startup-burst", "--reply-scope", "--unicast-echo", "--min-gap-ms", "--quiet",
             "--dry-run", "--timeout", "--rounds", "--gap", "--expect", "--schedule",
-            "--all-classes", "--query", "--listen-port", "--redact", "--report", "--key",
+            "--all-classes", "--query", "--listen-port", "--redact", "--out",
         ];
         for (f, _) in &self.flags {
             if !known.contains(&f.as_str()) {
@@ -2110,7 +2273,11 @@ fn main() {
 fn run() -> Result<(), String> {
     let args = Args::parse()?;
     if matches!(args.cmd.as_str(), "help" | "-h" | "--help") {
-        print!("{USAGE}");
+        print!("{}", USAGE.replace("vVERSION", &format!("v{VERSION}")));
+        return Ok(());
+    }
+    if matches!(args.cmd.as_str(), "version" | "-V" | "--version") {
+        println!("lsdp-static {VERSION}");
         return Ok(());
     }
     args.check_known()?;
@@ -2166,7 +2333,7 @@ fn run() -> Result<(), String> {
             };
             let sock = bind_socket(port, reuseport)?;
             s.log(&format!(
-                "serving {} node(s) on UDP {} -> broadcast {}",
+                "lsdp-static v{VERSION} serving {} node(s) on UDP {} -> broadcast {}",
                 s.nodes.len(),
                 port,
                 dest_list.join(", ")
@@ -2249,8 +2416,9 @@ fn run() -> Result<(), String> {
             let mut complete = 0usize;
             let mut seen_max = 0usize;
             // keyed by node id, keeping the node itself, so the terminal and the
-            // report can each render it through their own redactor
-            let mut per_node: HashMap<Vec<u8>, (Node, Vec<u128>)> = HashMap::new();
+            // report can each render it through their own redactor, and keeping the
+            // round each sighting came from so the raw data can be written out
+            let mut per_node: HashMap<Vec<u8>, (Node, Vec<(usize, u128)>)> = HashMap::new();
             let mut rows: Vec<(usize, usize, u128, u128, usize)> = Vec::new();
             for i in 1..=rounds {
                 let sock = bind_socket(listen_port, reuseport)?;
@@ -2275,7 +2443,7 @@ fn run() -> Result<(), String> {
                         .entry(n.id.clone())
                         .or_insert_with(|| (n.clone(), Vec::new()))
                         .1
-                        .push(*ms);
+                        .push((i, *ms));
                 }
                 let ok = expect == 0 || r.first_ms.len() >= expect;
                 if ok && !times.is_empty() {
@@ -2326,79 +2494,64 @@ fn run() -> Result<(), String> {
                     alls[alls.len() - 1]
                 );
             }
-            let mut nodes_seen: Vec<&(Node, Vec<u128>)> = per_node.values().collect();
+            let mut nodes_seen: Vec<&(Node, Vec<(usize, u128)>)> = per_node.values().collect();
             nodes_seen.sort_by_key(|(n, _)| u32::from(n.addr));
             if !nodes_seen.is_empty() {
-                println!("\nper node (rounds seen / median / max):");
+                // Per player, not just the fastest and slowest of each round: one
+                // player consistently answering late is invisible in the summary
+                // above, and is exactly the kind of thing worth spotting.
+                println!("\nper player, time to answer:");
                 let labels: Vec<String> =
                     nodes_seen.iter().map(|(n, _)| describe(n, &red)).collect();
                 let w = labels.iter().map(|l| l.len()).max().unwrap_or(0);
-                for ((n, times), label) in nodes_seen.iter().zip(&labels) {
-                    let _ = n;
-                    let mut v = times.clone();
-                    v.sort();
+                println!(
+                    "  {:<w$} {:>7} {:>8} {:>8} {:>8} {:>8}",
+                    "player", "seen", "min", "median", "p95", "max"
+                );
+                for ((_, times), label) in nodes_seen.iter().zip(&labels) {
+                    let v = sorted_times(times);
                     println!(
-                        "  {:<w$} {:>3}/{:<3} {:>6} ms {:>6} ms",
+                        "  {:<w$} {:>3}/{:<3} {:>6} ms {:>6} ms {:>6} ms {:>6} ms",
                         label,
                         v.len(),
                         rounds,
+                        v[0],
                         pct(&v, 0.5),
+                        pct(&v, 0.95),
                         v[v.len() - 1]
                     );
                 }
             }
-            if let Some(path) = args.get("--report") {
-                // The report is always redacted, whatever the terminal was set to:
-                // a file that exists to be shared should not depend on a flag having
-                // been remembered.
+            if let Some(out) = args.get("--out") {
+                // The saved run is always redacted, whatever the terminal was set
+                // to: a directory that exists to be published should not depend on
+                // a flag having been remembered.
                 let shared = Redactor::new(true);
-                let per_node_red: Vec<(String, Vec<u128>)> = nodes_seen
+                let per_player: Vec<(String, Vec<(usize, u128)>)> = nodes_seen
                     .iter()
-                    .map(|(n, times)| {
-                        let mut v = times.clone();
-                        v.sort();
-                        (describe(n, &shared), v)
-                    })
+                    .map(|(n, times)| (describe(n, &shared), times.clone()))
                     .collect();
                 let dests_red: Vec<String> =
                     dests.iter().map(|d| shared.ip(*d).to_string()).collect();
-                let text = report_markdown(&Measurement {
-                    rounds,
-                    complete,
-                    seen_max,
-                    expect,
-                    schedule: &schedule,
-                    timeout,
-                    query_kind,
-                    dests: &dests_red,
-                    rows: &rows,
-                    firsts: &firsts,
-                    alls: &alls,
-                    per_node: &per_node_red,
-                    red: &shared,
-                });
-                std::fs::write(&path, &text).map_err(|e| format!("{path}: {e}"))?;
-                let leaks = find_unredacted(&text);
-                if leaks.is_empty() {
-                    println!("\nwrote {path} -- checked: no address, MAC or node id left in it");
-                } else {
-                    println!("\nwrote {path}");
-                    for l in &leaks {
-                        println!("  !! possible leak: {l}");
-                    }
-                    return Err(format!(
-                        "{} possible leak(s) in {path} -- do not publish it until they are \
-                         explained",
-                        leaks.len()
-                    ));
-                }
-                if let Some(kp) = args.get("--key") {
-                    std::fs::write(&kp, shared.key_file()).map_err(|e| format!("{kp}: {e}"))?;
-                    println!(
-                        "wrote {kp} -- DO NOT SHARE: it maps the placeholders back to \
-                         this network"
-                    );
-                }
+                write_run(
+                    &out,
+                    &Measurement {
+                        rounds,
+                        complete,
+                        seen_max,
+                        expect,
+                        schedule: &schedule,
+                        timeout,
+                        query_kind,
+                        dests: &dests_red,
+                        rows: &rows,
+                        firsts: &firsts,
+                        alls: &alls,
+                        per_node: &per_player,
+                        red: &shared,
+                    },
+                    &shared,
+                )?;
             }
             Ok(())
         }

@@ -1,4 +1,4 @@
-# lsdp-static
+# lsdp-static v1.0
 
 A static LSDP responder: it answers BluOS discovery queries on UDP 11430 from a
 list of players in a config file, the way an avahi static service file answers
@@ -177,12 +177,30 @@ queries`, datagrams are being dropped, and that is worth knowing on its own.
 
 A measurement run is evidence about how BluOS players behave, which makes it
 worth keeping and worth publishing — and it is full of the addresses, MACs and
-room names of the house it was measured in. So `--report` writes the run as a
-markdown document with all of that replaced:
+room names of the house it was measured in. So `--out` saves the run with all of
+that replaced. Give it a folder; it names the rest itself, the way
+`bluos-probe.py` names its bundles:
 
 ```sh
-lsdp-static measure --rounds 20 --expect 4 --report ../test-runs/lsdp-timing-2026-09-12.md
+lsdp-static measure --rounds 20 --expect 4 --out ../test-runs
 ```
+
+```
+../test-runs/
+  lsdp-measure-20260912T140431Z/
+    REPORT.md           the run, written up, ready to publish
+    rounds.csv          round, players seen, complete, first ms, last ms, datagrams
+    observations.csv    every single sighting: round, player, ms
+  DO-NOT-SHARE-key-20260912T140431Z.txt
+```
+
+`REPORT.md` carries per-player statistics — min, median, p95 and max for each
+player separately, not just the fastest and slowest of each round, which is
+where one consistently-late player would otherwise hide. The two CSVs are the
+complete underlying data, so nothing has to be recomputed by hand or taken on
+trust.
+
+Two runs started in the same second get `-2`, `-3`, key file included.
 
 The redaction is the scheme `bluos-probe.py` uses, so a measurement from here
 and a capture from there mean the same thing in the same bundle: addresses
@@ -191,31 +209,29 @@ become `02:00:00:00:xx:yy`, player names become `Room-A`, `Room-B`. Placeholders
 are stable within a run, so the same player is the same name in every line, and
 the relationships between the numbers survive.
 
-The report is **always** redacted, whether or not `--redact` was given — a file
-that exists to be shared should not depend on remembering a flag. After writing
-it, the tool scans its own output for anything that still parses as an address,
-a MAC or a bare-hex node id, and refuses to finish quietly if it finds one.
+The saved run is **always** redacted, whether or not `--redact` was given — a
+directory that exists to be published should not depend on remembering a flag.
+After writing it, the tool scans every file it just wrote for anything that
+still parses as an address, a MAC or a bare-hex node id, and fails rather than
+finish quietly if it finds one.
 
 Add `--redact` to redact the terminal output as well, which also works for
-`serve` (its log) and `discover`. To keep the mapping for yourself:
-
-```sh
-lsdp-static measure --rounds 20 --expect 4 \
-    --report ../test-runs/lsdp-timing-2026-09-12.md --key ../test-runs/DO-NOT-SHARE-key-2026-09-12.txt
-```
+`serve` (its log) and `discover`.
 
 `../test-runs/` is where `bluos-probe.py` already puts its bundles, so timing
 runs and protocol captures end up side by side.
 
 The key file maps placeholders back to the originals and says so at the top. It
-is the one file that must not be published. The `DO-NOT-SHARE-` prefix is the
-name the probe uses for the same thing, and the repository's `.gitignore` covers
-both that prefix and `*.key`, so neither can be committed by accident.
+is written *next to* the run directory rather than inside it, so the directory
+can be published whole. It is the one file that must not be shared; the
+`DO-NOT-SHARE-` prefix is the name the probe uses for the same thing, and the
+repository's `.gitignore` covers both that prefix and `*.key`, so neither can be
+committed by accident.
 
-What the report contains: the run's settings, a per-round table, min/median/p95/max
-for both "first player answered" and "all players answered", a histogram of each,
-a per-player table, and the protocol's own documented timings so the numbers can
-be read against what they should be.
+What `REPORT.md` contains: the tool version and the run's settings, a per-round
+table, min/median/p95/max for both "first player answered" and "all players
+answered", a histogram of each, the per-player table, and the protocol's own
+documented timings so the numbers can be read against what they should be.
 
 ## The node id trap
 
@@ -276,8 +292,7 @@ firewalled port look identical from here.
 | `--min-gap-ms 250` | collapse duplicate queries, which a broadcast relay produces by design. |
 | `--dry-run` | print the exact bytes that would be announced, and exit. |
 | `--redact` | replace addresses, node ids and player names in the output with documentation placeholders. Works for `serve`, `measure` and `discover`. |
-| `--report FILE` | `measure`: write the run as publishable markdown. Always redacted, and checked afterwards. |
-| `--key FILE` | `measure`: write the placeholder → original mapping. Do not publish this one. |
+| `--out DIR` | `measure`: save the run under `DIR` in an auto-named directory — report plus the raw CSVs. Always redacted, checked afterwards, with the key written beside it. |
 
 ## What this does not prove
 

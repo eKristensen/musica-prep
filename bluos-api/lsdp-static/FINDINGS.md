@@ -8,9 +8,9 @@ one at a time.
 app is unchanged at 5–6 seconds. The answers are on the wire in milliseconds;
 the wait is somewhere else.
 
-Early testing, 2026-09-12, four players, three VLANs on `ek-arm`. Confidence
-markers follow `bluos-http-api.md`: **[V hardware]** observed directly here,
-**[U]** unverified — test first.
+Early testing, 2026-09-12, four players, three VLANs on `ek-arm`, with
+`lsdp-static` v1.0. Confidence markers follow `bluos-http-api.md`:
+**[V hardware]** observed directly here, **[U]** unverified — test first.
 
 ---
 
