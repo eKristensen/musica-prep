@@ -1,111 +1,169 @@
 # Does better LSDP make the controller apps faster?
 
-**No.** Discovery reliability improves; the time before players appear does not.
+**Reliability: yes, visibly.** With a static responder answering instantly, the
+four players appear in the Android app **all at once** instead of trickling in
+one at a time.
 
-That is the result the tool was built to get, and it is worth writing down
-plainly because it is the opposite of what a faster responder should have
-produced. Notes below are from early testing on 2026-09-12, four players, three
-VLANs on `ek-arm`, against the first-party BluOS Controller apps.
+**Timing: no.** The full list still takes 3–4 seconds to appear, and the desktop
+app is unchanged at 5–6 seconds. The answers are on the wire in milliseconds;
+the wait is somewhere else.
 
-Confidence markers follow `bluos-http-api.md`: **[V hardware]** observed
-directly here, **[U]** unverified, test first.
+Early testing, 2026-09-12, four players, three VLANs on `ek-arm`. Confidence
+markers follow `bluos-http-api.md`: **[V hardware]** observed directly here,
+**[U]** unverified — test first.
 
 ---
 
-## What was measured
+## What each number measures
 
-Two things, and keeping them apart is the whole point:
+These are not the same measurement, and conflating them is how the first draft
+of this document got it wrong.
 
-- **On the wire** — `lsdp-static measure`. How long until an announce carrying
-  each player arrives. This is the protocol.
-- **On screen** — stopping and restarting a controller app and watching for the
-  player list to fill. This is what a user experiences.
+| | measured from | to |
+|---|---|---|
+| **Android** | pressing the **Players** tab | all four players listed |
+| **Windows / Linux** | launching the app | players listed |
 
-The tool only measures the first. The apps were timed by hand.
+The Android number deliberately excludes app startup. It is the number that
+matters: on Android the app is pushed out of memory constantly, so this is the
+wait a user actually pays, over and over, all day. The desktop number includes
+startup because on the desktop the app stays running and discovery happens once.
 
-## Results
+## Android **[V hardware]**
 
-### Android, two phones **[V hardware]**
+Two phones, deliberately different:
 
-Stopping and restarting the BluOS Controller repeatedly, back to back:
+| phone | network position | discovery source |
+|---|---|---|
+| A | different VLAN from the players | the static responder on `ek-arm` |
+| B | **same VLAN as the players** | the players themselves, directly |
 
-- **3–4 seconds** before all four players appear.
-- All four appeared **9 times out of 10**.
-- Rediscovery was "somewhat more stable with the relay running, but always
-  slow".
+**No difference in timing between them.** Both take 3–4 seconds from the
+Players tab to a full list, with all four players present 9 times out of 10,
+testing back to back.
 
-The reliability is the good part: 9/10 complete, and the misses are one player
-short rather than an empty list.
+That equivalence is the useful part: **a static LSDP responder puts a phone on
+another VLAN in the same position as a phone sitting on the players' own
+subnet** — and whatever instability the `udp-broadcast-relay-redux` setup was
+contributing is gone with it.
 
-> The baseline that "more stable with the relay running" was compared against
-> is not recorded — relay versus nothing, or relay versus the static responder.
-> Worth settling before this line is quoted anywhere, because the two readings
-> support opposite conclusions about whether the relay is still needed.
+### The one clear improvement: all at once, not one by one
 
-### Windows **[V hardware]**
+Before the static responder, players "almost always show up one-by-one,
+sometimes two at once". With it, they appear together.
 
-**5–6 seconds**, unchanged. Retested after the static responder was in place;
-no measurable difference.
+That is a real quality difference even though the total time did not move, and
+the mechanism is measurable rather than mysterious. A real player delays its
+answer by a random 0–750 ms (§12.1), independently per player, so four players
+answer spread across most of a second — which is exactly what a list filling in
+one entry at a time looks like. The static responder answers for all four in one
+burst at 0 ms, wins the race against their own announces, and the app has the
+whole list in one go.
 
-### Linux **[V hardware]**
+Measured on the wire, the same responder, the only difference being the reply
+delay:
 
-No measurable difference either, with the host firewall opened so the datagrams
-could arrive.
+| responder behaviour | time to all four players |
+|---|---|
+| `--delay-ms 0-750`, imitating real players | 279–743 ms, median 671 |
+| `--delay-ms 0` (the default) | ~0 ms, every round |
 
-Two caveats worth carrying:
+**A prediction this makes [U]:** phone B, talking to real players directly,
+should *still* trickle, because those players still draw their own 0–750 ms.
+If both phones show the list appearing all at once, this explanation is wrong.
+Watching the two side by side settles it in one try.
 
-- `bluos-http-api.md` surveys the **Android, Windows and macOS** controllers.
-  Whatever Linux client this was is outside that survey, so its behaviour is not
-  corroborated by anything in the specification.
-- The suspicion is that it **still discovers over mDNS** rather than LSDP
-  **[U]**. Untested — an answered LSDP query it ignores and an unanswered one it
-  never sent look identical from the outside.
+## Desktop: Windows and Linux **[V hardware]**
+
+**5–6 seconds from launch, unchanged**, with the static responder in place and
+the host firewall opened so the datagrams could arrive.
+
+The two are one result, not two. The Linux client is
+[`bluos-controller-linux`](https://gitlab.com/zquestz/bluos-controller-linux),
+which downloads the **official Windows installer**, extracts the Electron app,
+applies a patch and builds an AppImage — of version **4.16.0**, which is the
+exact build `bluos-http-api.md` was written from. Same code, two operating
+systems, same number. The agreement is corroboration.
+
+So the desktop client is the analysed one, and what is known about it applies:
+it browses mDNS *and* sends LSDP queries, rebuilds its entire Bonjour browser
+every ten seconds, and resolves mDNS services in two stages (§12.2). The earlier
+suspicion that "the Linux app still relies on mDNS" is better stated as: the
+desktop client uses both, and nothing here shows which one it acted on **[U]**.
 
 ## What this means
 
-The protocol's own cost is known, and it is not the problem:
-
 | | time to all four players |
 |---|---|
-| measured on the wire, real players | ~640 ms median, ~730 ms p95 |
-| the same, as predicted by a random 0–750 ms reply delay per player | ~630 ms median |
-| measured on the wire, static responder answering immediately | ~0 ms |
-| **Android app, on screen** | **3–4 s** |
-| **Windows app, on screen** | **5–6 s** |
+| on the wire, real players | ~640 ms median, ~730 ms p95 |
+| on the wire, static responder | ~0 ms |
+| **Android, Players tab → full list** | **3–4 s** |
+| **Windows / Linux, launch → full list** | **5–6 s** |
 
-So between 3 and 6 seconds pass while the answers are already in hand — over
-five seconds of it on Windows. Discovery is not what the user is waiting for.
-Whatever the apps are doing (mDNS resolution round trips, the ten-second
-Bonjour browser reset the desktop clients run, UI or session startup, a
-deliberate settling delay), it is not waiting for LSDP, and making LSDP
-instantaneous cannot shorten it.
+Three to four seconds pass on Android with every answer already in hand. Making
+discovery instant removed the trickle and it removed the relay's unreliability,
+and it moved the total wait by nothing measurable.
 
-**A faster responder cannot fix a slow client.** That is the finding, and it is
-what justifies continuing with Musica: a controller that keeps its own player
-list and does not rediscover on every launch is the only thing that removes
-this wait.
+**A faster responder cannot fix a slow client.** The discovery process in the
+Android app is as slow as it ever was — which is the thing that motivated Musica
+in the first place, and this is now measured rather than assumed. A controller
+that keeps its own player list and does not rediscover on every launch is the
+only thing that removes this wait.
 
-## What this does not say
+## Loose ends
 
-- It does not say the relay is unnecessary. Reliability did improve, and the
-  ambiguity above means the relay's own contribution is still unquantified.
-- It does not say the apps are badly built. 3–6 s to a usable list is a
-  reasonable product decision when discovery is genuinely unreliable; it is
-  only a problem for someone who wants a controller that is instant.
-- It does not measure anything about **control** latency after discovery, which
-  is a separate question and the one Musica actually lives in.
+**One player is on Wi-Fi, and it is not consistently the slowest.** Expected,
+and it supports the model above rather than undermining it: Wi-Fi adds perhaps
+tens of milliseconds, while the random reply delay spans 750. The draw swamps
+the link. If a Wi-Fi player were *consistently* last, that would be the
+interesting result.
+
+**The mDNS + relay baseline was not timed.** Whether the previous setup was
+slower than 3–4 s is not recorded, only that it was "most likely not faster".
+Nothing here depends on it, but it is the one number missing from the
+comparison.
 
 ## Next tests, cheapest first
 
-1. **`staticPlayers.txt`** (§12.3). The desktop controllers read a
-   comma-separated list of player addresses from their user-data directory and
-   use them **with no discovery at all**. If Windows still takes 5–6 s with that
-   file in place, the delay is definitively not discovery — that single test
-   would settle this whole question for the desktop apps.
-2. **Settle the Android baseline.** Three runs of ten restarts — relay only,
-   static responder only, neither — recorded the same way.
-3. **Test the Linux mDNS hypothesis.** `avahi-browse -a` while the app starts,
-   or block UDP 5353 and see whether it stops finding players. Either answers it
-   in a minute.
-4. **`--query R` at a real player** to settle claim `C-19`, which is unrelated
-   to timing but is the other open question this tool can answer.
+1. **`staticPlayers.txt` on the desktop** — see below. If the app still takes
+   5–6 seconds with discovery skipped entirely, the delay is definitively not
+   discovery, and the desktop half of this question is closed.
+2. **Watch both phones side by side** for trickle versus all-at-once, to confirm
+   or kill the explanation above.
+3. **Time the old baseline**, ten Players-tab presses with the relay and no
+   static responder, to fill in the missing row.
+4. **`--query R` at a real player**, to settle claim `C-19`. Unrelated to timing,
+   but this tool can answer it.
+
+### Where `staticPlayers.txt` lives
+
+A documented feature, though documented by **Bluesound Professional** for the
+remote-subnet case rather than in the consumer app guide — and independently
+[V] in the client code (§12.3).
+
+| platform | path |
+|---|---|
+| Windows | `C:\Users\<you>\AppData\Roaming\BluOS Controller\staticPlayers.txt` |
+| Linux AppImage | `~/.config/BluOS Controller/staticPlayers.txt` **[U]** |
+| macOS | `~/Library/Application Support/BluOS Controller/staticPlayers.txt` **[U]** |
+
+The Windows path is the documented one. The other two are Electron's standard
+`app.getPath('userData')` for the same product name, so they should hold for the
+AppImage repack — unverified, but the directory either exists or it does not,
+which is a five-second check.
+
+Contents are one comma-separated line of `ip:port`, no spaces:
+
+```
+192.168.0.1:11000,192.168.0.2:11000,192.168.0.3:11000
+```
+
+The port matters: it is how a multi-zone chassis such as a CI580 is addressed,
+each node on its own port (`:11000,:11010,:11020,:11030`) at one address. Players
+listed here are used directly, **with no discovery at all**, which is what makes
+this the decisive test.
+
+Sources: [How to Discover and Control Players from a Remote
+Subnet](https://support.bluesoundprofessional.com/hc/en-us/articles/360060411413-How-to-Discover-and-Control-Players-from-a-Remote-Subnet)
+(Bluesound Professional) · [`bluos-controller-linux`
+README](https://gitlab.com/zquestz/bluos-controller-linux/-/raw/main/README.md)

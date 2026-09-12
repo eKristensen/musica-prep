@@ -15,11 +15,14 @@ the spread, which is the number that actually decides this — "two to three
 seconds, consistently" is a different product from "usually fast, sometimes
 never".
 
-**That question now has an answer: no.** Making LSDP instantaneous does not make
-the controller apps show players any sooner — they take 3–6 seconds either way,
-with the answers already in hand. Reliability improved; timing did not. See
-[`FINDINGS.md`](FINDINGS.md) for the measurements and for the one test that
-would settle what the apps are actually waiting for.
+**That question now has an answer.** Answering instantly changes *how* the
+players appear — all at once instead of trickling in one at a time — and it puts
+a phone on another VLAN in the same position as one sitting on the players' own
+subnet. It does not change *when* the list is complete: 3–4 s on Android from
+the Players tab, 5–6 s on the desktop from launch, with every answer already in
+hand. See [`FINDINGS.md`](FINDINGS.md) for the measurements, the mechanism
+behind the trickle, and the one test that would settle what the apps are
+actually waiting for.
 
 Written against `../bluos-http-api.md` §12.1. `selftest` checks the encoder
 against the real Bluesound Node N130 announce captured in that section, byte for
