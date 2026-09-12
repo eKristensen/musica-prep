@@ -4,8 +4,8 @@
 four players appear in the Android app **all at once** instead of trickling in
 one or two at a time.
 
-**Timing: no.** The full list still takes 3–5 seconds, and the desktop app is
-unchanged at 5–6 seconds. The answers are on the wire in milliseconds, and the
+**Timing: no.** The full list still takes 3–5 seconds (timed by counting, ±1 s),
+and the desktop app is unchanged at 5–6 seconds. The answers are on the wire in milliseconds, and the
 app is already on screen showing its cached player while the other three wait.
 The wait is not discovery.
 
@@ -31,6 +31,45 @@ The Android number deliberately excludes app startup. It is the number that
 matters: on Android the app is pushed out of memory constantly, so this is the
 wait a user actually pays, over and over, all day. The desktop number includes
 startup because on the desktop the app stays running and discovery happens once.
+
+### The Android procedure, exactly
+
+One "back to back" run is:
+
+1. Open the BluOS app.
+2. Wait for the menu bar to appear.
+3. Tap the player icon — **the timer starts here**.
+4. Stop when all four players are listed.
+5. Open the app drawer, **swipe the app away**, and start again.
+
+Timed by counting in the head, not with a stopwatch. Call it **±1 s** and treat
+"3–5 s" as one number with a wide error bar rather than as a measured range —
+whether a particular run was three seconds or five is inside the noise.
+
+Nothing here rests on that precision. The gap the finding depends on is between
+a player that is on screen immediately and three that are not there for about
+four seconds; a second of counting error does not touch it. The desktop numbers
+were taken the same way and deserve the same ±1 s.
+
+**Step 5 matters more than it looks.** Swiping the app away means Android kills
+the process, so every run is a genuine cold start — and the previously selected
+player *still* appears instantly. That player is therefore cached **on disk**,
+not merely left in memory from the last run **[U]**. The app persists at least
+one player's address across process death and reads it back before, or instead
+of, discovering anything.
+
+### Tightening it, for the next round
+
+Two ways, neither needing a stopwatch:
+
+- **Screen-record the phone.** Android records natively; scrubbing the video
+  gives the tap and each player's appearance to about a tenth of a second, for
+  no extra equipment and no counting.
+- **Run `lsdp-static sniff` at the same time.** It timestamps the query leaving
+  the phone and each announce arriving, so the network half becomes exact and
+  only the screen half is left to the eye — or to the recording.
+
+Together those turn "about four seconds later" into a measurement.
 
 ## Android **[V hardware]**
 
