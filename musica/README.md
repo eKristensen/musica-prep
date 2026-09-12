@@ -167,6 +167,8 @@ Planning stage. No code yet.
 MIT licensed — see [LICENSE](LICENSE). There is no intention to replace any
 commercial product or to make money from this.
 
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 It is built for my hardware and my habits. It may well not suit yours.
 
 ---
