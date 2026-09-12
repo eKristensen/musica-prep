@@ -5,10 +5,10 @@ list of players in a config file, the way an avahi static service file answers
 mDNS. No BluOS hardware is involved — it speaks for players that are named, not
 found.
 
-It exists to answer one question before any more work goes into Musica:
+It exists to answer one question about BluOS:
 
-> **If discovery answers instantly and consistently, is discovery still a
-> problem worth building around?**
+> **If discovery answers instantly and consistently, is discovery still what
+> makes players slow to appear?**
 
 So the tool also measures. `measure` runs discovery over and over and reports
 the spread, which is the number that actually decides this — "two to three
@@ -271,10 +271,10 @@ lsdp-static measure --query R --broadcast <ek-arm-ip> --rounds 10 --expect 4
 ordinary unicast address. Add `--listen-port 0` if something else on the client
 already holds 11430; this responder answers to whatever source port asked.
 
-If that works from the guest VLAN, then Musica pointed at one known address gets
-the full player list — node id, class and real port — with no relay, no
+If that works from the guest VLAN, then a client pointed at one known address
+gets the full player list — node id, class and real port — with no relay, no
 broadcast, and no configured address list. Worth ten minutes of testing before
-concluding that discovery needs infrastructure.
+concluding that cross-subnet discovery needs infrastructure.
 
 The same command aimed at a **real player** tests something the probe left open.
 `bluos-http-api.md` records claim `C-19` — "an LSDP `R` query sent by unicast is

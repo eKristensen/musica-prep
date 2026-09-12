@@ -375,15 +375,15 @@ during it **[U]**.
 - What refills the list in under a second with both discovery protocols off.
   `lsdp-static sniff` would show whether anything goes out on 11430 at all when
   the list refills — and if nothing does, the answer is unicast HTTP to cached
-  addresses, which is worth knowing because it is what Musica would do anyway.
+  addresses.
 
 ### Why it matters more than the timing does
 
 A slow list fills eventually. A list that empties itself while the app is open
 is a failure the user meets mid-task, with no obvious cause and no action to
-take except tapping again. It also means the app's own cache is already capable
-of doing what Musica intends to do — hold the list and render it instantly — and
-the app discards it anyway.
+take except tapping again. It also shows the app's own cache is already capable
+of holding the list and rendering it instantly — and that the app discards it
+anyway.
 
 ---
 

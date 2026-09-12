@@ -111,8 +111,8 @@ all; and a Sonos system in the family does not behave this way either. Neither
 is measured here, but together they settle that the experience is achievable on
 this kind of home network — the BluOS app itself achieves it, just not on
 Android.
-Solving it inside somebody else's app or inside Android is not a thing Musica is
-expected to do. What Musica can do is not depend on the part that fails.
+Fixing it inside somebody else's app or inside Android is not something a
+third-party client can do; not depending on the part that fails is.
 
 ## What the static responder did change
 
@@ -285,23 +285,28 @@ takes to draw it. The right target is not "as good as the app on a cable" — it
 is **no wait at all**, with the network touched only to confirm what is already
 on screen.
 
-## What this means for Musica
+## What the measurements say a client should do
 
-The justification is intact, and the reason for it is sharper.
+Stated as findings about BluOS, not as a plan for any particular client.
 
 A phone is on Wi-Fi in real life. Over Wi-Fi, discovery costs 3–5 seconds and
 fails to complete about one run in five, and nothing done to the network side —
 a relay, a static responder answering in microseconds — changed either number.
 Broadcast discovery on Wi-Fi is simply not dependable. On a cable it costs
-1.0–1.5 s instead, which is better and still more than a list the app already
+1.0–1.5 s instead, which is better and still more than a list a client already
 holds should ever cost.
 
-A controller that keeps its own player list does not discover at all on the path
-that matters, so none of this applies to it. The BluOS app already does exactly
-that for one player, the selected one, which survives its shutdown cache clear —
-and, within a session, for the whole list, which it then throws away on a timer.
-**Musica's design target is to do that for every player and keep it** — and,
-where discovery is unavoidable, to prefer the unicast `R` query over broadcast.
+So:
+
+- **A client that keeps its own player list does not discover on the path that
+  fails**, and none of the Wi-Fi penalty reaches it. The BluOS app demonstrates
+  this itself, twice over: the selected player survives its shutdown cache
+  clear, and the whole list is held well enough to render instantly on a tap —
+  which it then discards on a timer anyway.
+- **Where discovery is unavoidable, the unicast `R` query does not depend on
+  Wi-Fi broadcast delivery**, which is the part that fails.
+- **A static list of players is not a substitute for either**, for the staleness
+  reasons above.
 
 ## What is left, and none of it is pending work
 
@@ -315,7 +320,7 @@ Two curiosities remain open, for whoever wants them:
 - **Whether the Wi-Fi penalty belongs to the Android app or to Android.** Any
   Bonjour browser app on the same phone and the same Wi-Fi would separate them
   in minutes. It would not change a conclusion — the penalty is real and it is
-  not Musica's to fix either way.
+  not a third-party client's to fix either way.
 - **Whether a player answers a unicast `R` query**, which would settle claim
   `C-19` in the specification. That is a protocol question, useful to the spec,
   and unrelated to any of the timings here.
