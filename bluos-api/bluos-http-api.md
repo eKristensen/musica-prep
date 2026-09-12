@@ -2381,7 +2381,7 @@ the right approach for a server-side client on a known network.
 not make clear. Bluesound Professional publishes it as the way to reach players
 from a remote subnet, with the Windows path and the file format:
 
-| | |
+| field | value |
 |---|---|
 | Path (Windows) | `C:\Users\<user>\AppData\Roaming\BluOS Controller\staticPlayers.txt` |
 | Format | one comma-separated line of `ip:port`, no spaces |

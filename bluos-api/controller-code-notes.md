@@ -4,7 +4,7 @@ Explanations for the numbers in
 [`controller-discovery-timings.md`](controller-discovery-timings.md), read out
 of the shipping apps. Two sources:
 
-| | |
+| build | how it was read |
 |---|---|
 | **Android 4.16.2** | `com.lenbrook.sovi.bluesound`, APK from APKPure. Reconstructed from Dalvik bytecode — names survive R8 shrinking and the control flow below is simple enough to read directly |
 | **Windows 4.16.1** | Electron app. Its main process ships **original TypeScript** in adjacent source maps, so this is real source, not decompilation |
