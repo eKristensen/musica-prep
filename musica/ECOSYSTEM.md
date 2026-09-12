@@ -5,10 +5,8 @@ well that many of them come nowhere near my own requirements. This is the
 result: everything that can in one way or another interact with BluOS players.
 
 It is a list of links, not descriptions — visit a project if you want to know
-what it does. The only note is where a project is closed source, since that is
-the one thing you cannot find out by following the link. Which of these were
-candidates for replacing the official app, and how they fared, is in
-[MOTIVATION.md](MOTIVATION.md).
+what it does. Which of these were candidates for replacing the official app,
+and how they fared, is in [MOTIVATION.md](MOTIVATION.md).
 
 There may well be more at [github.com/topics/bluos](https://github.com/topics/bluos).
 
