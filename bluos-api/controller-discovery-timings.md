@@ -45,9 +45,17 @@ in its path.
 4. Stop when all four players are listed.
 5. Open the app drawer, **swipe the app away**, start again.
 
-Step 5 kills the process, so every run is a cold start. The currently selected
-player survives it: the app's shutdown cache clear does not clear that one, so
-it is restored rather than discovered.
+Step 5 is meant to force a cold start, and **the measurements show it worked**:
+a process that survives the swipe still holds the whole player list in memory
+and renders it in under a second, so any run that took seconds was a genuine
+cold start. Android does not actually promise to kill a process on a swipe — see
+[`controller-code-notes.md`](controller-code-notes.md) — which is why the
+instant-list behaviour was hard to provoke on demand, and why the timing itself
+is better evidence that a run was cold than the swipe is.
+
+The currently selected player survives a real kill regardless: it is the one
+player written to storage, and it is read back at startup rather than
+rediscovered.
 
 **This method cannot measure first-player discovery.** The player icon only
 works once at least one player exists, and the restored player guarantees that.
