@@ -34,12 +34,14 @@
 # `model` let a client show something useful before its first /SyncStatus.
 # Unknown keys are ignored by controllers, so extra ones are harmless.
 
-# This is the Bluesound Node N130 announce captured in bluos-http-api.md 12.1;
-# `lsdp-static selftest` checks that it encodes to exactly those bytes.
-node 90:76:82:42:74:c4 192.168.10.10
+# The Bluesound Node N130 announce captured in bluos-http-api.md 12.1, whose
+# node id is an RFC 7042 documentation MAC here and there -- the real device's
+# MAC is redacted throughout this repository. `lsdp-static selftest` checks that
+# this encodes to exactly the captured bytes.
+node 00:00:5e:00:53:03 192.168.10.10
   service 0x0001 name="Bluesound Node" port=11000 model=N130 version=3.20.52 zs=0
   service 0x0004 name="Bluesound Node" port=11431
 
 # A second player, minimal: port defaults to 11000.
-node 90:76:82:11:22:33 192.168.10.11
+node 00:00:5e:00:53:04 192.168.10.11
   service player name="Kitchen" model=PULSE2i version=3.20.52

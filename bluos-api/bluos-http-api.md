@@ -2190,13 +2190,15 @@ skipped rather than aborting the parse — build the parser that way, because th
 version byte is only incremented for *incompatible* changes.
 
 **A real Announce**, captured from a Bluesound Node N130 and preserved as a
-test fixture in the `nightvision` library. Decoded field by field:
+test fixture in the `nightvision` library. Decoded field by field — **The node id is redacted.** It is a real device's MAC in the original fixture, replaced here and everywhere else in this repository with an RFC 7042 documentation MAC (`00-00-5E-00-53-xx`), the same convention `bluos-probe.py` uses for its own copy of this packet. Every length is unchanged, so the structure is exactly as captured; only those six bytes differ.
+
+
 
 ```
 06 4C 53 44 50 01              header: len 6, "LSDP", version 1
 73                             message length = 115
 41                             'A' announce
-06 90 76 82 42 74 C4           nodeId, 6 bytes (a MAC)
+06 00 00 5E 00 53 03           nodeId, 6 bytes (a MAC, redacted)
 04 C0 A8 0A 0A                 address, 4 bytes = 192.168.10.10
 02                             2 announce records
    00 01                       record 1: class 0x0001, BluOS Player
@@ -2226,7 +2228,7 @@ Three things this shows that a field table does not:
 The matching Delete and Query packets from the same fixture set:
 
 ```
-06 4C 53 44 50 01  0E 44  06 90 76 82 42 74 C4  02 00 01 00 04
+06 4C 53 44 50 01  0E 44  06 00 00 5E 00 53 03  02 00 01 00 04
                    └─ len 14, 'D', nodeId, 2 classes: 0x0001 and 0x0004
 
 06 4C 53 44 50 01  07 51  02 00 01 00 04

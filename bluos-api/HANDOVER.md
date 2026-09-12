@@ -272,9 +272,9 @@ Remaining unresolved, and not worth more effort:
 
 ## Fixed in v1.6
 
-**The harness itself was not shareable.** It embedded a real device MAC —
-`90:56:82:98:06:6E`, lifted from `captures/syncstatus/` and propagated into
-seven test fixtures plus the raw bytes of the LSDP announce fixture. All
+**The harness itself was not shareable.** It embedded a real device MAC, lifted
+from `captures/syncstatus/` and propagated into seven test fixtures plus the raw
+bytes of the LSDP announce fixture. All
 identifying values are now synthetic and the convention is stated at the top of
 the file: RFC 7042 documentation MACs (`00:00:5E:00:53:xx`) and `10.255.255.x`
 fixture addresses. 126 assertions still pass.
@@ -282,8 +282,9 @@ fixture addresses. 126 assertions still pass.
 ## Fixed in v1.4 and v1.5
 
 1. **A MAC address was reaching shared bundles.** LSDP `node_id` is a MAC with
-   the separators stripped (`905682982996`), which `MAC_RE` could not see.
-   Every discovery capture you have shared so far contains real device MACs.
+   the separators stripped (twelve bare hex digits, e.g. `00005e005303`), which
+   `MAC_RE` could not see. Every discovery capture shared before this fix
+   contains real device MACs.
 2. **C-35 was mis-scored.** The settings tree reports a display string
    (`off`/`dim`/`bright`), not the numeric value written, so "asked 1, got dim"
    read as failure. The GET query form works — pyblu is right, blutui is wrong.

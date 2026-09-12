@@ -16,8 +16,9 @@ What the measurements found is written up elsewhere, not here —
 the data. This file is about the program.
 
 Written against `../bluos-http-api.md` §12.1. `selftest` checks the encoder
-against the real Bluesound Node N130 announce captured in that section, byte for
-byte, so what goes on the wire is what a real player puts there.
+against the Bluesound Node N130 announce captured in that section, byte for byte
+apart from its redacted node id, so the structure that goes on the wire is what
+a real player puts there.
 
 ## Build
 

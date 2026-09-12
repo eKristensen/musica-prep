@@ -15,8 +15,9 @@
 //   selftest  check the wire codec against real captured packets
 //
 // Protocol reference: bluos-api/bluos-http-api.md section 12.1.  The encoder is
-// checked byte-for-byte against the captured Bluesound Node N130 announce in
-// `selftest`, so what goes on the wire is what a real player puts there.
+// checked in `selftest` against the captured Bluesound Node N130 announce from
+// that section, byte for byte apart from the redacted node id, so the structure
+// this program puts on the wire is what a real player puts there.
 //
 // Linux only: it uses SO_REUSEPORT and getifaddrs(3) directly.  No dependencies.
 
@@ -287,13 +288,13 @@ fn hex_spaced(b: &[u8]) -> String {
 // ---------------------------------------------------------------------------
 //
 //   # a comment
-//   node 90:76:82:42:74:c4 192.168.10.10
+//   node 00:00:5e:00:53:03 192.168.10.10
 //     service 0x0001 name="Bluesound Node" port=11000 model=N130 version=3.20.52 zs=0
 //     service 0x0004 name="Bluesound Node" port=11431
 //
 // `service` lines attach to the node above them.  Values may be quoted; TXT keys
 // keep the order they are written in.  The node id is the player's MAC (any of
-// 90:76:82:42:74:c4, 90-76-82-42-74-c4, 9076824274c4) or the word `auto`, which
+// 00:00:5e:00:53:03, 00-00-5e-00-53-03, 00005e005303) or the word `auto`, which
 // derives a stable id from the address.
 
 fn parse_class(s: &str) -> Result<u16, String> {
@@ -1358,14 +1359,16 @@ fn pct(sorted: &[u128], p: f64) -> u128 {
 
 /// The Bluesound Node N130 announce captured by the `nightvision` project and
 /// decoded field by field in bluos-http-api.md section 12.1, rebuilt here byte by
-/// byte from that listing.  If the encoder reproduces this exactly, what this
-/// program puts on the wire is what a real player puts there.
+/// byte from that listing -- with the node id replaced by an RFC 7042
+/// documentation MAC, as it is in the specification and in `bluos-probe.py`.
+/// Every length is unchanged, so reproducing this exactly means the wire
+/// structure is what a real player puts there.
 fn fixture_announce() -> Vec<u8> {
     let mut e: Vec<u8> = Vec::new();
     e.extend_from_slice(&[0x06, 0x4C, 0x53, 0x44, 0x50, 0x01]); // header
     e.push(0x73); // message length 115
     e.push(0x41); // 'A'
-    e.extend_from_slice(&[0x06, 0x90, 0x76, 0x82, 0x42, 0x74, 0xC4]); // node id
+    e.extend_from_slice(&[0x06, 0x00, 0x00, 0x5E, 0x00, 0x53, 0x03]); // node id
     e.extend_from_slice(&[0x04, 0xC0, 0xA8, 0x0A, 0x0A]); // 192.168.10.10
     e.push(0x02); // 2 records
     e.extend_from_slice(&[0x00, 0x01]); // class 0x0001
@@ -1404,7 +1407,7 @@ fn fixture_announce() -> Vec<u8> {
 }
 
 const FIXTURE_CONFIG: &str = concat!(
-    "node 90:76:82:42:74:c4 192.168.10.10\n",
+    "node 00:00:5e:00:53:03 192.168.10.10\n",
     "  service 0x0001 name=\"Bluesound Node\" port=11000 model=N130 version=3.20.52 zs=0\n",
     "  service 0x0004 name=\"Bluesound Node\" port=11431\n",
 );
@@ -1421,7 +1424,7 @@ fn selftest() -> i32 {
         }
     };
 
-    // encoder vs the real captured announce
+    // encoder vs the real captured announce, node id redacted
     let nodes = match parse_config(FIXTURE_CONFIG) {
         Ok(n) => n,
         Err(e) => {
@@ -1432,7 +1435,7 @@ fn selftest() -> i32 {
     let got = encode_announce(&nodes[0]).unwrap();
     let want = fixture_announce();
     check(
-        "encoded announce is byte-identical to the captured N130 packet",
+        "encoded announce is byte-identical to the captured N130 packet (redacted node id)",
         got == want,
         format!("got  {}\n      want {}", hex_spaced(&got), hex_spaced(&want)),
     );
@@ -1463,7 +1466,7 @@ fn selftest() -> i32 {
                 && match &msgs[0] {
                     Msg::Announce(n) => {
                         n.addr == Ipv4Addr::new(192, 168, 10, 10)
-                            && hex(&n.id) == "9076824274c4"
+                            && hex(&n.id) == "00005e005303"
                             && n.records.len() == 2
                             && n.records[0].get("port") == Some("11000")
                             && n.records[0].get("model") == Some("N130")
@@ -1486,7 +1489,7 @@ fn selftest() -> i32 {
 
     // the Delete fixture from the same capture set
     let del = vec![
-        0x06, 0x4C, 0x53, 0x44, 0x50, 0x01, 0x0E, 0x44, 0x06, 0x90, 0x76, 0x82, 0x42, 0x74, 0xC4,
+        0x06, 0x4C, 0x53, 0x44, 0x50, 0x01, 0x0E, 0x44, 0x06, 0x00, 0x00, 0x5E, 0x00, 0x53, 0x03,
         0x02, 0x00, 0x01, 0x00, 0x04,
     ];
     check(
@@ -1628,10 +1631,10 @@ first-party client does",
     check(
         "node id placeholders are locally administered six-byte ids",
         {
-            let ph = red.node_id(&[0x90, 0x76, 0x82, 0x42, 0x74, 0xC4]);
+            let ph = red.node_id(&[0x00, 0x00, 0x5E, 0x00, 0x53, 0x03]);
             ph.len() == 6 && ph[..4] == [0x02, 0x00, 0x00, 0x00]
         },
-        hex(&red.node_id(&[0x90, 0x76, 0x82, 0x42, 0x74, 0xC4])),
+        hex(&red.node_id(&[0x00, 0x00, 0x5E, 0x00, 0x53, 0x03])),
     );
     check(
         "player names become Room-A, Room-B, ...",
@@ -1652,12 +1655,12 @@ first-party client does",
         "the scanner catches a real address, a MAC and a bare-hex node id",
         {
             let hits = find_unredacted(
-                "player at 10.42.7.9:11000 mac 90:76:82:42:74:c4 node 9076824274c4 \
-                 also 90-76-82-42-74-c4",
+                "player at 10.42.7.9:11000 mac de:ad:be:ef:00:01 node deadbeef0001 \
+                 also de-ad-be-ef-00-01",
             );
             hits.len() == 4
         },
-        format!("{:?}", find_unredacted("10.42.7.9 90:76:82:42:74:c4 9076824274c4 90-76-82-42-74-c4")),
+        format!("{:?}", find_unredacted("10.42.7.9 de:ad:be:ef:00:01 deadbeef0001 de-ad-be-ef-00-01")),
     );
     check(
         "the scanner passes redacted text, timestamps, versions and table rules",
@@ -1676,7 +1679,7 @@ first-party client does",
         {
             let r = Redactor::new(true);
             let n = parse_config(
-                "node 90:76:82:42:74:c4 10.42.7.9\n  service 0x0001 name=\"Stue\" port=11000\n",
+                "node de:ad:be:ef:00:01 10.42.7.9\n  service 0x0001 name=\"Stue\" port=11000\n",
             )
             .unwrap();
             let line = describe(&n[0], &r);
@@ -1685,7 +1688,7 @@ first-party client does",
                 && !line.contains("10.42.7.9")
         },
         describe(
-            &parse_config("node 90:76:82:42:74:c4 10.42.7.9\n  service 0x0001 name=\"Stue\"\n")
+            &parse_config("node de:ad:be:ef:00:01 10.42.7.9\n  service 0x0001 name=\"Stue\"\n")
                 .unwrap()[0],
             &Redactor::new(true),
         ),
@@ -1695,14 +1698,14 @@ first-party client does",
         {
             let r = Redactor::new(true);
             let n = parse_config(
-                "node 90:76:82:42:74:c4 10.42.7.9\n  service 0x0001 name=\"Stue\" port=11000\n",
+                "node de:ad:be:ef:00:01 10.42.7.9\n  service 0x0001 name=\"Stue\" port=11000\n",
             )
             .unwrap();
             let cfg = emit_config(&n, &r);
             find_unredacted(&cfg).is_empty() && !cfg.contains("Stue")
         },
         emit_config(
-            &parse_config("node 90:76:82:42:74:c4 10.42.7.9\n  service 0x0001 name=\"Stue\"\n")
+            &parse_config("node de:ad:be:ef:00:01 10.42.7.9\n  service 0x0001 name=\"Stue\"\n")
                 .unwrap(),
             &Redactor::new(true),
         ),
@@ -1723,7 +1726,7 @@ first-party client does",
     {
         let shared = Redactor::new(true);
         let node = parse_config(
-            "node 90:76:82:42:74:c4 10.42.7.9\n  service 0x0001 name=\"Stue\" port=11000\n",
+            "node de:ad:be:ef:00:01 10.42.7.9\n  service 0x0001 name=\"Stue\" port=11000\n",
         )
         .unwrap();
         let per: Vec<(String, Vec<(usize, u128)>)> =
@@ -2085,7 +2088,7 @@ SERVE
   --config FILE        player list; see players.conf.example
   --player SPEC        a player without a config file, repeatable:
                          --player 192.168.10.10
-                         --player 192.168.10.10,id=90:76:82:42:74:c4,name=Kitchen,port=11000
+                         --player 192.168.10.10,id=00:00:5e:00:53:03,name=Kitchen,port=11000
   --delay-ms N|LO-HI   wait this long before answering (default 0: answer
                        immediately, which is the whole point of serving).
                        A range is drawn per query and per node, so
