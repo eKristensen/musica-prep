@@ -328,8 +328,7 @@ not a solution for me, as I prefer a written and visual format.
 
 ## Wishlist
 
-Everything above tries to be fair to the official app. This section sets that
-aside. Beyond the obvious —
+Beyond the obvious —
 [proper Linux support](https://support1.bluesound.com/hc/en-us/community/posts/360033533054-BluOS-controller-app-on-Linux)
 and a reliable Android app — this is what I would want on top of simply being
 able to interact with my players at all, asked for without regard to whether
