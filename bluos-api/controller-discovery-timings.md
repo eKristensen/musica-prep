@@ -412,10 +412,6 @@ Established **[V hardware]**:
 
 Not established:
 
-- **Which interface each of R1–R4 actually used** — though it now matters less
-  than it seemed to, since the app's delay keys on the Wi-Fi radio being
-  enabled rather than on which interface carries traffic, and the radio was
-  never switched off in those runs.
 - Whether Waydroid being a few tenths slower than the phones means anything; a
   virtualised display is the dull explanation.
 - **What the iOS controller actually does.** `bluos-http-api.md` is built from
@@ -427,31 +423,15 @@ Not established:
   out of the picture. R8 establishes that it is
   app-side; it does not say whether the app queries late, renders late, or waits
   deliberately.
-- What empties the list, what refills it in under a second with no discovery
-  running, and whether the ~30 s / ~50 s marks are fixed.
+- Whether the ~30 s / ~50 s marks are fixed. What empties the list and what
+  refills it are no longer open — both are read out of the app's own code.
 - Whether the desktop apps would also improve with Wi-Fi off — they were on
   wired LAN throughout, so the comparison has not been run.
-- What the desktop spends its 5–6 s on, and whether the static list is added to
-  discovery's results rather than replacing them.
+- What the desktop spends its 5–6 s on.
 - Whether the Linux AppImage reads `staticPlayers.txt`; the vendor supports the
   file on Windows and macOS only.
 
-## What is left
-
-The measuring is done. Nothing here is a prerequisite for anything, and the two
-suspect runs need no redoing — the wired figure rests on three later runs that
-are not in doubt, and R3 and R4's own numbers sit with the Wi-Fi rows, which is
-where they are filed.
-
-"App or platform?" is no longer one of them: the Wi-Fi penalty is the app's own
-two-second delay. One question stays open because nobody has looked, not because
-anything waits on it:
-
-- **Does a real player answer a unicast `R` query?** `lsdp-static measure --query R`
-  aimed at a player settles claim `C-19` in `bluos-http-api.md`, currently
-  INCONCLUSIVE. A protocol question rather than a timing one.
-
-Smaller unknowns, recorded above where they arose and not worth a trip on their
-own: what the Android app spends its 1.0–1.5 s floor on, what empties its player
-list, whether the Linux AppImage reads `staticPlayers.txt`, and why Waydroid is
-a couple of tenths slower than the phones.
+None of the above is a prerequisite for anything, and the two suspect runs need
+no redoing: the wired figure rests on three later runs that are not in doubt,
+and R3 and R4's own numbers sit with the Wi-Fi rows, which is where they are
+filed. The measuring is done.
