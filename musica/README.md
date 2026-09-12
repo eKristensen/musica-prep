@@ -1,22 +1,25 @@
 # Musica — a hosted web-based BluOS controller
 
-This is a personal project that aims solve problems I have encountered while using
-Bluesound music players. It is not the goal to replace the official app, or any
-alternative app.
+This is a personal project that aims to solve problems I have run into while
+using Bluesound music players. It is not meant to replace the official app, or
+any of the alternatives to it.
 
 ---
 
 ## Why
 
 **1. Unreliable player visibility on Android.** The official Android app loses
-players, shows them inconsistently, and generally makes it hard to control them
-I own. I assumed this was normal until I ran the same app under Waydroid and saw
-it behave. Later I tried the official iOS app which worked fine. I believe it is
-a solvable problem that has, for whatever reason, not been solved on Android.
+players, shows them inconsistently, and generally makes it hard to control the
+ones I own. I assumed this was normal until I ran the same app under Waydroid
+and saw it behave. Later I tried the official iOS app, which worked fine. I
+believe it is a solvable problem that has, for whatever reason, not been solved
+on Android.
 
 **2. No Linux desktop client.** The official desktop app is Electron, which
-makes the absence of a Linux build hard to explain. Using Wine to run the Windows
-is not an acceptable solution for me.
+makes the absence of a Linux build hard to explain. A community project
+repackages the Windows build as an AppImage and it does work, but it carries
+over some of the same discovery problems, and running the Windows app under
+Wine is not an acceptable solution for me.
 
 **3. Slow Tidal browsing.** Opening My Music → Songs means waiting several
 seconds, every time, for a list that has not changed.
@@ -28,17 +31,31 @@ I tried the alternatives first. None of them worked for me — see
 
 ## Design philosophy
 
-**Platform independence.** I do not want to decide what platform you should
-use, therefore this is a web app. Web apps runs on everything
-that got a browser or support for Progressive Web Apps.
+**Platform independence.** I do not like it when someone else decides which
+platform you should use by not offering the same experience and feature set
+everywhere. In my experience web apps come closest to platform independence,
+so this is a web app. It runs on anything with a browser, and installs like a
+native app where Progressive Web Apps are supported.
 
-**One Graphical User Interface.** Shared between desktop and mobile apps. A web
-app collapses that into one codebase that behaves the same everywhere.
+**One user interface.** One interface for desktop and phone, rather than one
+per platform. A web app collapses that into a single codebase that behaves the
+same everywhere.
 
-**Built to last.** I build the application in Rust (backend) and TypeScript
-(frontend) to get as much feedback from the compiler as possible. Dependencies
-are carefully chosen and only included when the task otherwise would make
-little sense to implement directly. The hope is to avoid project dead by dependency.
+**It never acts on its own.** It does what you ask, and it keeps its picture of
+the players current. It does not tidy up, correct configurations it disapproves
+of, or act because it noticed it could. The one exception is pre-caching Tidal
+lists, which is read-only.
+
+**Built to last.** Rust on the backend and TypeScript in the frontend, to get
+as much feedback from the compiler as possible. Dependencies are chosen
+carefully and added only when implementing the thing directly would make little
+sense. The hope is to avoid death by dependency.
+
+**It is meant to be boring.** Written once, built, and left with minimal
+maintenance.
+
+Each of these is worked out in depth in
+[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md).
 
 ---
 
@@ -53,26 +70,25 @@ browser connects to that server and nothing else.
    (fixed IPs from config)         (holds state)     (phone / laptop)
 ```
 
-That single design choice is what fixes problem 1 and 2. Loading a webpage
-from a server that already have all the info is faster and more reliable than
-constant player rediscovery and state synchronization.
+That single design choice is what fixes problem 1. Loading a page from a server
+that already holds the state is faster and more reliable than rediscovering
+players and resynchronising on every launch. Delivering it as a web app is what
+answers problem 2.
 
-It allows hiding problem 3 too: because the server is always running, it can
-cache Tidal lists and hand them over instantly.
+It hides problem 3 as well: because the server is always running, it can
+pre-cache Tidal lists and hand them over instantly. Search is not helped by
+this — a search still goes out to the service, so it will be no faster than it
+is today.
 
 ---
 
 ## Features
 
-**Nothing here is built yet.** This is the intended scope, not a change log. The
-repository currently holds the plan to start the work.
+**Nothing here is built yet.** This is the intended scope, not a change log.
+The repository currently holds the plan to start the work.
 
-Feature completeness is not the goal. The list is based on select features on
-Bluesound NODE N110, N130 and N132.
-
-Aside from the features supported BluOS API used is the same among all
-Bluesound Players. Most other BluOS-bases players will most likely work fine
-even if they are not listed above.
+Feature completeness is not the goal. The list is based on selected features of
+the Bluesound NODE N110, N130 and N132.
 
 - List configured players, always visible, online or offline
 - Play, pause, stop, skip, seek
@@ -85,15 +101,28 @@ even if they are not listed above.
 - Browsing and search for Tidal, Radio Paradise and local media
 - Tidal lists pre-cached, sortable, and searchable within a single list
 - Dirac Live preset, subwoofer, crossover and the rest of the audio settings
-- Tested to work in Firefox on Linux, and on Android via PWA.
 
-### Deliberately absent
+The BluOS API is the same across Bluesound players, so other BluOS-based
+players will most likely work even though they are not listed above. Which
+features are available will vary with the hardware.
 
-Soundbars. Home theatre and zone configuration. Rechargeable and battery
-players. Anything specific to custom-install or professional hardware.
-Player setup and Wi-Fi provisioning. Automatic discovery. Move playback.
+The targets during development are Firefox on Linux and Android as a PWA. Other
+browsers are not a goal, and nothing is deliberately done to break them either.
 
-Keep the official app installed for those.
+### Outside the scope
+
+**Hardware I do not own.** Soundbars, rechargeable and battery players, and
+anything specific to custom-install or professional hardware. Nothing is done
+to shut these out — they speak the same API, so ordinary playback control will
+most likely work on them — but none of it is tested, and nothing specific to
+them is built.
+
+**Features left out on purpose.** Home theatre and zone configuration, player
+setup and Wi-Fi provisioning, automatic discovery, moving playback between
+players, and triggering firmware upgrades. Each omission has its reasoning in
+[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md).
+
+Keep the official app installed for any of this.
 
 ---
 
@@ -108,7 +137,11 @@ listen: "0.0.0.0:8080"
 ```
 
 IP addresses only. Names, models and capabilities come from the players
-themselves. Port is optional and defaults to 11000.
+themselves. Port is optional and defaults to 11000. See
+[config.example.yaml](config.example.yaml) for the remaining settings.
+
+There is no authentication of any kind. Anyone who can reach the server can
+control the players, so run it on a network you trust.
 
 ---
 
@@ -127,30 +160,14 @@ The result is one binary with the frontend embedded.
 
 ---
 
-## Design notes
-
-The reasoning behind the significant choices lives in
-[DECISIONS.md](DECISIONS.md). It is worth reading before changing anything
-structural — each decision records what was chosen, why, and the specific signal
-that would justify revisiting it.
-
-Two that shape everything else:
-
-- **The app never acts on its own.** It does what you ask and it keeps its
-  picture of the players current. It does not tidy up, correct configurations it
-  disapproves of, or act because it noticed it could. The one exception is
-  pre-caching Tidal lists, which is read-only.
-- **It is meant to be boring.** Written once, built, and left with minimal
-  maintenance.
-
----
-
 ## Status and expectations
 
 Planning stage. No code yet.
 
-MIT licensed — see `LICENSE`. There is no intention to replace any commercial
-product or to make money from this.
+MIT licensed — see [LICENSE](LICENSE). There is no intention to replace any
+commercial product or to make money from this.
+
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 It is built for my hardware and my habits. It may well not suit yours.
 
@@ -162,14 +179,13 @@ This project is built against the
 [BluOS Custom Integration API v1.7](https://content-bluesound-com.s3.amazonaws.com/uploads/BluOS-Custom-Integration-API_v1.7.pdf).
 
 The players I own support calls that document does not cover, and this project
-uses some of them. They are described in `docs/protocol-notes.md`. Those are
-implementation notes for this project, not a specification of the BluOS API.
+uses some of them.
 
 ---
 
 ## Acknowledgements
 
-This project is not affiliated with, endorsed by,
-or supported by anyone. All product names, logos and trademarks mentioned here
+This project is not affiliated with, endorsed by or supported by any hardware
+or service vendor. All product names, logos and trademarks mentioned here
 belong to their respective owners and are used descriptively. Support for any
 given device or feature is partial at best.

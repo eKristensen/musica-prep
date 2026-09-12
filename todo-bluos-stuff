@@ -4,16 +4,17 @@ ZONE=$(sudo firewall-cmd --get-zone-of-interface=wlp2s0)
 sudo firewall-cmd --zone="$ZONE" --add-port=11430/udp --timeout=5m
 
 -----
-VJK med inspiration fra mit BluOS projekt.
-Endnu en ide: Uniconta giv claude filerne fra installationen af uniconta sammen med api'et og spørg om filerne hjælper den med at forstå api'et.
-
-
-----
-
-
-
-
------
 
 I think it makes sense to pre-extract code to make the chat cheaper
 
+-----
+
+Look for more third-party projects on GitLab. The repackaged Linux controller
+(gitlab.com/zquestz/bluos-controller-linux) was found there and not on GitHub,
+so the search so far has been GitHub-heavy. There may be more.
+
+-----
+
+Decide what to do with the ChatGPT/AI analysis idea for finding new music.
+ibeex/blue_cli (github.com/ibeex/blue_cli) does something along those lines
+and is the closest existing example found.

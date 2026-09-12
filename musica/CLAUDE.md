@@ -2,10 +2,11 @@
 
 ## Read first
 
-- `DECISIONS.md` — settled architectural decisions. **These are not open for
-  reinterpretation.** If you believe one is wrong, say so and stop; do not build
-  against it. Each has a "Revisit if" clause naming the signal that would
-  reopen it.
+- `CONTRIBUTING.md` — applies to you exactly as it does to a person. Nothing in
+  it is relaxed because the change comes from an agent.
+- `DESIGN_PRINCIPLES.md` — settled architectural decisions, and binding here.
+  **They are not open for reinterpretation.** If you believe one is wrong, say
+  so and stop; do not build against it.
 - `PLAN.md` — the work plan, tiers and ordering.
 - `README.md` and `MOTIVATION.md` — what this is, and the requirements the
   work is measured against.
@@ -183,7 +184,7 @@ Ask. Particularly about:
 - Anything that would add a dependency.
 - Anything that would make the app act without a user asking.
 - Anything where the device behaviour is not in `docs/bluos-http-api.md`.
-- Anything that contradicts `DECISIONS.md`.
+- Anything that contradicts `DESIGN_PRINCIPLES.md`.
 
 A question costs a minute. A wrong assumption baked into the architecture costs
 an evening.
