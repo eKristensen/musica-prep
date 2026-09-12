@@ -420,23 +420,25 @@ Not established:
 - Whether the Linux AppImage reads `staticPlayers.txt`; the vendor supports the
   file on Windows and macOS only.
 
-## Next measurements
+## What is left
 
-1. **`lsdp-static sniff` beside a Waydroid run**, if the app's 1.0–1.5 s floor
-   is worth breaking down further. It answers nothing and timestamps every
-   datagram, so it would show whether the app queries at the moment of the tap
-   and renders a second later, or waits a second before querying at all. Both
-   are app-side either way, so this is optional. Its other use is on a phone,
-   where the source address of the query says which interface was really used —
-   which is what would resolve R3 and R4.
-2. **Redo R3 with Wi-Fi confirmed off**, to replace a suspect row with a real one.
-3. **Screen-record the phone** rather than watching it; Android records natively
-   and scrubbing the video resolves the tap and each player's appearance to
-   about a tenth of a second.
-4. **Run an mDNS/Bonjour browser app on the Fairphone over Wi-Fi**, as the
-   differential test for the multicast-lock hypothesis above. A few minutes, and
-   it separates "the app" from "the platform".
-5. **Try `--query R`.** Its answers come back by **unicast**, which does not
-   depend on Wi-Fi broadcast delivery at all. If the Wi-Fi penalty is broadcast
-   handling, a unicast query is the protocol-level way around it — and Musica
-   can send one even though no shipping client does.
+The measuring is done. Nothing here is a prerequisite for anything, and the two
+suspect runs need no redoing — the wired figure rests on three later runs that
+are not in doubt, and R3 and R4's own numbers sit with the Wi-Fi rows, which is
+where they are filed.
+
+Two questions stay open because nobody has looked, not because anything waits on
+them:
+
+- **App or platform?** Any mDNS or Bonjour browser app on the Fairphone, over the
+  same Wi-Fi, separates "the BluOS Android app" from "Android" as the cause of
+  the Wi-Fi penalty. Minutes of work. It would not change what the penalty costs
+  or whose job it is.
+- **Does a real player answer a unicast `R` query?** `lsdp-static measure --query R`
+  aimed at a player settles claim `C-19` in `bluos-http-api.md`, currently
+  INCONCLUSIVE. A protocol question rather than a timing one.
+
+Smaller unknowns, recorded above where they arose and not worth a trip on their
+own: what the Android app spends its 1.0–1.5 s floor on, what empties its player
+list, whether the Linux AppImage reads `staticPlayers.txt`, and why Waydroid is
+a couple of tenths slower than the phones.

@@ -46,9 +46,11 @@ different app build (4.16.3 against whatever the Play Store gave the phones),
 and virtualised hardware. None of it moved the number. The fast result is not a
 property of one phone, one Android, one app version, or real hardware.
 
-Two earlier runs were recorded as "wired" and are now suspect: an adapter was
-plugged in but Wi-Fi was never turned off, and nothing confirmed which interface
-the app used. Until that is redone, treat them as Wi-Fi measurements.
+Two earlier runs were recorded as "wired" when an adapter was plugged in but
+Wi-Fi was never turned off, so they are almost certainly Wi-Fi measurements and
+are filed as such. Nothing rests on them: the wired figure comes from three
+later runs that are not in doubt, and their own numbers match the Wi-Fi rows
+anyway.
 
 ### Where the penalty lives **[V hardware]**, and what causes it **[U]**
 
@@ -283,20 +285,26 @@ and, within a session, for the whole list, which it then throws away on a timer.
 **Musica's design target is to do that for every player and keep it** — and,
 where discovery is unavoidable, to prefer the unicast `R` query over broadcast.
 
-## The measurements that would close this
+## What is left, and none of it is pending work
 
-1. **A Bonjour browser app on the Fairphone over the same Wi-Fi**, which
-   separates "the Android app" from "Android" as the cause of the Wi-Fi penalty.
-   Minutes of work, and it is the last question about the cause that is still
-   open.
-2. **`--query R` against a real player**, which would settle claim `C-19` and, if
-   the Wi-Fi hypothesis holds, demonstrate the protocol-level way around it.
+The question this was built to answer is answered, in both directions: a static
+LSDP responder does not make any controller faster, and it would be the wrong
+answer even if it had. Nothing below changes that, and nothing below needs doing
+before the work is used.
 
-Everything else that was on this list has been answered — including
-`staticPlayers.txt`, which showed the desktop delay is not discovery. `sniff`
-remains useful for one optional question, whether the app's floor is spent
-before or after it sends its query, and for confirming which interface a phone
-used, which is all that still separates the two suspect runs from the rest.
+Two curiosities remain open, for whoever wants them:
+
+- **Whether the Wi-Fi penalty belongs to the Android app or to Android.** Any
+  Bonjour browser app on the same phone and the same Wi-Fi would separate them
+  in minutes. It would not change a conclusion — the penalty is real and it is
+  not Musica's to fix either way.
+- **Whether a player answers a unicast `R` query**, which would settle claim
+  `C-19` in the specification. That is a protocol question, useful to the spec,
+  and unrelated to any of the timings here.
+
+Everything else has been answered: `staticPlayers.txt` showed the desktop delay
+is not discovery, R8 showed the Android floor is the app's own, and R9 showed
+the Wi-Fi penalty is Android-side rather than the network's.
 
 ### Where `staticPlayers.txt` lives, and what it is actually for
 
