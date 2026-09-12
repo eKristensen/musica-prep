@@ -129,6 +129,21 @@ against the real players, the one on Wi-Fi answered with a mean of 373 ms agains
 a theoretical 375, faster than two of the three on cable. It is Wi-Fi between the
 *controller* and the network that costs 2–4 seconds, not Wi-Fi at the player.
 
+## Reliability has a second dimension
+
+"Does the list fill" is not the only question. The Android app also **empties
+its own list** after roughly 30–50 seconds sitting idle — showing "Discovering…"
+and then "No Player Found" — and refills it in under a second when tapped. That
+happens with every discovery mechanism switched off, and while the previously
+selected player stays fully controllable. It is written up in
+[`../controller-discovery-timings.md`](../controller-discovery-timings.md).
+
+Two things follow. A slow list fills eventually, but a list that empties itself
+mid-session is a failure the user meets with no cause visible and nothing to do
+but tap again — so it may matter more than any of the timings here. And the app
+demonstrably holds the whole list well enough to render it instantly on demand,
+then discards it on a timer anyway.
+
 ## What this means for Musica
 
 The justification is intact, and the reason for it is sharper.
@@ -140,9 +155,10 @@ Broadcast discovery on Wi-Fi is simply not dependable.
 
 A controller that keeps its own player list does not discover at all on the path
 that matters, so none of this applies to it. The BluOS app already does exactly
-that for one player, the selected one, which survives its shutdown cache clear.
-**Musica's design target is to do that for every player** — and, where discovery
-is unavoidable, to prefer the unicast `R` query over broadcast.
+that for one player, the selected one, which survives its shutdown cache clear —
+and, within a session, for the whole list, which it then throws away on a timer.
+**Musica's design target is to do that for every player and keep it** — and,
+where discovery is unavoidable, to prefer the unicast `R` query over broadcast.
 
 ## The measurements that would close this
 

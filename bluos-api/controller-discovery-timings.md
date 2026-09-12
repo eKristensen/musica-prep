@@ -99,20 +99,12 @@ services, on a particular app build, or on real hardware. The one thing every
 fast run has in common is a **wired path with no Wi-Fi in it**; the one thing
 every slow run has in common is Wi-Fi.
 
-### R7 is also a much better test rig
+### R7 is also a better test rig
 
 The guest is bridged on the host, so `lsdp-static sniff` can watch the same
-segment from that host, and the guest's screen can be recorded there too. Query
-out, announces in, and screen filling can finally be put on one timeline —
-without a phone, a stopwatch, or a person counting.
-
-That makes one experiment cheap that was not before: run `lsdp-static serve`
-against this guest and see whether 1.0–1.5 s drops. A real player answers after
-a random 0–750 ms, so roughly a second is about what the protocol alone would
-cost, and there may be very little app-side delay left to find on a good link
-**[U]**. If the number falls to a few hundred milliseconds against a responder
-answering instantly, that is the protocol's cost measured directly; if it stays
-near a second, the remainder is the app's.
+segment from that host and the guest's screen can be recorded there too — query
+out, announces in, and screen filling on one timeline, with no phone and no
+stopwatch. That is what made R8 cheap to run.
 
 ### R8 puts a floor under it, and the floor is the app
 
@@ -191,29 +183,94 @@ out. `sniff` settles this the same way it settles R3.
 
 ---
 
-## Anomaly: players vanishing while the app is open
+## The list empties itself, and a tap brings it back
 
-Seen on the Fairphone during R4 (airplane mode + cable), several times
-**[V hardware]**:
+A second kind of unreliability, separate from how long discovery takes, and
+arguably worse for a user: **the player list goes empty while the app is open
+and untouched**, and the app says it cannot find anything it was showing a
+minute earlier.
 
-- The app was left open and idle, roughly 30–45 seconds (estimated, not timed).
-- **All players disappeared** from the list.
-- They did not come back on their own. Tapping Players ran what looked like a
-  normal discovery, and then they were gone again a few seconds later.
-- On one occasion they simply kept disappearing.
+This was first seen during R4 and dismissed as an oddity. It has since been
+reproduced deliberately and timed, so it is recorded properly here.
 
-Not seen in R6. Worth relating to two things already established about
-controllers in `bluos-http-api.md` §12.1:
+### The cycle, timed **[V hardware]**
 
-- **Departure is detected by failing to reach a player, not by being told** — no
-  controller acts on an LSDP Delete. So something was failing, either the
-  players stopping being reachable over HTTP or their announces not arriving.
-- Players re-announce unprompted every **57 s ± 6 s**, which is the same order
-  of magnitude as the 30–45 s to disappearance, though nothing here ties the two
-  together **[U]**.
+On the Fairphone over Wi-Fi, with **every discovery mechanism deliberately
+switched off** — no UDP broadcast relay, no `lsdp-static`, mDNS relay disabled:
 
-This is a separate phenomenon from slow discovery and should not be folded into
-it.
+| t | what the app does |
+|---|---|
+| 0 s | tap Players — **all four appear instantly** |
+| ~30 s | the list changes to **"Discovering…"** |
+| ~50 s | it settles on **"No Player Found"**, list empty |
+| any time after | tap Players — **all four are back within 1 s** |
+
+Then it repeats. Throughout all of it, **the previously selected player stays
+fully controllable**.
+
+The R4 sighting was the same cycle under different conditions (airplane mode and
+a cable, disappearance estimated at 30–45 s), including the detail that tapping
+Players brought them back and they vanished again shortly after. One run there
+simply kept emptying.
+
+### Three things about this are strange
+
+**It empties itself with nothing wrong.** The app declares "No Player Found"
+while it is simultaneously controlling a player over the network. Whatever
+empties the list is not the players being unreachable, because one demonstrably
+is not.
+
+**It refills with no discovery mechanism running.** With LSDP and mDNS both
+switched off, a tap repopulates the whole list in under a second. Nothing could
+have been discovered in that second by either protocol, so the list must come
+from somewhere the app already had it — or from reaching the players directly at
+addresses it already knew **[U]**. `bluos-http-api.md` §12.1 notes that
+controllers detect departure by *failing to reach* a player rather than by being
+told, which implies the app does probe known addresses; §12.3 shows the desktop
+builds can work from a plain address list with no discovery at all. A cached
+address list plus a unicast HTTP check would explain both the emptying and the
+one-second refill, but nothing here proves it.
+
+**So the app has a cache it does not trust.** It holds the full list well enough
+to render it instantly on demand, and it also throws that list away on a timer
+while sitting idle. Those two behaviours are hard to reconcile from the outside.
+
+### What this does and does not affect
+
+It does **not** affect the measured runs R1–R8. Every one of those force-closes
+the app between runs — step 5 of the procedure, swipe it out of the app drawer —
+which kills the process and any runtime cache with it. They measure a cold start
+by construction, which is exactly why they are immune to this.
+
+It does mean one loose observation should be treated as unusable: with nothing
+running, the Wi-Fi app on the Fairphone appeared to show all players as fast as
+on a cable, roughly three times in four. That was almost certainly the cache
+rather than discovery, since the app was not force-closed between attempts. The
+same session's impression that a cold start is slower, and that the static
+announce therefore helps, is an impression only — `lsdp-static` was not running
+during it **[U]**.
+
+### Open questions
+
+- What empties the list. A cache lifetime, a failed background refresh, and a
+  discovery-state machine timing out are all consistent with what was seen.
+- Whether the ~30 s and ~50 s marks are fixed. Two observations is not a
+  pattern, though both sightings agree to within the noise of estimating.
+- Whether the 57 s ± 6 s announce cycle is involved. It is the same order of
+  magnitude as the time to disappearance, which is suggestive and nothing more
+  **[U]**.
+- What refills the list in under a second with both discovery protocols off.
+  `lsdp-static sniff` would show whether anything goes out on 11430 at all when
+  the list refills — and if nothing does, the answer is unicast HTTP to cached
+  addresses, which is worth knowing because it is what Musica would do anyway.
+
+### Why it matters more than the timing does
+
+A slow list fills eventually. A list that empties itself while the app is open
+is a failure the user meets mid-task, with no obvious cause and no action to
+take except tapping again. It also means the app's own cache is already capable
+of doing what Musica intends to do — hold the list and render it instantly — and
+the app discards it anyway.
 
 ---
 
@@ -227,6 +284,9 @@ Established **[V hardware]**:
 - That remaining second is **the app's own** and not the protocol's: answering
   instantly does not shorten it (R8).
 - A player on Wi-Fi answers a query no slower than one on a cable.
+- The app empties its own player list after roughly 30–50 seconds sitting idle,
+  and refills it in under a second on a tap — with every discovery mechanism
+  switched off, and while the selected player stays controllable throughout.
 - Over Wi-Fi, it takes 3–5 s and fails to complete roughly one run in five.
 - The desktop app takes 5–6 s from launch on both Windows and Linux, and a
   static LSDP responder does not change that.
@@ -243,7 +303,8 @@ Not established:
 - *What* the app spends its 1.0–1.5 s floor on. R8 establishes that it is
   app-side; it does not say whether the app queries late, renders late, or waits
   deliberately.
-- What causes the vanishing players.
+- What empties the list, what refills it in under a second with no discovery
+  running, and whether the ~30 s / ~50 s marks are fixed.
 - Whether the desktop apps would also improve with Wi-Fi off — they were on
   wired LAN throughout, so the comparison has not been run.
 
