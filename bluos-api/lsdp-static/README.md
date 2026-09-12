@@ -20,9 +20,10 @@ players appear — all at once instead of trickling in — but not *when* the li
 complete: 3–5 s on Android over Wi-Fi, 5–6 s on the desktop from launch.
 
 What did change it was the link. On a wired path with no Wi-Fi in it, the same
-app showed every player in 1–1.5 s, every run, on three devices — both phones
-with Wi-Fi disabled and a bridged Waydroid guest with no Google Play services at
-all.
+app showed every player in 1–1.5 s, every run, on three devices. And that
+remaining second is the app's own: answering instantly does not shorten it
+either. The protocol is not in the picture at all — it finishes inside the app's
+floor.
 [`FINDINGS.md`](FINDINGS.md) is the reasoning, including the corrections it has
 been through; [`../controller-discovery-timings.md`](../controller-discovery-timings.md)
 is the measurement log.

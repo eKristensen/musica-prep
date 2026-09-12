@@ -30,6 +30,7 @@ still took 5–6 s from launch, with or without the responder.
 |---|---|---|
 | **Wi-Fi** | 3–5 s | about 4 in 5 |
 | **wired, no Wi-Fi in the path** | **1–1.5 s** | **every run, three devices** |
+| wired, **and** a responder answering instantly | **1–1.5 s, unchanged** | every run |
 
 That is not a small finding. The same app, the same players, the same second —
 a different link, and discovery stops being a problem.
@@ -104,11 +105,29 @@ Correction 3 undermines the inference that the app holds results it already has
 for several seconds. Over a cable it does not. That inference is withdrawn
 pending the measurement below.
 
-There may be very little app-side delay to find at all. A real player answers a
-query after a random 0–750 ms, so the 1–1.5 s measured on a wire is roughly what
-the protocol alone costs, plus rendering **[U]**. If that holds, the app is
-about as fast as LSDP allows on a good link, and the entire 3–5 s Wi-Fi figure
-is the link.
+That inference is now **partly restored, at a smaller size**. Running
+`lsdp-static serve` against the wired Waydroid guest — answers available in
+milliseconds — did not move its 1.0–1.5 s at all. So there *is* an app-side
+floor; it is about a second rather than about four.
+
+## The wait, decomposed
+
+Three rounds of measurement now separate cleanly:
+
+| cost | size | what removes it |
+|---|---|---|
+| the app's own floor | **1.0–1.5 s** | nothing on the network side |
+| Wi-Fi, on top of that | **+2 to 4 s**, and one run in five incomplete | a cable |
+| the LSDP protocol itself | none of it — it finishes inside the floor | — |
+
+The last row is the answer to the question this experiment was built to ask. The
+protocol was never the problem, which is why making it instant changed nothing
+anyone can see.
+
+One thing this does *not* say: **a player being on Wi-Fi is fine.** In 20 rounds
+against the real players, the one on Wi-Fi answered with a mean of 373 ms against
+a theoretical 375, faster than two of the three on cable. It is Wi-Fi between the
+*controller* and the network that costs 2–4 seconds, not Wi-Fi at the player.
 
 ## What this means for Musica
 
@@ -127,24 +146,17 @@ is unavoidable, to prefer the unicast `R` query over broadcast.
 
 ## The measurements that would close this
 
-1. **`lsdp-static serve` against the bridged Waydroid guest, with `sniff`
-   alongside.** The guest is wired, on the host's bridge, so the query going
-   out, every announce coming back, and the screen filling can all be put on one
-   timeline from that host — no phone, no stopwatch, nobody counting. If 1–1.5 s
-   drops to a few hundred milliseconds when a responder answers instantly, the
-   protocol's cost is measured directly and whatever is left is the app's. This
-   is now the cheapest decisive experiment available.
-2. **`lsdp-static sniff` beside every run.** It answers nothing and timestamps
-   every datagram. The source address of a phone's query says which interface it
-   really used, which resolves the two suspect runs outright.
-3. **Redo the wired runs with Wi-Fi confirmed off**, so the comparison rests on
-   confirmed configurations rather than plugged-in adapters.
-4. **`staticPlayers.txt` on the desktop** (§12.3), which makes the desktop apps
+1. **`staticPlayers.txt` on the desktop** (§12.3), which makes the desktop apps
    skip discovery entirely. If Windows still takes 5–6 s, its delay is
    definitively not discovery. Path and format are in the data file's companion
    notes below.
-5. **`--query R` against a real player**, which would settle claim `C-19` and, if
-   the Wi-Fi hypothesis holds, demonstrate the way around it.
+2. **`--query R` against a real player**, which would settle claim `C-19` and, if
+   the Wi-Fi hypothesis holds, demonstrate the protocol-level way around it.
+
+Everything else that was on this list has been answered. `sniff` remains useful
+for one optional question — whether the app's floor is spent before or after it
+sends its query — and for confirming which interface a phone used, which is all
+that still separates the two suspect runs from the rest.
 
 ### Where `staticPlayers.txt` lives
 

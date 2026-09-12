@@ -68,6 +68,7 @@ All on 2026-09-12, in the order given.
 | R5 | Xiaomi Mi 9 | airplane mode + USB Ethernet | — | — | **Ethernet did not work at all**, no discovery | none |
 | R6 | **both phones** | **Wi-Fi disabled** + USB Ethernet | players directly | **timer** | **≈1 s, a little above** | **always, every run, both devices** |
 | R7 | **Waydroid** (LineageOS, no Google Play, app 4.16.3) | **bridged, wired**, own IP on the players' VLAN | players directly | **timer** | **1.0–1.5 s** | **always, however many times tried** |
+| R8 | **Waydroid**, same as R7 | same as R7 | **`lsdp-static serve` on the players' network**, answering instantly | **timer** | **1.0–1.5 s — no difference** | always |
 | D1 | Windows | wired LAN | with and without `lsdp-static serve` | counted | 5–6 s from launch | — |
 | D2 | Linux AppImage | wired LAN | with and without `lsdp-static serve` | counted | 5–6 s from launch, no measurable difference | — |
 
@@ -112,6 +113,59 @@ cost, and there may be very little app-side delay left to find on a good link
 **[U]**. If the number falls to a few hundred milliseconds against a responder
 answering instantly, that is the protocol's cost measured directly; if it stays
 near a second, the remainder is the app's.
+
+### R8 puts a floor under it, and the floor is the app
+
+R7's 1.0–1.5 s could have been the protocol: a real player answers a query after
+a random 0–750 ms, so about a second was roughly what LSDP alone should cost.
+R8 tests that directly — the same guest, with `lsdp-static serve` answering
+instantly on the same network — and the number **does not move**.
+
+The answers were available in milliseconds and the app still took 1.0–1.5 s.
+**That second is the app's own**, and nothing done to discovery will remove it.
+
+Which gives a clean decomposition of the wait a user actually experiences:
+
+| cost | size | removable by |
+|---|---|---|
+| the app's own floor | **1.0–1.5 s** | nothing on the network — only by not discovering at all |
+| Wi-Fi, on top of that floor | **+2 to 4 s**, plus one run in five incomplete | a cable, or not discovering at all |
+| the LSDP protocol itself | none of the total — it finishes inside the floor | — |
+
+### On-the-wire measurement, for comparison
+
+[`lsdp-measure-20260912T185206Z/`](lsdp-measure-20260912T185206Z/) — 20 rounds
+against the four real players from a wired host, all 20 complete:
+
+| | min | median | p95 | max |
+|---|---:|---:|---:|---:|
+| first player (ms) | 8 | 124 | 362 | 366 |
+| all players (ms) | 448 | 637 | 739 | 749 |
+
+**The 8 ms belongs to the player that is on Wi-Fi**, which looks like it means
+something and does not. It is that player's *smallest of twenty draws*, and the
+draws are random by design.
+
+Pooling all 80 sightings gives a mean of 390 ms and a median of 393, against the
+375/375 a uniform 0–750 ms delay predicts — the four players are plainly drawing
+from the same distribution. Per player:
+
+| player | link | min | mean | median | max |
+|---|---|---:|---:|---:|---:|
+| Room-A | cable | 20 | 427 | 450 | 749 |
+| Room-B | cable | 32 | 420 | 458 | 733 |
+| Room-C | cable | 15 | 339 | 312 | 714 |
+| **Room-D** | **Wi-Fi** | **8** | **373** | **336** | **739** |
+
+The Wi-Fi player's mean of 373 ms is the closest of the four to the theoretical
+375. The expected smallest of twenty draws from 0–750 ms is 36 ms, and a draw of
+8 ms or less turns up within twenty about 19 % of the time — so across four
+players, a minimum that low *somewhere* is more likely than not.
+
+**Comparing minima across players is comparing noise.** The medians are the
+comparable figures, and they say a player on Wi-Fi answers a query no slower
+than one on a cable. Player-side Wi-Fi is not implicated in anything here; the
+Wi-Fi that matters is the link to the **controller**.
 
 ### R3 is now suspect
 
@@ -170,6 +224,9 @@ Established **[V hardware]**:
 - Over a cable with Wi-Fi off, discovery takes about a second and never failed —
   on three devices now, including one with no Google Play services and a
   different app version, so it is not a property of one phone or one build.
+- That remaining second is **the app's own** and not the protocol's: answering
+  instantly does not shorten it (R8).
+- A player on Wi-Fi answers a query no slower than one on a cable.
 - Over Wi-Fi, it takes 3–5 s and fails to complete roughly one run in five.
 - The desktop app takes 5–6 s from launch on both Windows and Linux, and a
   static LSDP responder does not change that.
@@ -181,29 +238,29 @@ Not established:
 
 - **Which interface each of R1–R4 actually used.** This is the big one. R3 and
   R4 may both be Wi-Fi measurements mislabelled as wired.
-- Whether the remaining ~1 s in R6 and R7 is the protocol's own 0–750 ms reply
-  delay, rendering, or something else. The Waydroid rig can answer this.
 - Whether Waydroid being a few tenths slower than the phones means anything; a
   virtualised display is the dull explanation.
+- *What* the app spends its 1.0–1.5 s floor on. R8 establishes that it is
+  app-side; it does not say whether the app queries late, renders late, or waits
+  deliberately.
 - What causes the vanishing players.
 - Whether the desktop apps would also improve with Wi-Fi off — they were on
   wired LAN throughout, so the comparison has not been run.
 
 ## Next measurements
 
-1. **`lsdp-static sniff` beside every future run.** It answers nothing and
-   timestamps every datagram, so each run records which interface the phone
-   queried from, when the query went out, and when each announce arrived. That
-   alone resolves R3 and R4.
+1. **`lsdp-static sniff` beside a Waydroid run**, if the app's 1.0–1.5 s floor
+   is worth breaking down further. It answers nothing and timestamps every
+   datagram, so it would show whether the app queries at the moment of the tap
+   and renders a second later, or waits a second before querying at all. Both
+   are app-side either way, so this is optional. Its other use is on a phone,
+   where the source address of the query says which interface was really used —
+   which is what would resolve R3 and R4.
 2. **Redo R3 with Wi-Fi confirmed off**, to replace a suspect row with a real one.
 3. **Screen-record the phone** rather than watching it; Android records natively
    and scrubbing the video resolves the tap and each player's appearance to
    about a tenth of a second.
-4. **Run `lsdp-static serve` against the Waydroid guest**, from the host that
-   bridges it, with `sniff` alongside. Instant answers to a wired guest is the
-   cleanest way to separate the protocol's cost from the app's, and it needs
-   neither a phone nor a stopwatch.
-5. **Try `--query R`.** Its answers come back by **unicast**, which does not
+4. **Try `--query R`.** Its answers come back by **unicast**, which does not
    depend on Wi-Fi broadcast delivery at all. If the Wi-Fi penalty is broadcast
    handling, a unicast query is the protocol-level way around it — and Musica
    can send one even though no shipping client does.
