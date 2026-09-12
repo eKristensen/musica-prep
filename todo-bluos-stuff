@@ -4,9 +4,6 @@ ZONE=$(sudo firewall-cmd --get-zone-of-interface=wlp2s0)
 sudo firewall-cmd --zone="$ZONE" --add-port=11430/udp --timeout=5m
 
 -----
-VJK med inspiration fra mit BluOS projekt.
-
------
 
 I think it makes sense to pre-extract code to make the chat cheaper
 

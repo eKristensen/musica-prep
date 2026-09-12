@@ -31,9 +31,12 @@ I tried the alternatives first. None of them worked for me — see
 
 ## Design philosophy
 
-**Platform independence.** I do not want to decide which platform you should
-use, so this is a web app. It runs on anything with a browser, and installs
-like a native app where Progressive Web Apps are supported.
+**Platform independence.** I do not like when someone else decides which
+platform you should use by not offering an equal experience and featureset
+for all platforms. The applications I have that get closest to platform
+independence in my experiences is web apps, so this is a web app. It runs on
+anything with a browser, and installs like a native app where Progressive Web
+Apps are supported.
 
 **One user interface.** One interface for desktop and phone, rather than one
 per platform. A web app collapses that into a single codebase that behaves the
@@ -43,6 +46,9 @@ same everywhere.
 as much feedback from the compiler as possible. Dependencies are chosen
 carefully and added only when implementing the thing directly would make little
 sense. The hope is to avoid death by dependency.
+
+The design principles are described in depth in
+[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md).
 
 ---
 
@@ -63,7 +69,8 @@ players and resynchronising on every launch. Delivering it as a web app is what
 answers problem 2.
 
 It hides problem 3 as well: because the server is always running, it can
-pre-cache Tidal lists and hand them over instantly.
+pre-cache Tidal lists and hand them over instantly, though Search speed will
+remain unchanged.
 
 ---
 
@@ -91,8 +98,8 @@ The BluOS API is the same across Bluesound players, so most other BluOS-based
 players will most likely work even though they are not listed above. Which
 features are available will vary with the hardware.
 
-The targets are Firefox on Linux and Android as a PWA. Other browsers are not a
-goal, and nothing is deliberately done to break them either.
+The targets during development is Firefox on Linux and Android as a PWA. Other
+browsers are not a goal, and nothing is deliberately done to break them either.
 
 ### Deliberately absent
 
