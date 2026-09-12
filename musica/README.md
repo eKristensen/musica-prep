@@ -31,24 +31,33 @@ I tried the alternatives first. None of them worked for me — see
 
 ## Design philosophy
 
-**Platform independence.** I do not like when someone else decides which
-platform you should use by not offering an equal experience and featureset
-for all platforms. The applications I have that get closest to platform
-independence in my experiences is web apps, so this is a web app. It runs on
-anything with a browser, and installs like a native app where Progressive Web
-Apps are supported.
+**Platform independence.** I do not like it when someone else decides which
+platform you should use by not offering the same experience and feature set
+everywhere. In my experience web apps come closest to platform independence,
+so this is a web app. It runs on anything with a browser, and installs like a
+native app where Progressive Web Apps are supported.
 
 **One user interface.** One interface for desktop and phone, rather than one
 per platform. A web app collapses that into a single codebase that behaves the
 same everywhere.
+
+**It never acts on its own.** It does what you ask, and it keeps its picture of
+the players current. It does not tidy up, correct configurations it disapproves
+of, or act because it noticed it could. The one exception is pre-caching Tidal
+lists, which is read-only.
 
 **Built to last.** Rust on the backend and TypeScript in the frontend, to get
 as much feedback from the compiler as possible. Dependencies are chosen
 carefully and added only when implementing the thing directly would make little
 sense. The hope is to avoid death by dependency.
 
-The design principles are described in depth in
-[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md).
+**It is meant to be boring.** Written once, built, and left with minimal
+maintenance.
+
+Each of these is worked out in depth in
+[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md). It is worth reading before
+changing anything structural — each decision records what was chosen, why, and
+the specific signal that would justify revisiting it.
 
 ---
 
@@ -69,8 +78,9 @@ players and resynchronising on every launch. Delivering it as a web app is what
 answers problem 2.
 
 It hides problem 3 as well: because the server is always running, it can
-pre-cache Tidal lists and hand them over instantly, though Search speed will
-remain unchanged.
+pre-cache Tidal lists and hand them over instantly. Search is not helped by
+this — a search still goes out to the service, so it will be no faster than it
+is today.
 
 ---
 
@@ -94,21 +104,27 @@ the Bluesound NODE N110, N130 and N132.
 - Tidal lists pre-cached, sortable, and searchable within a single list
 - Dirac Live preset, subwoofer, crossover and the rest of the audio settings
 
-The BluOS API is the same across Bluesound players, so most other BluOS-based
+The BluOS API is the same across Bluesound players, so other BluOS-based
 players will most likely work even though they are not listed above. Which
 features are available will vary with the hardware.
 
-The targets during development is Firefox on Linux and Android as a PWA. Other
+The targets during development are Firefox on Linux and Android as a PWA. Other
 browsers are not a goal, and nothing is deliberately done to break them either.
 
-### Deliberately absent
+### Outside the scope
 
-Soundbars. Home theatre and zone configuration. Rechargeable and battery
-players. Anything specific to custom-install or professional hardware. Player
-setup and Wi-Fi provisioning. Automatic discovery. Move playback. Firmware
-upgrade triggering. Authentication — the server belongs on a network you trust.
+**Hardware I do not own.** Soundbars, rechargeable and battery players, and
+anything specific to custom-install or professional hardware. Nothing is done
+to shut these out — they speak the same API, so ordinary playback control will
+most likely work on them — but none of it is tested, and nothing specific to
+them is built.
 
-Keep the official app installed for those.
+**Features left out on purpose.** Home theatre and zone configuration, player
+setup and Wi-Fi provisioning, automatic discovery, moving playback between
+players, and triggering firmware upgrades. Each omission has its reasoning in
+[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md).
+
+Keep the official app installed for any of this.
 
 ---
 
@@ -126,6 +142,9 @@ IP addresses only. Names, models and capabilities come from the players
 themselves. Port is optional and defaults to 11000. See
 [config.example.yaml](config.example.yaml) for the remaining settings.
 
+There is no authentication of any kind. Anyone who can reach the server can
+control the players, so run it on a network you trust.
+
 ---
 
 ## Building
@@ -140,24 +159,6 @@ make test
 ```
 
 The result is one binary with the frontend embedded.
-
----
-
-## Design notes
-
-The reasoning behind the significant choices lives in
-[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md). It is worth reading before
-changing anything structural — each decision records what was chosen, why, and
-the specific signal that would justify revisiting it.
-
-Two that shape everything else:
-
-- **The app never acts on its own.** It does what you ask, and it keeps its
-  picture of the players current. It does not tidy up, correct configurations
-  it disapproves of, or act because it noticed it could. The one exception is
-  pre-caching Tidal lists, which is read-only.
-- **It is meant to be boring.** Written once, built, and left with minimal
-  maintenance.
 
 ---
 
