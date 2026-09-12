@@ -2404,9 +2404,13 @@ professional installs rather than a general configuration mechanism.
 
 **It does not make startup faster [V hardware].** Tested on Windows with mDNS
 and LSDP discovery both disabled: only the listed players appeared, confirming
-the file took effect, and startup was no faster than with discovery running.
-Whatever the desktop controller spends its first several seconds on, finding
-players is not it. See `controller-discovery-timings.md`.
+the file took effect, and startup was no faster than with discovery running —
+and the controller still displayed its "Discovering…" stage. So the listed
+players appear to be **added to** whatever discovery returns rather than
+replacing it, and "used directly, with no discovery" describes the feature's
+purpose rather than a code path the app skips **[U]**. What the test does show
+is that the controller is not waiting for discovery *answers*: there were none
+to wait for, and the wait was unchanged. See `controller-discovery-timings.md`.
 
 Source: [How to Discover and Control Players from a Remote
 Subnet](https://support.bluesoundprofessional.com/hc/en-us/articles/360060411413-How-to-Discover-and-Control-Players-from-a-Remote-Subnet),

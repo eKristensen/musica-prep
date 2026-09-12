@@ -21,8 +21,8 @@ behaviour nobody has tested yet.
 ## What the experiment was
 
 `lsdp-static serve` answers LSDP queries instantly from a static player list,
-where a real player waits a random 0–750 ms and a UDP broadcast relay adds loss
-and delay on top. If discovery were the bottleneck, removing it entirely should
+where a real player waits a random 0–750 ms before answering (`../bluos-http-api.md`
+§12.1) and a UDP broadcast relay adds loss and delay on top. If discovery were the bottleneck, removing it entirely should
 have been visible on screen.
 
 It was not. The Android app still took 3–5 s over Wi-Fi, and Windows and Linux
@@ -136,79 +136,29 @@ number, which is corroboration rather than coincidence.
 Both were on wired LAN throughout, so the Wi-Fi comparison above has never been
 run against them.
 
-**And that 5–6 s is not discovery either.** `staticPlayers.txt` makes the
-desktop builds use a configured address list and skip discovery entirely
-(§12.3). With it in place and mDNS and LSDP both switched off, only the listed
-players appeared — so the file took effect — and startup was no faster. Removing
-discovery outright did not move the number. The desktop is at least stable once
-up: none of the list-emptying seen on Android.
+**And that 5–6 s is not spent waiting for answers.** With `staticPlayers.txt` in
+place and mDNS and LSDP both switched off, only the listed players appeared — so
+the file took effect — and startup was no faster. There were no answers to wait
+for and the wait was the same. It does not follow that the delay is unrelated to
+discovery: the app still showed its "Discovering…" stage with both mechanisms
+off, so the static list looks like an addition to whatever discovery returns
+rather than a replacement for it. A discovery *timer* expiring on its own
+schedule fits everything seen. The desktop is at least stable once up: none of
+the list-emptying seen on Android.
 
-## Corrections this file has been through
+## Two traps this work fell into
 
-Recorded rather than quietly edited, because the wrong version was acted on for
-a while each time.
+Kept because both are easy to fall into again, not as a record of every revision.
 
-1. **The trickle is not the players' 0–750 ms reply delay.** 750 ms is far
-   inside the wait, so it cannot produce a visible trickle. The trickle was the
-   UDP broadcast relay pushing datagrams past the app's render.
-2. **The instantly-shown player is not fast discovery.** It is not discovery at
-   all: the app's shutdown cache clear leaves the currently selected player
-   alone, so it is restored from storage. An earlier draft also claimed this
-   proved the network was fine at t ≈ 0 — it proves nothing of the kind.
-3. **"Nothing about the network path changes the answer" was wrong.** It held
-   across three configurations that now all look like Wi-Fi. A cable with Wi-Fi
-   genuinely off takes about a second.
+**A warm app is not a measurement.** The Android app holds the whole player list
+in a session and renders it instantly, so any run that does not force-close the
+app first measures the cache, not discovery. Every usable run here swipes the app
+away between attempts. One observation was discarded for exactly this reason.
 
-Correction 3 undermines the inference that the app holds results it already has
-for several seconds. Over a cable it does not. That inference is withdrawn
-pending the measurement below.
-
-That inference is now **partly restored, at a smaller size**. Running
-`lsdp-static serve` against the wired Waydroid guest — answers available in
-milliseconds — did not move its 1.0–1.5 s at all. So there *is* an app-side
-floor; it is about a second rather than about four.
-
-## Where the 0–750 ms comes from, and why it exists
-
-The figure is quoted often enough in these notes to be worth sourcing.
-
-**Provenance: unknown, and this file should not pretend otherwise.** The only
-place the figure appears in this repository is `../bluos-http-api.md` §12.1
-under "Timing", in a section marked **[V]**, alongside the 57 s ± 6 s announce
-cycle and the announce-timer reset rule. `bluos-probe.py` calls it "the
-documented 0–750 ms response", pointing back at the same claim. No vendor
-document is in this repository at all, so nothing here traces the number to a
-primary source — **[V]** in §12.1 covers client code, the vendor spec and
-hardware without saying which applied, and the sources table's only vendor spec
-is the *BluOS Custom Integration API* v1.7 (09/04/2025), which nothing states
-covers LSDP.
-
-Whoever wrote §12.1 knows where it came from; this file does not. Worth pinning
-down, because it is the number every measurement here is checked against.
-
-**The value itself is independently supported**, whatever its paper source: 20
-rounds against four players gave a pooled mean of 390 ms and a median of 393
-against the 375/375 a uniform 0–750 ms draw predicts, a largest observation of
-749 ms, and all four players drawing from the same distribution
-([`../test-runs/lsdp-measure-20260912T185206Z/`](../test-runs/lsdp-measure-20260912T185206Z/))
-**[V hardware]**.
-
-**Why a player waits at all** is not stated anywhere in the repository, so what
-follows is inference **[U]**. A broadcast query reaches every node at once. If
-they all answered immediately they would transmit simultaneously on a shared
-medium, which on consumer Wi-Fi means collisions, retries and lost answers —
-the precise failure the protocol exists to avoid, since LSDP was built because
-multicast discovery was unreliable enough to generate product returns (§12).
-Spreading the answers randomly across a window fixes that, and the same
-technique is standard elsewhere: mDNS requires a randomised 20–120 ms delay
-before responding, for the same reason.
-
-The size of the window is the interesting part. 750 ms is roughly six times
-mDNS's, which looks generous until it is set against the documented system
-limit of **64 players**: 64 answers spread over 750 ms average about 12 ms
-apart, which is a sensible spacing for small datagrams on a busy wireless
-network. The number reads like it was chosen for a full-sized system, and a
-four-player house pays the same price for a spread it does not need.
+**A plugged-in adapter is not a wired test.** Two runs were recorded as "wired"
+with Wi-Fi still enabled, and their numbers sit with the Wi-Fi rows. Confirm the
+radio is off, or confirm the interface from the source address of the query, or
+the label is a guess.
 
 ## The wait, decomposed
 
@@ -285,29 +235,6 @@ takes to draw it. The right target is not "as good as the app on a cable" — it
 is **no wait at all**, with the network touched only to confirm what is already
 on screen.
 
-## What the measurements say a client should do
-
-Stated as findings about BluOS, not as a plan for any particular client.
-
-A phone is on Wi-Fi in real life. Over Wi-Fi, discovery costs 3–5 seconds and
-fails to complete about one run in five, and nothing done to the network side —
-a relay, a static responder answering in microseconds — changed either number.
-Broadcast discovery on Wi-Fi is simply not dependable. On a cable it costs
-1.0–1.5 s instead, which is better and still more than a list a client already
-holds should ever cost.
-
-So:
-
-- **A client that keeps its own player list does not discover on the path that
-  fails**, and none of the Wi-Fi penalty reaches it. The BluOS app demonstrates
-  this itself, twice over: the selected player survives its shutdown cache
-  clear, and the whole list is held well enough to render instantly on a tap —
-  which it then discards on a timer anyway.
-- **Where discovery is unavoidable, the unicast `R` query does not depend on
-  Wi-Fi broadcast delivery**, which is the part that fails.
-- **A static list of players is not a substitute for either**, for the staleness
-  reasons above.
-
 ## What is left, and none of it is pending work
 
 The question this was built to answer is answered, in both directions: a static
@@ -325,8 +252,12 @@ Two curiosities remain open, for whoever wants them:
   `C-19` in the specification. That is a protocol question, useful to the spec,
   and unrelated to any of the timings here.
 
+Both are now largely answered from the app's own code, in
+[`../android-controller-code.md`](../android-controller-code.md), which is where
+code-level explanations live rather than in this file.
+
 Everything else has been answered: `staticPlayers.txt` showed the desktop delay
-is not discovery, R8 (instant answers to a wired guest) showed the Android floor
+is not spent waiting for answers, R8 (instant answers to a wired guest) showed the Android floor
 is the app's own, and R9 (an iPhone on the same Wi-Fi) showed the Wi-Fi penalty
 is Android-side rather than the network's.
 

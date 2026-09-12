@@ -2,8 +2,11 @@
 
 How long a BluOS controller takes to show every player, measured on real
 devices. **This file is the data.** The interpretation lives in
-[`lsdp-static/FINDINGS.md`](lsdp-static/FINDINGS.md); keeping them apart means a
-later correction to the reasoning does not quietly rewrite the observations.
+[`lsdp-static/FINDINGS.md`](lsdp-static/FINDINGS.md), and explanations traced to
+the Android app's own code live in
+[`android-controller-code.md`](android-controller-code.md). Keeping them apart
+means a later correction to the reasoning does not quietly rewrite the
+observations.
 
 Four players. Three VLANs on `ek-arm`, which previously ran
 `udp-broadcast-relay-redux` on UDP 11430 and during these tests sometimes ran
@@ -19,7 +22,7 @@ markers are not used for it.
 
 ## Devices
 
-| | |
+| device | detail |
 |---|---|
 | **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App from Play Store, version not recorded. **Background usage allowed** for the BluOS app |
 | **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002`. App from Play Store, version not recorded. **No battery-saver restrictions** on the BluOS app |
@@ -232,17 +235,26 @@ players promptly. A browser that holds a multicast lock and finds them
 instantly, while the BluOS app does not, points at the app. Both failing equally
 points at the platform. Either way the network is already excluded, by R9.
 
-### D3: the desktop delay is not discovery either
+### D3: the desktop delay is not waiting for answers
 
-`staticPlayers.txt` makes the desktop controllers use a configured address list
-and skip discovery entirely (§12.3). With it in place and **mDNS and LSDP
-discovery both switched off**, only the listed players appear — so the file
-plainly took effect — and startup is **no faster than before**.
+With `staticPlayers.txt` in place and **mDNS and LSDP discovery both switched
+off**, only the listed players appear — so the file took effect — and startup is
+**no faster than before [V hardware]**.
 
-That closes the desktop half of the question the same way R8 closed the Android
-half. **The 5–6 seconds is not discovery [V hardware]**. Discovery was removed
-outright and the number did not move, so whatever the desktop app spends that
-time on, it is not finding players.
+**What that does and does not show.** It does not show the delay is unrelated to
+discovery, because the app still displayed its "Discovering…" stage with both
+mechanisms off. The likelier reading is that the static list is **added to**
+whatever discovery produces rather than replacing it: run discovery, then append
+the file's entries. §12.3 says listed players are used "with no discovery",
+which is the vendor's framing of the feature's purpose, not an observation of
+what the app skips.
+
+What it does show is that the app is not waiting for **answers**. There were
+none to wait for — no discovery mechanism was running — and the wait was the
+same. A timer that expires on its own schedule fits; players arriving does not.
+Untested, and one run settles it: put an empty `staticPlayers.txt` in place with
+both mechanisms off and see whether the "Discovering…" stage still takes the
+same time **[U]**.
 
 The desktop is at least stable once up: none of the list-emptying seen on
 Android **[V hardware]**.
@@ -410,8 +422,10 @@ Established **[V hardware]**:
 - A static LSDP responder does not change the Android timing either; what it
   changes is that players arrive together rather than one or two at a time.
 - The Xiaomi Mi 9 does not bring up USB Ethernet in airplane mode at all.
-- The desktop's 5–6 s is **not discovery**: bypassing discovery entirely with
-  `staticPlayers.txt` does not shorten it (D3). The desktop is stable once up.
+- The desktop's 5–6 s is not spent waiting for discovery **answers**: with no
+  discovery mechanism running at all, startup took the same time (D3). Whether
+  the app is waiting on a discovery *timer* is a separate question, and open.
+  The desktop is stable once up.
 - **iOS does not have the Wi-Fi problem at all**, on the same network and the
   same players, which rules the network and the access point out as the cause.
 - Android battery management is not the cause either: the app has background
@@ -436,7 +450,8 @@ Not established:
   running, and whether the ~30 s / ~50 s marks are fixed.
 - Whether the desktop apps would also improve with Wi-Fi off — they were on
   wired LAN throughout, so the comparison has not been run.
-- What the desktop spends its 5–6 s on, now that discovery is excluded.
+- What the desktop spends its 5–6 s on, and whether the static list is added to
+  discovery's results rather than replacing them.
 - Whether the Linux AppImage reads `staticPlayers.txt`; the vendor supports the
   file on Windows and macOS only.
 

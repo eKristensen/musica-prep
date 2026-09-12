@@ -5,28 +5,15 @@ list of players in a config file, the way an avahi static service file answers
 mDNS. No BluOS hardware is involved — it speaks for players that are named, not
 found.
 
-It exists to answer one question about BluOS:
+It was built to test whether BluOS discovery is what makes players slow to
+appear, by removing discovery's cost entirely and seeing what changes. So it
+also measures: `measure` runs discovery repeatedly and reports the spread and
+how often a round comes back short.
 
-> **If discovery answers instantly and consistently, is discovery still what
-> makes players slow to appear?**
-
-So the tool also measures. `measure` runs discovery over and over and reports
-the spread, which is the number that actually decides this — "two to three
-seconds, consistently" is a different product from "usually fast, sometimes
-never".
-
-**That question now has an answer: no.** Answering instantly changes *how* the
-players appear — all at once instead of trickling in — but not *when* the list is
-complete: 3–5 s on Android over Wi-Fi, 5–6 s on the desktop from launch.
-
-What did change it was the link. On a wired path with no Wi-Fi in it, the same
-app showed every player in 1–1.5 s, every run, on three devices. And that
-remaining second is the app's own: answering instantly does not shorten it
-either. The protocol is not in the picture at all — it finishes inside the app's
-floor.
-[`FINDINGS.md`](FINDINGS.md) is the reasoning, including the corrections it has
-been through; [`../controller-discovery-timings.md`](../controller-discovery-timings.md)
-is the measurement log.
+What the measurements found is written up elsewhere, not here —
+[`FINDINGS.md`](FINDINGS.md) for the reasoning and
+[`../controller-discovery-timings.md`](../controller-discovery-timings.md) for
+the data. This file is about the program.
 
 Written against `../bluos-http-api.md` §12.1. `selftest` checks the encoder
 against the real Bluesound Node N130 announce captured in that section, byte for
@@ -101,12 +88,12 @@ sudo install -m755 target/release/lsdp-static /usr/local/sbin/
 
 `cargo` from Debian/Ubuntu (`apt install cargo`) is new enough, on arm64 too.
 
-## The experiment, end to end
+## A run, end to end
 
-Run all of this from a host on the **controller's** VLAN, not from `ek-arm`,
-unless you are testing the relay box talking to itself.
+Run all of this from a host on the **controller's** VLAN, not from the responder
+box, unless you are testing it talking to itself.
 
-**1. Baseline — what discovery costs today, with the relay running.**
+**1. Baseline — what discovery costs before you change anything.**
 
 ```sh
 lsdp-static measure --rounds 20 --expect 4
