@@ -328,10 +328,13 @@ not a solution for me, as I prefer a written and visual format.
 
 ## Wishlist
 
-Aside from the obvious —
+Everything above tries to be fair to the official app. This section sets that
+aside. Beyond the obvious —
 [proper Linux support](https://support1.bluesound.com/hc/en-us/community/posts/360033533054-BluOS-controller-app-on-Linux)
-and a reliable Android app — I have a handful of smaller annoyances and wishes
-that matter much less than my primary motivation for starting this project:
+and a reliable Android app — this is what I would want on top of simply being
+able to interact with my players at all, asked for without regard to whether
+anyone has marketed it or how realistic it is. Which of these are reasonable
+to build is settled in [PLAN.md](PLAN.md), not here:
 
 1) On one of my players I use HDMI to get audio from my television. When HDMI
    audio plays, the playback queue is cleared, and I have to decide what to
