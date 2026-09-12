@@ -63,16 +63,30 @@ not have been as quick as I remember.
 
 -----
 
-Work out what a player's actual identity is. The note I was reading says "the
-id is the player's MAC and it's the cache key a controller dedupes on", but
-that does not match the captures: /SyncStatus carries id="<ip>:<port>" plus a
-separate mac attribute, and <slave> entries use a bare IP as id. So id is an
-address, not a MAC, at least on this firmware.
+Player identity: the LSDP node id against the /SyncStatus mac attribute.
 
-The underlying question stands either way. A player with both Ethernet and
-Wi-Fi has a different MAC per interface, so "the MAC" is ambiguous on a player
-that has both. Does the mac attribute report the active interface or one fixed
-value, and does it change when a player is moved from wired to wireless? If
-anything really does dedupe on it, that decides whether a player survives the
-move as the same player or becomes a second one. Test on a player that has run
-on both.
+"The id is the player's MAC and it's the cache key a controller dedupes on" is
+about LSDP, and that is already covered (§12.1): the announce carries a 6-byte
+nodeId that is a MAC, unique per node rather than per interface, and it is the
+correct cache key. Nothing to resolve there.
+
+The open question is the other identifiers. /SyncStatus carries id="<ip>:<port>"
+and a separate mac attribute, and <slave> entries use a bare IP as id. Is that
+mac attribute the same value as the LSDP node id, or the MAC of whichever
+interface happens to be up?
+
+It matters because these players have two MACs, one per interface, and they
+switch between them: Wi-Fi is disabled when Ethernet is connected and returns
+when the cable is pulled. I have observed that, and it is documented vendor
+behaviour. The controller app is documented as showing the MAC of the connected
+card, so at least one surface follows the active interface. If /SyncStatus does
+the same, anything keyed on it sees a player change identity on a cable pull,
+where LSDP would not.
+
+Test: read the mac attribute and an LSDP announce for one player on Ethernet,
+then again on Wi-Fi, and compare all three values. This probably belongs in the
+claim register rather than here.
+
+Separately, worth knowing: if the cable is already connected when the wired
+network starts working, a player may stay on Wi-Fi until the cable is
+replugged.
