@@ -205,8 +205,8 @@ On the iPhone the app simply works. Players are there, immediately, with no
 "Discovering…" stage — **the same on Wi-Fi as on a cable with Wi-Fi off**. Only
 the same VLAN was tested, which is enough for the question being asked.
 
-Not timed, so "instant" is an impression rather than a number, and the device
-and iOS version are recorded loosely. It is corroborated by a family member
+Not timed, so "instant" is an impression rather than a number. It is corroborated
+by a family member
 running Bluesound from iOS who reports never having seen any of the behaviour
 described on Android — hearsay, and worth having.
 
@@ -236,8 +236,7 @@ surviving between launches.
 The app delays discovery by a hard-coded two seconds whenever the Wi-Fi radio is
 enabled, whatever interface is actually carrying traffic. That is what the rows
 above are measuring, and it is read out of the app in
-[`controller-code-notes.md`](controller-code-notes.md), which also disposes of
-the multicast-lock guess this section used to carry.
+[`controller-code-notes.md`](controller-code-notes.md).
 
 **Battery management is not the explanation.** The app is allowed background
 usage on the Fairphone and exempt from battery-saver restrictions on the Mi 9,
@@ -345,11 +344,10 @@ discovered in that second by either protocol. The app remembers the players'
 HTTP; see [`controller-code-notes.md`](controller-code-notes.md).
 
 **The timings are not arbitrary, and neither is the refill.** The app's own
-constants account for the ~30 s and ~50 s marks exactly, for why players age out
-long before they would next announce, and for why a tap restores the list
-without touching the network: see
-[`controller-code-notes.md`](controller-code-notes.md). Nothing goes out on the
-network at the moment of the refill — the list never left memory.
+constants account for the ~30 s and ~50 s marks exactly, and for why players age
+out long before they would next announce; the refill is a separate mechanism
+that survives the emptying. Both are in
+[`controller-code-notes.md`](controller-code-notes.md).
 
 ### What this does and does not affect
 
@@ -372,9 +370,9 @@ during it **[U]**.
 
 A slow list fills eventually. A list that empties itself while the app is open
 is a failure the user meets mid-task, with no obvious cause and no action to
-take except tapping again. It also shows the app's own cache is already capable
-of holding the list and rendering it instantly — and that the app discards it
-anyway.
+take except tapping again. And the app is never actually lost: it still holds
+every player's address while it displays "No Player Found", and one tap is
+enough for it to reach all four and prove it.
 
 ---
 
@@ -383,8 +381,8 @@ anyway.
 Established **[V hardware]**:
 
 - Over a cable with Wi-Fi off, discovery takes about a second and never failed —
-  on three devices now, including one with no Google Play services and a
-  different app version, so it is not a property of one phone or one build.
+  on three devices now, one of them with no Google Play services and one of them
+  on a different app build, so it is not a property of one phone or one build.
 - That remaining second is **the app's own** and not the protocol's: answering
   instantly does not shorten it (R8). Nothing measured here requires it to exist.
 - Used over Wi-Fi, the app is much worse than over a cable, in both speed and

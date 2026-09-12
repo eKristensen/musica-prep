@@ -36,8 +36,12 @@ picked, and a retry path for when the post-upgrade check times out. The rest of
 the diff is the version string in the `User-Agent`, regenerated data-binding
 classes, and resource-id renumbering behind them.
 
-So the build gap between this file and the measurements does not exist for
-anything this file claims.
+So on Android there is no build gap between this file and the measurements.
+
+**On the desktop there is one, and it has not been closed.** The source read
+here is Windows **4.16.1**; D1–D3 were measured on **4.16.0**, and no comparison
+between the two has been made. Everything below about the desktop describes
+4.16.1 **[U]** as an account of what the measured build did.
 
 ---
 
