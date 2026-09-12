@@ -35,7 +35,7 @@ markers are not used for it.
 
 | device | detail |
 |---|---|
-| **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App from Play Store, version not recorded. **Background usage allowed** for the BluOS app |
+| **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App **4.16.3** from the Play Store. **Background usage allowed** for the BluOS app |
 | **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002`. App from Play Store, version not recorded. **No battery-saver restrictions** on the BluOS app |
 | **Waydroid** | LineageOS 20 — Android 13 — image `20-20260403-VANILLA-waydroid_x86_64`, minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
 | **iPhone** | an iPhone 16-series, exact model not recorded; iOS current as of a week before these tests, version not recorded |
@@ -117,15 +117,19 @@ and that difference is small enough to be the virtualised display rather than
 anything about discovery **[U]**.
 
 What makes R7 worth more than a repeat is everything it differs in. A
-**different Android** (LineageOS, not a vendor build), with **no Google Play
-services at all**, running a **different app version** (4.16.3 from APKMirror,
-where the phones run whatever the Play Store gave them), on **virtualised
-hardware**. None of that moved the number.
+**different Android** (LineageOS 20, not a vendor build), with **no Google Play
+services at all**, on **virtualised hardware**, and with the app sideloaded from
+APKMirror rather than installed from the Play Store. None of that moved the
+number.
+
+The app build is *not* one of the differences: R7 runs 4.16.3, the same version
+the Fairphone runs. Nothing here varies the app version deliberately, so nothing
+here says whether the version matters.
 
 So the fast-on-wire result does not depend on the vendor Android, on Google Play
-services, on a particular app build, or on real hardware. The one thing every
-fast run has in common is a **wired path with no Wi-Fi in it**; the one thing
-every slow run has in common is Wi-Fi.
+services, or on real hardware. The one thing every fast run has in common is a
+**wired path with no Wi-Fi in it**; the one thing every slow run has in common
+is Wi-Fi.
 
 ### R7 is also a better test rig
 
