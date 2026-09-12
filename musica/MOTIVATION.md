@@ -144,7 +144,7 @@ response and in many cases it would be correct.
   discovery traffic and resolves the players quickly and consistently.
 - **Not one bad device.** The problems move around between players rather than
   sticking to one.
-- **Not the app's logic.** With the same Android app running in a container on
+- **Not the app's logic.** With the same Android app running under Waydroid on
   a wired laptop, discovery is instant and completely reliable.
 
   That last comparison is the most informative one. The same app, given a
@@ -195,8 +195,8 @@ player is online and reachable.
   players simply stay in the list. My guess is that the mDNS cache on iOS works
   better.
 
-- **Why desktop is different.** Windows machines, and an Android container on a
-  laptop, have no aggressive radio power management and no wireless multicast
+- **Why desktop is different.** Windows machines, and Waydroid on a laptop,
+  have no aggressive radio power management and no wireless multicast
   filtering. Discovery tends to succeed on the first attempt, so the app's
   behaviour under lossy conditions is never exercised.
 
@@ -324,7 +324,9 @@ the last time I tried Roon.
 I have not tested any voice assistant. Even if they did work great, they are
 not a solution for me, as I prefer a written and visual format.
 
-### Wishlist
+---
+
+## Wishlist
 
 Aside from the obvious —
 [proper Linux support](https://support1.bluesound.com/hc/en-us/community/posts/360033533054-BluOS-controller-app-on-Linux)
@@ -362,12 +364,18 @@ that matter much less than my primary motivation for starting this project:
    step at a time.
 
 6) I often go to the same playlist, or the same menu within Tidal in BluOS. My
-   most frequently used list is My Songs in Tidal. Rather than keep clicking
-   and waiting, why not have a shortcut that goes there directly — and build it
-   so it is not limited to this one idea, but allows for any shortcut I might
-   want in the future?
+   most frequently used list is My Music → Songs in Tidal. Rather than keep
+   clicking and waiting, why not have a shortcut that goes there directly — and
+   build it so it is not limited to this one idea, but allows for any shortcut
+   I might want in the future?
 
-### Unofficial official Linux desktop
+---
+
+## The unofficial official Linux desktop
+
+There is one more option, and it deserves an answer of its own: if the
+community has already packaged the official desktop app for Linux, why is that
+not enough?
 
 [Bluesound acknowledged a request for an official Linux client in 2019](https://support1.bluesound.com/hc/en-us/community/posts/360033533054-BluOS-controller-app-on-Linux),
 but as of 2026 there is still no official Linux client. There is a community
