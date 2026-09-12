@@ -10,7 +10,9 @@ latest round — probably not the app's either. It looks like the **link**.
 All the numbers are in
 [`../controller-discovery-timings.md`](../controller-discovery-timings.md),
 which is the data; this file is the reasoning over it. Confidence markers follow
-`bluos-http-api.md`: **[V hardware]** observed directly, **[U]** unverified.
+`bluos-http-api.md`: **[V hardware]** observed directly here, **[V]** verified
+in client code or a vendor document, **[U]** unverified — a claim about
+behaviour nobody has tested yet.
 
 ---
 
@@ -48,7 +50,7 @@ Two earlier runs were recorded as "wired" and are now suspect: an adapter was
 plugged in but Wi-Fi was never turned off, and nothing confirmed which interface
 the app used. Until that is redone, treat them as Wi-Fi measurements.
 
-### The leading explanation **[U]**
+### Where the penalty lives **[V hardware]**, and what causes it **[U]**
 
 Broadcast delivery over Wi-Fi to the controller is the weak point, and it is
 **an Android-side weakness, not the network's**. The same house, the same
@@ -267,8 +269,8 @@ the problem actually is.
 | platform | path |
 |---|---|
 | Windows | `C:\Users\<you>\AppData\Roaming\BluOS Controller\staticPlayers.txt` |
-| Linux AppImage | `~/.config/BluOS Controller/staticPlayers.txt` **[U]** |
-| macOS | `~/Library/Application Support/BluOS Controller/staticPlayers.txt` **[U]** |
+| macOS | `~/Library/Application Support/BluOS Controller/staticPlayers.txt` — supported by the vendor, exact path inferred from Electron's conventions **[U]** |
+| Linux AppImage | `~/.config/BluOS Controller/staticPlayers.txt` — not supported by the vendor at all, and untested **[U]** |
 
 One comma-separated line of `ip:port`, no spaces:
 

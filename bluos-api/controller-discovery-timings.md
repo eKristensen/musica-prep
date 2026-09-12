@@ -10,7 +10,10 @@ Four players. Three VLANs on `ek-arm`, which previously ran
 `lsdp-static serve` instead. One player is on Wi-Fi; the rest are wired.
 
 Confidence markers follow `bluos-http-api.md`: **[V hardware]** observed
-directly, **[U]** unverified.
+directly here, **[U]** unverified — a claim about behaviour that has not been
+tested. Detail that was simply never written down is marked *not recorded*
+in plain words; that is a gap in the notes, not an untested claim, and the
+markers are not used for it.
 
 ---
 
@@ -18,10 +21,10 @@ directly, **[U]** unverified.
 
 | | |
 |---|---|
-| **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App from Play Store, version not recorded **[U]** |
-| **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002`. App from Play Store, version not recorded **[U]** |
-| **Waydroid** | LineageOS-based Waydroid image (exact version not recorded **[U]**), minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
-| **iPhone** | an iPhone 16-series, exact model not recorded **[U]**; iOS current as of a week before these tests **[U]** |
+| **Fairphone 5 Plus** | Android 15, build `FP5.VT31.C.114.20260804`. App from Play Store, version not recorded |
+| **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11, `RKQ1.200826.002`. App from Play Store, version not recorded |
+| **Waydroid** | LineageOS-based Waydroid image (exact version not recorded), minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
+| **iPhone** | an iPhone 16-series, exact model not recorded; iOS current as of a week before these tests, version not recorded |
 | **Windows** | BluOS Controller 4.16.0 (Electron) |
 | **Linux** | [`bluos-controller-linux`](https://gitlab.com/zquestz/bluos-controller-linux) — the same official 4.16.0 Electron app, repackaged as an AppImage |
 
@@ -62,7 +65,7 @@ All on 2026-09-12, in the order given.
 
 | # | device | link | discovery path | timing | time to all players | complete |
 |---|---|---|---|---|---|---|
-| R1 | one Android phone [U: which] | Wi-Fi | `lsdp-static serve`, different VLAN | counted | 3–4 s | 9 of 10 |
+| R1 | one Android phone (which one not recorded) | Wi-Fi | `lsdp-static serve`, different VLAN | counted | 3–4 s | 9 of 10 |
 | R2 | the other Android phone | Wi-Fi | players directly, same VLAN | counted | no difference from R1 | — |
 | R3 | both phones | USB Ethernet — **but see the note** | players directly, same layer 2 | counted | 3–5 s | 4 of 5 |
 | R4 | Fairphone 5 Plus | airplane mode + USB Ethernet | players directly | **timer** | **2.9–3.4 s** | 4 of 5 |
@@ -225,9 +228,9 @@ discovery both switched off**, only the listed players appear — so the file
 plainly took effect — and startup is **no faster than before**.
 
 That closes the desktop half of the question the same way R8 closed the Android
-half. **The 5–6 seconds is not discovery.** Discovery was removed outright and
-the number did not move, so whatever the desktop app spends that time on, it is
-not finding players.
+half. **The 5–6 seconds is not discovery [V hardware]**. Discovery was removed
+outright and the number did not move, so whatever the desktop app spends that
+time on, it is not finding players.
 
 The desktop is at least stable once up: none of the list-emptying seen on
 Android **[V hardware]**.
