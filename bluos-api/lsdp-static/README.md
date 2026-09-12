@@ -51,6 +51,18 @@ podman run --rm -v "$PWD:/src:Z" -w /src docker.io/library/rust:1-alpine \
 
 `:Z` relabels the mount for SELinux and does nothing where SELinux is not in use.
 
+The plainest version works too, and is worth knowing because nothing about it is
+specific to this project:
+
+```sh
+podman run --rm -v "$PWD:/project" -w /project docker.io/library/rust:latest cargo build
+```
+
+That gives a debug build linked against the image's glibc, so keep it for a quick
+check and use one of the above when the binary has to run outside a container:
+`--release` for a build worth measuring with, and the alpine image when you would
+rather not care whether the host's glibc matches.
+
 ### Or run it as a container and install nothing
 
 `build-with-podman.sh` leaves an image behind whose entrypoint is the binary.
@@ -84,10 +96,10 @@ unless you are testing the relay box talking to itself.
 **1. Baseline — what discovery costs today, with the relay running.**
 
 ```sh
-lsdp-static measure --rounds 20 --expect 3
+lsdp-static measure --rounds 20 --expect 4
 ```
 
-`--expect 3` is however many players you have; a round stops as soon as it has
+`--expect 4` is however many players you have; a round stops as soon as it has
 that many, so a round that never gets there burns the full `--timeout` and shows
 up as an incomplete round. That count — complete rounds out of 20 — is the
 headline. The median is the comfortable case; the p95 and the incomplete rounds
@@ -122,8 +134,8 @@ the other VLANs and you are measuring the two together.
 **4. Measure again, from the same place as step 1.**
 
 ```sh
-lsdp-static measure --rounds 20 --expect 3
-lsdp-static measure --rounds 20 --expect 3 --schedule 0   # one query, no retries
+lsdp-static measure --rounds 20 --expect 4
+lsdp-static measure --rounds 20 --expect 4 --schedule 0   # one query, no retries
 ```
 
 The second one is the interesting variant. The seven-packet query burst at
@@ -152,6 +164,50 @@ when the list stops changing. `announce datagrams` counts every announce heard,
 including the deliberate repeats — if that is far below `players × repeats ×
 queries`, datagrams are being dropped, and that is worth knowing on its own.
 
+## Keeping the results
+
+A measurement run is evidence about how BluOS players behave, which makes it
+worth keeping and worth publishing — and it is full of the addresses, MACs and
+room names of the house it was measured in. So `--report` writes the run as a
+markdown document with all of that replaced:
+
+```sh
+lsdp-static measure --rounds 20 --expect 4 --report ../test-runs/lsdp-timing-2026-09-12.md
+```
+
+The redaction is the scheme `bluos-probe.py` uses, so a measurement from here
+and a capture from there mean the same thing in the same bundle: addresses
+become RFC 5737 documentation addresses starting at `192.0.2.11`, node ids
+become `02:00:00:00:xx:yy`, player names become `Room-A`, `Room-B`. Placeholders
+are stable within a run, so the same player is the same name in every line, and
+the relationships between the numbers survive.
+
+The report is **always** redacted, whether or not `--redact` was given — a file
+that exists to be shared should not depend on remembering a flag. After writing
+it, the tool scans its own output for anything that still parses as an address,
+a MAC or a bare-hex node id, and refuses to finish quietly if it finds one.
+
+Add `--redact` to redact the terminal output as well, which also works for
+`serve` (its log) and `discover`. To keep the mapping for yourself:
+
+```sh
+lsdp-static measure --rounds 20 --expect 4 \
+    --report ../test-runs/lsdp-timing-2026-09-12.md --key ../test-runs/DO-NOT-SHARE-key-2026-09-12.txt
+```
+
+`../test-runs/` is where `bluos-probe.py` already puts its bundles, so timing
+runs and protocol captures end up side by side.
+
+The key file maps placeholders back to the originals and says so at the top. It
+is the one file that must not be published. The `DO-NOT-SHARE-` prefix is the
+name the probe uses for the same thing, and the repository's `.gitignore` covers
+both that prefix and `*.key`, so neither can be committed by accident.
+
+What the report contains: the run's settings, a per-round table, min/median/p95/max
+for both "first player answered" and "all players answered", a histogram of each,
+a per-player table, and the protocol's own documented timings so the numbers can
+be read against what they should be.
+
 ## The node id trap
 
 The node id is the cache key a controller dedupes on, and it is the player's
@@ -175,7 +231,7 @@ from another subnet, where broadcast never arrives:
 
 ```sh
 # from a host with no route to the players' broadcast domain at all
-lsdp-static measure --query R --broadcast <ek-arm-ip> --rounds 10 --expect 3
+lsdp-static measure --query R --broadcast <ek-arm-ip> --rounds 10 --expect 4
 ```
 
 `--broadcast` here is just "where to send the query", and for `R` that is one
@@ -204,12 +260,15 @@ firewalled port look identical from here.
 | Option | Why |
 |---|---|
 | `--repeat 3 --spacing-ms 40` | three copies of every answer, 40 ms apart. UDP is lossy; this is the cheapest available fix. `--repeat 1` to measure without it. |
-| `--delay-ms 0` | a real player waits a random 0–750 ms before answering. This does not. `--delay-ms 400` to see what that delay actually costs. |
+| `--delay-ms 0` | the default: answer immediately. A real player waits a random 0–750 ms; `serve` deliberately does not, which is the whole point. `--delay-ms 0-750` makes it imitate one instead, for reproducing that behaviour in order to document it — never for normal use. |
 | `--interval 57` | unsolicited announce every 57 s ± 6, the steady-state rate a real player uses. `--interval 0` turns it off, to test query/response alone. |
 | `--reply-scope arrival` | answer only on the subnet the query came from, instead of all three. |
 | `--unicast-echo` | also unicast each answer straight back to the querier. Off by default because no real player does it — but it is the one thing that would survive a client whose OS drops broadcast (a macOS Local Network permission denial does exactly that, silently). |
 | `--min-gap-ms 250` | collapse duplicate queries, which a broadcast relay produces by design. |
 | `--dry-run` | print the exact bytes that would be announced, and exit. |
+| `--redact` | replace addresses, node ids and player names in the output with documentation placeholders. Works for `serve`, `measure` and `discover`. |
+| `--report FILE` | `measure`: write the run as publishable markdown. Always redacted, and checked afterwards. |
+| `--key FILE` | `measure`: write the placeholder → original mapping. Do not publish this one. |
 
 ## What this does not prove
 

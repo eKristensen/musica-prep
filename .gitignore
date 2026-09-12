@@ -1,0 +1,9 @@
+# Redaction keys map placeholders back to the real network they were measured
+# on. bluos-probe.py writes DO-NOT-SHARE-key-<stamp>.json; lsdp-static writes
+# whatever --key names. Neither belongs in the repository, so neither can be
+# committed by accident.
+DO-NOT-SHARE-*
+*.key
+
+# python bytecode from importing bluos-probe.py
+__pycache__/

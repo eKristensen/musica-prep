@@ -441,23 +441,23 @@ fn parse_config(text: &str) -> Result<Vec<Node>, String> {
 }
 
 /// Render nodes back out as a config file -- used by `discover`.
-fn emit_config(nodes: &[Node]) -> String {
+fn emit_config(nodes: &[Node], red: &Redactor) -> String {
     let mut s = String::new();
     for n in nodes {
-        let mac: Vec<String> = n.id.iter().map(|b| format!("{b:02x}")).collect();
-        let name = n
-            .records
-            .iter()
-            .find_map(|r| r.get("name"))
-            .unwrap_or("")
-            .to_string();
+        let id = red.node_id(&n.id);
+        let mac: Vec<String> = id.iter().map(|b| format!("{b:02x}")).collect();
+        let name = match n.records.iter().find_map(|r| r.get("name")) {
+            Some(v) => red.name(v),
+            None => String::new(),
+        };
         if !name.is_empty() {
             let _ = writeln!(s, "# {name}");
         }
-        let _ = writeln!(s, "node {} {}", mac.join(":"), n.addr);
+        let _ = writeln!(s, "node {} {}", mac.join(":"), red.ip(n.addr));
         for r in &n.records {
             let mut line = format!("  service 0x{:04X}", r.class);
             for (k, v) in &r.txt {
+                let v = &if k == "name" { red.name(v) } else { v.clone() };
                 if v.chars().any(|c| c.is_whitespace() || c == '"' || c == '#') {
                     let _ = write!(line, " {k}=\"{}\"", v.replace('"', ""));
                 } else {
@@ -668,10 +668,199 @@ fn now_stamp() -> String {
     )
 }
 
-fn describe(node: &Node) -> String {
-    let name = node.records.iter().find_map(|r| r.get("name")).unwrap_or("(unnamed)");
+fn describe(node: &Node, red: &Redactor) -> String {
+    let name = match node.records.iter().find_map(|r| r.get("name")) {
+        Some(n) => red.name(n),
+        None => "(unnamed)".to_string(),
+    };
     let classes: Vec<String> = node.records.iter().map(|r| format!("0x{:04X}", r.class)).collect();
-    format!("{} [{}] {} {}", node.addr, hex(&node.id), name, classes.join("+"))
+    format!("{} [{}] {} {}", red.ip(node.addr), hex(&red.node_id(&node.id)), name, classes.join("+"))
+}
+
+// ---------------------------------------------------------------------------
+// redaction
+// ---------------------------------------------------------------------------
+//
+// The same scheme bluos-probe.py uses, so a measurement from here and a capture
+// from there can sit in one published bundle and mean the same thing: RFC 5737
+// TEST-NET-1 for addresses, a locally-administered 02:00:00:00:xx:yy pool for
+// node ids, Room-A.. for player names.  Structure-preserving, so the output is
+// still a valid, readable record; deterministic within a run, so the same player
+// is the same placeholder in every line; and not reversible from the output
+// alone -- `--key` writes the mapping to a separate file that is not for sharing.
+
+#[derive(Default)]
+struct RedactInner {
+    ipv4: HashMap<Ipv4Addr, Ipv4Addr>,
+    node: HashMap<Vec<u8>, Vec<u8>>,
+    name: HashMap<String, String>,
+    /// (kind, placeholder, original), in allocation order -- only ever written
+    /// to the key file, never to a report.
+    key: Vec<(&'static str, String, String)>,
+}
+
+struct Redactor {
+    on: bool,
+    inner: std::cell::RefCell<RedactInner>,
+}
+
+/// Addresses that are protocol constants rather than anybody's network.
+fn keep_ipv4(a: Ipv4Addr) -> bool {
+    let o = a.octets();
+    a.is_unspecified()
+        || a.is_loopback()
+        || a.is_broadcast()
+        || a.is_multicast()
+        // already a documentation address: redacting it again would be a lie
+        || o[..3] == [192, 0, 2]
+        || o[..3] == [198, 51, 100]
+        || o[..3] == [203, 0, 113]
+}
+
+/// The n-th documentation address.  Players start at .11, matching the probe,
+/// and spill into the other two documentation ranges if a house somehow has more
+/// than 244 of them.
+fn doc_addr(n: u32) -> Ipv4Addr {
+    match n {
+        0..=243 => Ipv4Addr::new(192, 0, 2, 11 + n as u8),
+        244..=497 => Ipv4Addr::new(198, 51, 100, (n - 243) as u8),
+        _ => Ipv4Addr::new(203, 0, 113, ((n - 497) % 254 + 1) as u8),
+    }
+}
+
+impl Redactor {
+    fn new(on: bool) -> Redactor {
+        Redactor { on, inner: std::cell::RefCell::new(RedactInner::default()) }
+    }
+
+    fn ip(&self, a: Ipv4Addr) -> Ipv4Addr {
+        if !self.on || keep_ipv4(a) {
+            return a;
+        }
+        let mut i = self.inner.borrow_mut();
+        if let Some(p) = i.ipv4.get(&a) {
+            return *p;
+        }
+        let ph = doc_addr(i.ipv4.len() as u32);
+        i.ipv4.insert(a, ph);
+        i.key.push(("address", ph.to_string(), a.to_string()));
+        ph
+    }
+
+    fn sockaddr(&self, a: SocketAddr) -> String {
+        match a {
+            SocketAddr::V4(v4) => format!("{}:{}", self.ip(*v4.ip()), v4.port()),
+            other => other.to_string(),
+        }
+    }
+
+    /// Node ids are always a six-byte MAC in practice, so the placeholder is one
+    /// too -- 02:00:00:00:xx:yy, locally administered and obviously not real.
+    fn node_id(&self, id: &[u8]) -> Vec<u8> {
+        if !self.on {
+            return id.to_vec();
+        }
+        let mut i = self.inner.borrow_mut();
+        if let Some(p) = i.node.get(id) {
+            return p.clone();
+        }
+        let n = 11 + i.node.len() as u32;
+        let ph = vec![0x02, 0x00, 0x00, 0x00, (n >> 8) as u8, n as u8];
+        i.node.insert(id.to_vec(), ph.clone());
+        i.key.push(("node id", hex(&ph), hex(id)));
+        ph
+    }
+
+    fn name(&self, n: &str) -> String {
+        if !self.on || n.is_empty() {
+            return n.to_string();
+        }
+        let mut i = self.inner.borrow_mut();
+        if let Some(p) = i.name.get(n) {
+            return p.clone();
+        }
+        let k = i.name.len();
+        let ph = if k < 26 {
+            format!("Room-{}", (b'A' + k as u8) as char)
+        } else {
+            format!("Room-{}", k + 1)
+        };
+        i.name.insert(n.to_string(), ph.clone());
+        i.key.push(("name", ph.clone(), n.to_string()));
+        ph
+    }
+
+    fn counts(&self) -> (usize, usize, usize) {
+        let i = self.inner.borrow();
+        (i.ipv4.len(), i.node.len(), i.name.len())
+    }
+
+    fn key_file(&self) -> String {
+        let mut s = String::from(
+            "# DO NOT SHARE. Maps the placeholders in the report back to this\n\
+             # network's real addresses, node ids and player names.\n\n",
+        );
+        for (kind, ph, orig) in &self.inner.borrow().key {
+            let _ = writeln!(s, "{kind:<8} {ph:<20} {orig}");
+        }
+        s
+    }
+}
+
+/// Scan text for anything that still looks like a real address, MAC or bare-hex
+/// node id.  The same idea as the probe's bundle verification: the redactor is
+/// only trustworthy if something independent checks its output before it is
+/// published.
+fn find_unredacted(text: &str) -> Vec<String> {
+    const SET: &str = "0123456789abcdefABCDEF.:-";
+    let mut out: Vec<String> = Vec::new();
+    let mut token = String::new();
+    let flush = |t: &str, out: &mut Vec<String>| {
+        if t.is_empty() {
+            return;
+        }
+        // a whole token may be a MAC, with either separator
+        if let Some(bytes) = mac_shaped(t) {
+            if bytes[..4] != [0x02, 0x00, 0x00, 0x00] {
+                out.push(format!("MAC-shaped string {t:?}"));
+            }
+        }
+        // ... and each colon-separated piece may be an address or a bare-hex id
+        for piece in t.split(':') {
+            if let Ok(a) = piece.parse::<Ipv4Addr>() {
+                if !keep_ipv4(a) {
+                    out.push(format!("IPv4 address {piece:?}"));
+                }
+            } else if piece.len() == 12 && piece.chars().all(|c| c.is_ascii_hexdigit()) {
+                if !piece.to_ascii_lowercase().starts_with("02000000") {
+                    out.push(format!("bare-hex node id {piece:?}"));
+                }
+            }
+        }
+    };
+    for ch in text.chars() {
+        if SET.contains(ch) {
+            token.push(ch);
+        } else {
+            flush(&token, &mut out);
+            token.clear();
+        }
+    }
+    flush(&token, &mut out);
+    out.sort();
+    out.dedup();
+    out
+}
+
+/// Six hex pairs joined by one consistent separator.
+fn mac_shaped(t: &str) -> Option<Vec<u8>> {
+    for sep in [':', '-'] {
+        let parts: Vec<&str> = t.split(sep).collect();
+        if parts.len() == 6 && parts.iter().all(|p| p.len() == 2 && p.chars().all(|c| c.is_ascii_hexdigit())) {
+            return Some(parts.iter().map(|p| u8::from_str_radix(p, 16).unwrap()).collect());
+        }
+    }
+    None
 }
 
 // ---------------------------------------------------------------------------
@@ -700,7 +889,9 @@ struct Serve {
     ifaces: Vec<Iface>,
     port: u16,
     arrival_scope: bool,
-    delay_ms: u64,
+    /// low and high bounds, in ms: a fixed `--delay-ms 400`, or a range like
+    /// `--delay-ms 0-750` to imitate a real player's random reply delay
+    delay_ms: (u64, u64),
     repeat: u32,
     spacing_ms: u64,
     interval: u64,
@@ -708,6 +899,7 @@ struct Serve {
     min_gap: Duration,
     startup: bool,
     verbose: bool,
+    red: Redactor,
 }
 
 impl Serve {
@@ -764,14 +956,16 @@ impl Serve {
                     if self.verbose {
                         self.log(&format!(
                             "  -> {} {} announce {} ({} bytes)",
-                            t,
+                            self.red.sockaddr(t),
                             job.tag,
-                            describe(&self.nodes[job.node]),
+                            describe(&self.nodes[job.node], &self.red),
                             pkt.len()
                         ));
                     }
                 }
-                Err(e) => self.log(&format!("  !! send to {t} failed: {e}")),
+                Err(e) => {
+                    self.log(&format!("  !! send to {} failed: {e}", self.red.sockaddr(t)))
+                }
             }
         }
     }
@@ -783,12 +977,19 @@ impl Serve {
         node: usize,
         dest: Dest,
         tag: &'static str,
+        delay_ms: u64,
     ) {
         for k in 0..self.repeat.max(1) {
-            let at = now
-                + Duration::from_millis(self.delay_ms + k as u64 * self.spacing_ms);
+            let at = now + Duration::from_millis(delay_ms + k as u64 * self.spacing_ms);
             jobs.push(Job { at, node, dest, tag });
         }
+    }
+
+    /// One draw from the configured reply delay, per query and per node, the way
+    /// a real player draws its own.
+    fn draw_delay(&self, rng: &mut Rng) -> u64 {
+        let (lo, hi) = self.delay_ms;
+        lo + rng.below(hi.saturating_sub(lo) + 1)
     }
 
     fn run(&self, sock: &UdpSocket) -> Result<(), String> {
@@ -886,7 +1087,11 @@ impl Serve {
                 Ok(m) => m,
                 Err(e) => {
                     if self.verbose {
-                        self.log(&format!("<- {from} unparseable ({e}): {}", hex_spaced(&buf[..n])));
+                        self.log(&format!(
+                            "<- {} unparseable ({e}): {}",
+                            self.red.sockaddr(from),
+                            hex_spaced(&buf[..n])
+                        ));
                     }
                     continue;
                 }
@@ -906,7 +1111,7 @@ impl Serve {
                 let cls: Vec<String> = classes.iter().map(|c| format!("0x{c:04X}")).collect();
                 self.log(&format!(
                     "<- {} query '{}' classes [{}] -> {} node(s)",
-                    from,
+                    self.red.sockaddr(from),
                     if unicast_reply { 'R' } else { 'Q' },
                     cls.join(","),
                     matched.len()
@@ -924,12 +1129,13 @@ impl Serve {
                         }
                     }
                     last_burst.insert(key, now);
+                    let d = self.draw_delay(&mut rng);
                     if unicast_reply {
-                        self.schedule_burst(&mut jobs, now, i, dest, "unicast");
+                        self.schedule_burst(&mut jobs, now, i, dest, "unicast", d);
                     } else {
-                        self.schedule_burst(&mut jobs, now, i, dest, "reply");
+                        self.schedule_burst(&mut jobs, now, i, dest, "reply", d);
                         if self.unicast_echo && !src_v4.is_unspecified() {
-                            self.schedule_burst(&mut jobs, now, i, Dest::To(from), "echo");
+                            self.schedule_burst(&mut jobs, now, i, Dest::To(from), "echo", d);
                         }
                     }
                 }
@@ -971,6 +1177,7 @@ fn discovery_round(
     expect: usize,
     players_only: bool,
     verbose: bool,
+    red: &Redactor,
 ) -> Result<Round, String> {
     let pkt = encode_query(query_kind, &[CLASS_ALL]);
     let start = Instant::now();
@@ -1029,7 +1236,12 @@ fn discovery_round(
             if !round.first_ms.contains_key(&key) {
                 if verbose {
                     // stderr, so `discover > players.conf` stays a clean config file
-                    eprintln!("    {:>6} ms  {}  (via {})", ms, describe(&node), from);
+                    eprintln!(
+                        "    {:>6} ms  {}  (via {})",
+                        ms,
+                        describe(&node, red),
+                        red.sockaddr(from)
+                    );
                 }
                 round.order.push(key.clone());
                 round.first_ms.insert(key, (ms, node));
@@ -1259,10 +1471,11 @@ first-party client does",
         parse_config("node auto 10.0.0.5\n").is_err(),
         String::new(),
     );
+    let plain = Redactor::new(false);
     check(
         "emitted config round-trips back to the same nodes",
-        parse_config(&emit_config(&nodes)).unwrap() == nodes,
-        emit_config(&nodes),
+        parse_config(&emit_config(&nodes, &plain)).unwrap() == nodes,
+        emit_config(&nodes, &plain),
     );
 
     // oversize handling: one node with more records than fit in a 255-byte message
@@ -1295,6 +1508,116 @@ first-party client does",
         String::new(),
     );
 
+    // redaction
+    let red = Redactor::new(true);
+    let real: Ipv4Addr = "10.42.7.9".parse().unwrap();
+    let real2: Ipv4Addr = "10.42.7.10".parse().unwrap();
+    check(
+        "the same address always gets the same placeholder, a different one does not",
+        red.ip(real) == red.ip(real) && red.ip(real) != red.ip(real2),
+        format!("{} {}", red.ip(real), red.ip(real2)),
+    );
+    check(
+        "address placeholders are RFC 5737 documentation addresses",
+        red.ip(real).octets()[..3] == [192, 0, 2],
+        red.ip(real).to_string(),
+    );
+    check(
+        "protocol constants are left alone",
+        [
+            Ipv4Addr::UNSPECIFIED,
+            Ipv4Addr::new(127, 0, 0, 1),
+            Ipv4Addr::new(255, 255, 255, 255),
+            Ipv4Addr::new(224, 0, 0, 251),
+            Ipv4Addr::new(192, 0, 2, 50),
+        ]
+        .iter()
+        .all(|a| red.ip(*a) == *a),
+        String::new(),
+    );
+    check(
+        "node id placeholders are locally administered six-byte ids",
+        {
+            let ph = red.node_id(&[0x90, 0x76, 0x82, 0x42, 0x74, 0xC4]);
+            ph.len() == 6 && ph[..4] == [0x02, 0x00, 0x00, 0x00]
+        },
+        hex(&red.node_id(&[0x90, 0x76, 0x82, 0x42, 0x74, 0xC4])),
+    );
+    check(
+        "player names become Room-A, Room-B, ...",
+        red.name("Stue") == "Room-A" && red.name("Kitchen") == "Room-B" && red.name("Stue") == "Room-A",
+        String::new(),
+    );
+    check(
+        "a redactor that is off changes nothing",
+        {
+            let off = Redactor::new(false);
+            off.ip(real) == real && off.name("Stue") == "Stue" && off.node_id(&[1, 2]) == vec![1, 2]
+        },
+        String::new(),
+    );
+
+    // the leak scanner, which is what makes a report safe to publish
+    check(
+        "the scanner catches a real address, a MAC and a bare-hex node id",
+        {
+            let hits = find_unredacted(
+                "player at 10.42.7.9:11000 mac 90:76:82:42:74:c4 node 9076824274c4 \
+                 also 90-76-82-42-74-c4",
+            );
+            hits.len() == 4
+        },
+        format!("{:?}", find_unredacted("10.42.7.9 90:76:82:42:74:c4 9076824274c4 90-76-82-42-74-c4")),
+    );
+    check(
+        "the scanner passes redacted text, timestamps, versions and table rules",
+        find_unredacted(
+            "2026-09-12T11:19:37.182Z | 192.0.2.11:11430 | 02:00:00:00:00:0b | 02000000000b \
+             | 0xFFFF | version 3.20.52 | 0-750 ms | 57 s | |---:|---:|",
+        )
+        .is_empty(),
+        format!(
+            "{:?}",
+            find_unredacted("2026-09-12T11:19:37.182Z 192.0.2.11:11430 02:00:00:00:00:0b 02000000000b 3.20.52")
+        ),
+    );
+    check(
+        "a redacted node description leaks neither address nor id nor name",
+        {
+            let r = Redactor::new(true);
+            let n = parse_config(
+                "node 90:76:82:42:74:c4 10.42.7.9\n  service 0x0001 name=\"Stue\" port=11000\n",
+            )
+            .unwrap();
+            let line = describe(&n[0], &r);
+            find_unredacted(&line).is_empty()
+                && !line.contains("Stue")
+                && !line.contains("10.42.7.9")
+        },
+        describe(
+            &parse_config("node 90:76:82:42:74:c4 10.42.7.9\n  service 0x0001 name=\"Stue\"\n")
+                .unwrap()[0],
+            &Redactor::new(true),
+        ),
+    );
+    check(
+        "a redacted config carries no original address, id or name either",
+        {
+            let r = Redactor::new(true);
+            let n = parse_config(
+                "node 90:76:82:42:74:c4 10.42.7.9\n  service 0x0001 name=\"Stue\" port=11000\n",
+            )
+            .unwrap();
+            let cfg = emit_config(&n, &r);
+            find_unredacted(&cfg).is_empty() && !cfg.contains("Stue")
+        },
+        emit_config(
+            &parse_config("node 90:76:82:42:74:c4 10.42.7.9\n  service 0x0001 name=\"Stue\"\n")
+                .unwrap(),
+            &Redactor::new(true),
+        ),
+    );
+
     // interfaces
     match interfaces() {
         Ok(ifs) => {
@@ -1324,6 +1647,182 @@ first-party client does",
     i32::from(fail > 0)
 }
 
+/// A histogram wide enough to show the shape and narrow enough to paste into a
+/// document.  The spread is the interesting part of a discovery measurement --
+/// the median alone hides the rounds that made the app look broken.
+fn histogram(data: &[u128]) -> String {
+    if data.is_empty() {
+        return String::new();
+    }
+    let max = *data.iter().max().unwrap();
+    let target = (max / 12).max(1);
+    let w = [1u128, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000]
+        .into_iter()
+        .find(|w| *w >= target)
+        .unwrap_or(10_000);
+    let n = (max / w) as usize + 1;
+    let mut counts = vec![0usize; n];
+    for v in data {
+        counts[(v / w) as usize] += 1;
+    }
+    let peak = *counts.iter().max().unwrap_or(&1);
+    let mut s = String::new();
+    for (i, c) in counts.iter().enumerate() {
+        let lo = i as u128 * w;
+        let bar = if peak == 0 { 0 } else { (c * 40).div_ceil(peak.max(1)) };
+        let _ = writeln!(
+            s,
+            "  {:>5}-{:<5} ms  {:<40} {}",
+            lo,
+            lo + w - 1,
+            "#".repeat(if *c == 0 { 0 } else { bar.max(1) }),
+            c
+        );
+    }
+    s
+}
+
+struct Measurement<'a> {
+    rounds: usize,
+    complete: usize,
+    seen_max: usize,
+    expect: usize,
+    schedule: &'a [f64],
+    timeout: Duration,
+    query_kind: u8,
+    dests: &'a [String],
+    /// round, players seen, first ms, last ms, announce datagrams
+    rows: &'a [(usize, usize, u128, u128, usize)],
+    firsts: &'a [u128],
+    alls: &'a [u128],
+    /// player label -> the round times it was seen at, already rendered with the
+    /// report's own redactor
+    per_node: &'a [(String, Vec<u128>)],
+    red: &'a Redactor,
+}
+
+/// A self-contained, publishable record of one measurement run.  Always
+/// redacted, whatever the terminal output was set to -- a file that exists to be
+/// shared should not depend on remembering a flag.
+fn report_markdown(m: &Measurement) -> String {
+    let mut s = String::new();
+    let sched: Vec<String> = m.schedule.iter().map(|t| format!("{t}")).collect();
+    let _ = writeln!(s, "# LSDP discovery timing\n");
+    let _ = writeln!(
+        s,
+        "How long a BluOS controller would wait to see every player, measured with\n\
+         `lsdp-static measure` on {}.\n",
+        now_stamp()
+    );
+    let _ = writeln!(
+        s,
+        "Addresses, node ids and player names are replaced with documentation\n\
+         placeholders (RFC 5737 for addresses, a locally administered pool for node\n\
+         ids), using the same scheme as `bluos-probe.py`. Placeholders are stable\n\
+         within this run, so the same player is the same name in every line.\n"
+    );
+
+    let _ = writeln!(s, "## Run\n");
+    let _ = writeln!(s, "| setting | value |");
+    let _ = writeln!(s, "|---|---|");
+    let _ = writeln!(s, "| rounds | {} |", m.rounds);
+    let _ = writeln!(
+        s,
+        "| query | `{}` for class 0xFFFF |",
+        if m.query_kind == MSG_QUERY_UNICAST { 'R' } else { 'Q' }
+    );
+    let _ = writeln!(s, "| query sent at | {} s |", sched.join(", "));
+    let _ = writeln!(s, "| listen timeout | {:.0} s |", m.timeout.as_secs_f64());
+    let _ = writeln!(
+        s,
+        "| round ends early at | {} |",
+        if m.expect > 0 { format!("{} players", m.expect) } else { "never".into() }
+    );
+    let _ = writeln!(s, "| sent to | {} |", m.dests.join(", "));
+    let _ = writeln!(s, "| complete rounds | {}/{} |", m.complete, m.rounds);
+    let _ = writeln!(s, "| most players seen in one round | {} |\n", m.seen_max);
+
+    let _ = writeln!(s, "## Rounds\n");
+    let _ = writeln!(s, "| round | players | first (ms) | all (ms) | announce datagrams |");
+    let _ = writeln!(s, "|---:|---:|---:|---:|---:|");
+    for (i, players, first, last, dg) in m.rows {
+        let _ = writeln!(s, "| {i} | {players} | {first} | {last} | {dg} |");
+    }
+    s.push('\n');
+
+    if !m.alls.is_empty() {
+        let _ = writeln!(s, "## Spread\n");
+        let _ = writeln!(s, "| | min | median | p95 | max |");
+        let _ = writeln!(s, "|---|---:|---:|---:|---:|");
+        let _ = writeln!(
+            s,
+            "| first player (ms) | {} | {} | {} | {} |",
+            m.firsts[0],
+            pct(m.firsts, 0.5),
+            pct(m.firsts, 0.95),
+            m.firsts[m.firsts.len() - 1]
+        );
+        let _ = writeln!(
+            s,
+            "| all players (ms) | {} | {} | {} | {} |\n",
+            m.alls[0],
+            pct(m.alls, 0.5),
+            pct(m.alls, 0.95),
+            m.alls[m.alls.len() - 1]
+        );
+        let _ = writeln!(s, "Time until every expected player had answered:\n");
+        let _ = writeln!(s, "```\n{}```\n", histogram(m.alls));
+        let _ = writeln!(s, "Time until the first player answered:\n");
+        let _ = writeln!(s, "```\n{}```\n", histogram(m.firsts));
+    }
+
+    if !m.per_node.is_empty() {
+        let _ = writeln!(s, "## Per player\n");
+        let _ = writeln!(s, "| player | rounds seen | median (ms) | max (ms) |");
+        let _ = writeln!(s, "|---|---:|---:|---:|");
+        for (k, times) in m.per_node {
+            let mut v = times.clone();
+            v.sort();
+            let _ = writeln!(
+                s,
+                "| {} | {}/{} | {} | {} |",
+                k,
+                v.len(),
+                m.rounds,
+                pct(&v, 0.5),
+                v[v.len() - 1]
+            );
+        }
+        s.push('\n');
+    }
+
+    let _ = writeln!(s, "## Reading these numbers\n");
+    let _ = writeln!(
+        s,
+        "From `bluos-http-api.md` section 12.1, for context rather than as a\n\
+         conclusion:\n\n\
+         - a player delays its answer to a query by a **random 0-750 ms**, so a\n  \
+           spread up to about 750 ms is the protocol working as specified, not\n  \
+           the network struggling;\n\
+         - controllers send the query **seven times**, at t = 0, 1, 2, 3, 5, 7\n  \
+           and 10 s, because UDP is lossy -- a first-answer time above one\n  \
+           second means a query or an answer was lost, not that a player was\n  \
+           slow;\n\
+         - a player also announces unprompted every **57 s +/- 6 s**, which is\n  \
+           the fallback when every query in a burst is lost.\n"
+    );
+
+    let (ips, nodes, names) = m.red.counts();
+    let _ = writeln!(s, "## Redaction\n");
+    let _ = writeln!(
+        s,
+        "{ips} address(es), {nodes} node id(s) and {names} player name(s) were replaced.\n\
+         Originals appear nowhere in this file; `lsdp-static measure --key` writes the\n\
+         mapping to a separate file, which is not for sharing."
+    );
+    s
+}
+
 // ---------------------------------------------------------------------------
 // command line
 // ---------------------------------------------------------------------------
@@ -1350,8 +1849,12 @@ SERVE
   --player SPEC        a player without a config file, repeatable:
                          --player 192.168.10.10
                          --player 192.168.10.10,id=90:76:82:42:74:c4,name=Kitchen,port=11000
-  --delay-ms N         wait N ms before answering a query (default 0; a real
-                       player waits a random 0-750 ms)
+  --delay-ms N|LO-HI   wait this long before answering (default 0: answer
+                       immediately, which is the whole point of serving).
+                       A range is drawn per query and per node, so
+                       `--delay-ms 0-750` deliberately imitates a real player
+                       -- only for reproducing their behaviour to document it,
+                       never for normal use
   --repeat N           datagrams per answer (default 3) -- UDP is lossy
   --spacing-ms N       gap between those datagrams (default 40)
   --interval N         unsolicited announce every N s +/- 6 (default 57, 0 = off)
@@ -1374,6 +1877,14 @@ DISCOVER / MEASURE
                        what the shipping controllers do; try `0` against a
                        static responder)
   --all-classes        keep non-player classes too (default: player classes only)
+  --redact             replace addresses, node ids and player names in the
+                       output with documentation placeholders, the same scheme
+                       bluos-probe.py uses
+  --report FILE        measure: write the run to FILE as markdown, ready to
+                       publish.  Always redacted, and checked afterwards for
+                       anything that still looks like an address or a MAC
+  --key FILE           measure: with --report, write the placeholder -> original
+                       mapping here.  DO NOT SHARE this one
   --query Q|R          Q (default) asks for a broadcast answer, R for a unicast
                        one back to this socket.  R plus --broadcast <host> is
                        the cross-subnet probe: no broadcast involved at all.
@@ -1397,7 +1908,7 @@ impl Args {
                 "--port" | "--iface" | "--broadcast" | "--config" | "--player" | "--delay-ms"
                     | "--repeat" | "--spacing-ms" | "--interval" | "--reply-scope" | "--min-gap-ms"
                     | "--timeout" | "--rounds" | "--gap" | "--expect" | "--schedule"
-                    | "--query" | "--listen-port"
+                    | "--query" | "--listen-port" | "--report" | "--key"
             )
         };
         let mut flags = Vec::new();
@@ -1447,7 +1958,7 @@ impl Args {
             "--player", "--delay-ms", "--repeat", "--spacing-ms", "--interval",
             "--no-startup-burst", "--reply-scope", "--unicast-echo", "--min-gap-ms", "--quiet",
             "--dry-run", "--timeout", "--rounds", "--gap", "--expect", "--schedule",
-            "--all-classes", "--query", "--listen-port",
+            "--all-classes", "--query", "--listen-port", "--redact", "--report", "--key",
         ];
         for (f, _) in &self.flags {
             if !known.contains(&f.as_str()) {
@@ -1550,6 +2061,29 @@ fn load_nodes(args: &Args) -> Result<Vec<Node>, String> {
     Ok(nodes)
 }
 
+/// `--delay-ms 400` or `--delay-ms 0-750`.
+fn parse_delay(spec: Option<&str>) -> Result<(u64, u64), String> {
+    let spec = match spec {
+        None => return Ok((0, 0)),
+        Some(v) => v.trim(),
+    };
+    let bad = || format!("--delay-ms: expected N or LO-HI, got {spec:?}");
+    match spec.split_once('-') {
+        Some((lo, hi)) => {
+            let lo: u64 = lo.trim().parse().map_err(|_| bad())?;
+            let hi: u64 = hi.trim().parse().map_err(|_| bad())?;
+            if hi < lo {
+                return Err(format!("--delay-ms: {hi} is below {lo}"));
+            }
+            Ok((lo, hi))
+        }
+        None => {
+            let n: u64 = spec.parse().map_err(|_| bad())?;
+            Ok((n, n))
+        }
+    }
+}
+
 fn parse_schedule(args: &Args) -> Result<Vec<f64>, String> {
     let s = args.get("--schedule").unwrap_or_else(|| "0,1,2,3,5,7,10".into());
     let mut out = Vec::new();
@@ -1589,6 +2123,7 @@ fn run() -> Result<(), String> {
     let ifaces = select_ifaces(&args)?;
     let dests = resolve_dests(&args, &ifaces)?;
     let reuseport = !args.has("--no-reuseport");
+    let red = Redactor::new(args.has("--redact"));
     // 'Q' asks responders to answer by broadcast, 'R' by unicast to the querier --
     // the only form that can work from another subnet, sent straight at a host.
     let listen_port: u16 = args.num("--listen-port", port)?;
@@ -1597,7 +2132,8 @@ fn run() -> Result<(), String> {
         "R" | "r" => MSG_QUERY_UNICAST,
         other => return Err(format!("--query must be Q or R, got {other:?}")),
     };
-    let dest_list: Vec<String> = dests.iter().map(|d| d.to_string()).collect();
+    // display only, so it goes through the redactor like everything else
+    let dest_list: Vec<String> = dests.iter().map(|d| red.ip(*d).to_string()).collect();
 
     match args.cmd.as_str() {
         "serve" => {
@@ -1606,7 +2142,7 @@ fn run() -> Result<(), String> {
                 nodes.iter().map(|n| encode_announce(n).unwrap()).collect();
             if args.has("--dry-run") {
                 for (n, p) in nodes.iter().zip(&packets) {
-                    println!("{}\n  {} bytes: {}\n", describe(n), p.len(), hex_spaced(p));
+                    println!("{}\n  {} bytes: {}\n", describe(n, &red), p.len(), hex_spaced(p));
                 }
                 println!("would answer on {}:{}", dest_list.join(", "), port);
                 return Ok(());
@@ -1618,7 +2154,7 @@ fn run() -> Result<(), String> {
                 ifaces,
                 port,
                 arrival_scope: args.get("--reply-scope").as_deref() == Some("arrival"),
-                delay_ms: args.num("--delay-ms", 0u64)?,
+                delay_ms: parse_delay(args.get("--delay-ms").as_deref())?,
                 repeat: args.num("--repeat", 3u32)?,
                 spacing_ms: args.num("--spacing-ms", 40u64)?,
                 interval: args.num("--interval", 57u64)?,
@@ -1626,6 +2162,7 @@ fn run() -> Result<(), String> {
                 min_gap: Duration::from_millis(args.num("--min-gap-ms", 250u64)?),
                 startup: !args.has("--no-startup-burst"),
                 verbose: !args.has("--quiet"),
+                red,
             };
             let sock = bind_socket(port, reuseport)?;
             s.log(&format!(
@@ -1635,11 +2172,15 @@ fn run() -> Result<(), String> {
                 dest_list.join(", ")
             ));
             for n in &s.nodes {
-                s.log(&format!("  announcing {}", describe(n)));
+                s.log(&format!("  announcing {}", describe(n, &s.red)));
             }
             s.log(&format!(
-                "answering after {} ms, {}x every {} ms; unsolicited announce {}",
-                s.delay_ms,
+                "answering after {}, {}x every {} ms; unsolicited announce {}",
+                if s.delay_ms.0 == s.delay_ms.1 {
+                    format!("{} ms", s.delay_ms.0)
+                } else {
+                    format!("a random {}-{} ms", s.delay_ms.0, s.delay_ms.1)
+                },
                 s.repeat,
                 s.spacing_ms,
                 if s.interval > 0 {
@@ -1668,6 +2209,7 @@ fn run() -> Result<(), String> {
                 args.num("--expect", 0usize)?,
                 !args.has("--all-classes"),
                 true,
+                &red,
             )?;
             let mut nodes: Vec<Node> =
                 r.order.iter().filter_map(|k| r.first_ms.get(k).map(|(_, n)| n.clone())).collect();
@@ -1676,7 +2218,14 @@ fn run() -> Result<(), String> {
             if nodes.is_empty() {
                 return Err("nothing answered -- wrong subnet, or a firewall is eating UDP 11430".into());
             }
-            print!("{}", emit_config(&nodes));
+            if red.on {
+                eprintln!(
+                    "NOTE: --redact replaced the addresses and node ids below with\n\
+                     documentation placeholders. This config is for publishing, not\n\
+                     for serving -- rerun without --redact to get a usable one.\n"
+                );
+            }
+            print!("{}", emit_config(&nodes, &red));
             Ok(())
         }
         "measure" => {
@@ -1699,7 +2248,10 @@ fn run() -> Result<(), String> {
             let mut alls: Vec<u128> = Vec::new();
             let mut complete = 0usize;
             let mut seen_max = 0usize;
-            let mut per_node: HashMap<String, Vec<u128>> = HashMap::new();
+            // keyed by node id, keeping the node itself, so the terminal and the
+            // report can each render it through their own redactor
+            let mut per_node: HashMap<Vec<u8>, (Node, Vec<u128>)> = HashMap::new();
+            let mut rows: Vec<(usize, usize, u128, u128, usize)> = Vec::new();
             for i in 1..=rounds {
                 let sock = bind_socket(listen_port, reuseport)?;
                 let r = discovery_round(
@@ -1712,13 +2264,18 @@ fn run() -> Result<(), String> {
                     expect,
                     !args.has("--all-classes"),
                     verbose,
+                    &red,
                 )?;
                 drop(sock);
                 let mut times: Vec<u128> = r.first_ms.values().map(|(ms, _)| *ms).collect();
                 times.sort();
                 seen_max = seen_max.max(r.first_ms.len());
-                for (k, (ms, n)) in &r.first_ms {
-                    per_node.entry(format!("{} {}", n.addr, k)).or_default().push(*ms);
+                for (_, (ms, n)) in &r.first_ms {
+                    per_node
+                        .entry(n.id.clone())
+                        .or_insert_with(|| (n.clone(), Vec::new()))
+                        .1
+                        .push(*ms);
                 }
                 let ok = expect == 0 || r.first_ms.len() >= expect;
                 if ok && !times.is_empty() {
@@ -1726,6 +2283,13 @@ fn run() -> Result<(), String> {
                     firsts.push(times[0]);
                     alls.push(*times.last().unwrap());
                 }
+                rows.push((
+                    i,
+                    r.first_ms.len(),
+                    times.first().copied().unwrap_or(0),
+                    times.last().copied().unwrap_or(0),
+                    r.datagrams,
+                ));
                 println!(
                     "round {:>3}: {} player(s){}  first {:>6} ms  last {:>6} ms  ({} announce datagrams)",
                     i,
@@ -1762,20 +2326,77 @@ fn run() -> Result<(), String> {
                     alls[alls.len() - 1]
                 );
             }
-            let mut keys: Vec<&String> = per_node.keys().collect();
-            keys.sort();
-            if !keys.is_empty() {
+            let mut nodes_seen: Vec<&(Node, Vec<u128>)> = per_node.values().collect();
+            nodes_seen.sort_by_key(|(n, _)| u32::from(n.addr));
+            if !nodes_seen.is_empty() {
                 println!("\nper node (rounds seen / median / max):");
-                for k in keys {
-                    let mut v = per_node[k].clone();
+                let labels: Vec<String> =
+                    nodes_seen.iter().map(|(n, _)| describe(n, &red)).collect();
+                let w = labels.iter().map(|l| l.len()).max().unwrap_or(0);
+                for ((n, times), label) in nodes_seen.iter().zip(&labels) {
+                    let _ = n;
+                    let mut v = times.clone();
                     v.sort();
                     println!(
-                        "  {:<40} {:>3}/{:<3} {:>6} ms {:>6} ms",
-                        k,
+                        "  {:<w$} {:>3}/{:<3} {:>6} ms {:>6} ms",
+                        label,
                         v.len(),
                         rounds,
                         pct(&v, 0.5),
                         v[v.len() - 1]
+                    );
+                }
+            }
+            if let Some(path) = args.get("--report") {
+                // The report is always redacted, whatever the terminal was set to:
+                // a file that exists to be shared should not depend on a flag having
+                // been remembered.
+                let shared = Redactor::new(true);
+                let per_node_red: Vec<(String, Vec<u128>)> = nodes_seen
+                    .iter()
+                    .map(|(n, times)| {
+                        let mut v = times.clone();
+                        v.sort();
+                        (describe(n, &shared), v)
+                    })
+                    .collect();
+                let dests_red: Vec<String> =
+                    dests.iter().map(|d| shared.ip(*d).to_string()).collect();
+                let text = report_markdown(&Measurement {
+                    rounds,
+                    complete,
+                    seen_max,
+                    expect,
+                    schedule: &schedule,
+                    timeout,
+                    query_kind,
+                    dests: &dests_red,
+                    rows: &rows,
+                    firsts: &firsts,
+                    alls: &alls,
+                    per_node: &per_node_red,
+                    red: &shared,
+                });
+                std::fs::write(&path, &text).map_err(|e| format!("{path}: {e}"))?;
+                let leaks = find_unredacted(&text);
+                if leaks.is_empty() {
+                    println!("\nwrote {path} -- checked: no address, MAC or node id left in it");
+                } else {
+                    println!("\nwrote {path}");
+                    for l in &leaks {
+                        println!("  !! possible leak: {l}");
+                    }
+                    return Err(format!(
+                        "{} possible leak(s) in {path} -- do not publish it until they are \
+                         explained",
+                        leaks.len()
+                    ));
+                }
+                if let Some(kp) = args.get("--key") {
+                    std::fs::write(&kp, shared.key_file()).map_err(|e| format!("{kp}: {e}"))?;
+                    println!(
+                        "wrote {kp} -- DO NOT SHARE: it maps the placeholders back to \
+                         this network"
                     );
                 }
             }
