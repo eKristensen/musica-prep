@@ -153,21 +153,24 @@ floor; it is about a second rather than about four.
 
 The figure is quoted often enough in these notes to be worth sourcing.
 
-**Provenance.** It is stated in `../bluos-http-api.md` §12.1 under "Timing", in a
-section marked **[V]**, alongside the 57 s ± 6 s announce cycle and the rule
-that a node answering a query also resets its announce timer. That paragraph
-reads as vendor-specification language rather than something inferred from
-client code, and §12.1 refers to "the vendor document" a few paragraphs later
-for the address-length field. The sources table lists exactly one vendor spec,
-the *BluOS Custom Integration API* v1.7 (09/04/2025). **Whether the LSDP timing
-comes from that document or from a separate Lenbrook LSDP specification is not
-recorded** — worth pinning down, since it is the only number here that the
-measurements are checked against.
+**Provenance: unknown, and this file should not pretend otherwise.** The only
+place the figure appears in this repository is `../bluos-http-api.md` §12.1
+under "Timing", in a section marked **[V]**, alongside the 57 s ± 6 s announce
+cycle and the announce-timer reset rule. `bluos-probe.py` calls it "the
+documented 0–750 ms response", pointing back at the same claim. No vendor
+document is in this repository at all, so nothing here traces the number to a
+primary source — **[V]** in §12.1 covers client code, the vendor spec and
+hardware without saying which applied, and the sources table's only vendor spec
+is the *BluOS Custom Integration API* v1.7 (09/04/2025), which nothing states
+covers LSDP.
 
-**Corroborated on hardware** regardless of which document it came from: 20
-rounds against four players gave a pooled mean of 390 ms and a median of 393,
-against the 375/375 a uniform 0–750 ms draw predicts, with all four players
-drawing from the same distribution
+Whoever wrote §12.1 knows where it came from; this file does not. Worth pinning
+down, because it is the number every measurement here is checked against.
+
+**The value itself is independently supported**, whatever its paper source: 20
+rounds against four players gave a pooled mean of 390 ms and a median of 393
+against the 375/375 a uniform 0–750 ms draw predicts, a largest observation of
+749 ms, and all four players drawing from the same distribution
 ([`../test-runs/lsdp-measure-20260912T185206Z/`](../test-runs/lsdp-measure-20260912T185206Z/))
 **[V hardware]**.
 
