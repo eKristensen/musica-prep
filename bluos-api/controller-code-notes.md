@@ -38,10 +38,12 @@ classes, and resource-id renumbering behind them.
 
 So on Android there is no build gap between this file and the measurements.
 
-**On the desktop there is one, and it has not been closed.** The source read
-here is Windows **4.16.1**; D1–D3 were measured on **4.16.0**, and no comparison
-between the two has been made. Everything below about the desktop describes
-4.16.1 **[U]** as an account of what the measured build did.
+On the desktop there is none either for Windows: the source read here is
+**4.16.1**, and D1 and D3 were measured on **4.16.1 build 6281** — the same
+build. D2 ran the Linux AppImage, which reports **4.16.0 build 5930**, one
+release behind; it is the official Electron app repackaged, so the Windows
+source is very likely an accurate account of it, but that is an inference and
+not a comparison **[U]**.
 
 ---
 
@@ -145,6 +147,14 @@ query form.
 ---
 
 ## Why the list empties itself **[V official]**
+
+*The behaviour being explained here, and in the three sections after it, is the
+cycle timed in
+[`controller-discovery-timings.md`](controller-discovery-timings.md): with the
+app open and untouched, the player list goes empty after ~30 s, settles on "No
+Player Found" at ~50 s, and comes back in full within a second of a tap — all
+with every discovery mechanism switched off, and with the selected player
+controllable throughout.*
 
 Three independent timers, and they do not fit the protocol they are timing.
 
@@ -433,6 +443,8 @@ is not something this source can be read off — it would have to be timed.
 
 ## Reproducing this
 
+### Android
+
 ```sh
 python3 -m venv /tmp/agv && /tmp/agv/bin/pip install androguard
 ```
@@ -453,9 +465,52 @@ for dex in [DEX(d) for d in apk.get_all_dex()]:
                 print("   ", i.get_name(), i.get_output())
 ```
 
-For Windows no tooling is needed: the source maps carry the original
-TypeScript, and `app-main/src/modules/` holds the three discovery modules
-directly.
+### Windows
+
+The code is four containers deep, each a different format:
+
+```
+BluOS Controller 4.16.1 Windows.exe      NSIS installer
+ └─ $PLUGINSDIR/app-64.7z                nested 7-Zip archive
+     └─ resources/app.asar               Electron's packed source archive
+         └─ node_modules/@app/
+             ├─ main/dist/index.js         Electron main process, the Node side
+             ├─ preload/dist/exposed.mjs   preload / contextBridge script
+             └─ renderer/dist/             the Vue 3 UI, production build
+         └─ node_modules/@lenbrook/vue-settings/   their shared settings-UI package
+```
+
+Needs `7z` (`apt install p7zip-full`) and `@electron/asar`:
+
+```sh
+7z x "BluOS Controller 4.16.1 Windows.exe" -oextracted
+7z x 'extracted/$PLUGINSDIR/app-64.7z' -oapp
+npx @electron/asar extract app/resources/app.asar asar_out
+```
+
+`asar_out/node_modules/@app/` is then the application.
+
+**Recovering the original TypeScript.** `@app/main/dist/index.js` ends with a
+`//# sourceMappingURL=data:application/json;charset=utf-8;base64,…` line. Decode
+it and the map's `sourcesContent` holds the unminified sources, named by
+`sources`:
+
+```python
+import re, base64, json
+content = open("asar_out/node_modules/@app/main/dist/index.js", encoding="utf-8").read()
+b64 = re.search(r"base64,([A-Za-z0-9+/=]+)", content).group(1)
+map_data = json.loads(base64.b64decode(b64))
+for path, src in zip(map_data["sources"], map_data["sourcesContent"]):
+    print(path)          # write `src` to this path to reconstruct the tree
+```
+
+`@lenbrook/vue-settings/dist/index.js.map` is a separate `.map` file next to its
+bundle and yields to the same trick. That reconstruction is what
+`app-main/src/modules/` refers to throughout this file; the three discovery
+modules sit there together.
+
+The renderer bundle (`@app/renderer/dist/assets/*.js`) ships **no** source map,
+so it stays minified — nothing above is read from it.
 
 The Android classes worth reading are `com.lenbrook.sovi.discovery.PlayerDiscoveryManager`
 (and its `$LSDPProbeRetry`), `LSDPPlayerDiscoveryOnSubscribe`,

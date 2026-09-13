@@ -39,8 +39,8 @@ markers are not used for it.
 | **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11 (API 30), `RKQ1.200826.002`. App **4.16.2 build 3217** from the Play Store. **No battery-saver restrictions** on the BluOS app |
 | **Waydroid** | LineageOS 20 — Android 13 — image `20-20260403-VANILLA-waydroid_x86_64`, minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
 | **iPhone 16** | iOS 26.6.2. BluOS Controller **4.16.2** |
-| **Windows** | BluOS Controller 4.16.0 (Electron) |
-| **Linux** | [`bluos-controller-linux`](https://gitlab.com/zquestz/bluos-controller-linux) — the same official 4.16.0 Electron app, repackaged as an AppImage |
+| **Windows** | BluOS Controller **4.16.1 build 6281** (Electron) |
+| **Linux** | [`bluos-controller-linux`](https://gitlab.com/zquestz/bluos-controller-linux) — **4.16.0 build 5930**, the official Electron app repackaged as an AppImage |
 
 USB Ethernet on the phones is a wired adapter; "Wi-Fi" means the phone's own
 radio. The Waydroid guest is wired throughout — a host bridge, no radio anywhere
