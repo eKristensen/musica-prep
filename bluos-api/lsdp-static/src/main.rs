@@ -32,7 +32,10 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 compile_error!("lsdp-static targets Linux (SO_REUSEPORT and getifaddrs are used directly)");
 
 /// Shown in every report and log banner, so a saved run says what produced it.
-const VERSION: &str = "1.0";
+/// Taken from Cargo.toml rather than written twice: a hand-kept copy drifts the
+/// moment someone changes the code without remembering to bump it, and then
+/// every saved run claims a version that never produced it.
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 const LSDP_PORT: u16 = 11430;
 const LSDP_HEADER: [u8; 6] = [0x06, b'L', b'S', b'D', b'P', 0x01];

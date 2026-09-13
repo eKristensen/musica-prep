@@ -61,33 +61,50 @@ protocol will not tell you it has.
 
 ## What is left
 
-The experiment is finished in both directions. One protocol question remains,
-unrelated to any of the timings: whether a real player answers a unicast `R`
-query, which would settle claim `C-19` in `../bluos-http-api.md`. No shipping
-controller sends one.
+Nothing. The experiment is finished in both directions, and the one protocol
+question that was still open has been answered.
 
-**One attempt has been made and it did not settle the claim**
-([`../test-runs/lsdp-measure-20260913T164700Z/`](../test-runs/lsdp-measure-20260913T164700Z/)
-and the two runs either side of it). A unicast `R` at a single player drew
-**nothing at all** — 10 rounds, 70 query sends, zero datagrams. That is the
-result the claim is about, but on its own it cannot distinguish "`R` is not
-answered" from "the query never got through", and the run meant to control for
-that could not do the job: a `Q` is answered by **broadcast**, which is
-indistinguishable from a player's unsolicited 57 s announce arriving in the same
-12 s window. Its six sightings were four different players — four of them not
-even the one addressed — and their number matches what background announces
-alone predict.
+### `C-19`: a unicast query is not answered **[V hardware]**
 
-A second problem is visible in the broadcast-`Q` control from the same session:
-every player answered in **0–2 ms**, where the identical command a day earlier
-([`../test-runs/lsdp-measure-20260912T185206Z/`](../test-runs/lsdp-measure-20260912T185206Z/))
-produced the expected 8–749 ms spread. Something was answering instantly, which
-is what `serve` is for, so it is not established that the real players were the
-ones replying during that session at all.
+`../bluos-http-api.md` §12.4 proposes sending an `R` query **unicast** to a
+known player address as a way to reach players across a subnet boundary, where
+broadcast cannot go. It does not work, and neither does the `Q` form.
 
-What would settle it, with nothing else on the network answering: a **single**
-query and a **one-second** window, so background announces cannot be mistaken
-for a reply — `--schedule 0 --timeout 1 --rounds 20`, once with `--query R
---listen-port 0` and once with `--query Q`, both `--to` one player. A real
-answer hits nearly every round and comes from the addressed player; background
-noise hits about one round in fourteen and comes from anyone.
+Three runs, one session, nothing else on the network answering:
+
+| run | query | sent to | rounds | answered |
+|---|---|---|---|---|
+| [`…171249Z`](../test-runs/lsdp-measure-20260913T171249Z/) | `Q` broadcast | the interfaces' broadcast addresses | 10 | **10/10, all four players**, 21–746 ms |
+| [`…171402Z`](../test-runs/lsdp-measure-20260913T171402Z/) | **`R` unicast** | one player | 20 | **0/20 — not one datagram** |
+| [`…171517Z`](../test-runs/lsdp-measure-20260913T171517Z/) | **`Q` unicast** | the same player | 20 | 2/20, and both explained by background |
+
+The first run is what makes the other two mean anything: the same players, minutes
+earlier, answering every broadcast query with the full 0–750 ms spread §12.1
+describes. They were awake, reachable and replying normally.
+
+Each unicast round sent **one** query and listened for **one second**, so an
+unsolicited announce — every 57 s per player, about a 7 % chance of landing in
+any given window — cannot be mistaken for a reply. Across 20 rounds that
+predicts ~1.4 stray sightings. The `Q` run produced 2: one from a player that
+was not the one addressed, and so cannot be a reply to it at all, and one from
+the addressed player. Neither carries the 0–750 ms answer delay, and a run where
+the query were being answered would have hit nearly every round, not one.
+
+So **`C-19` is refuted**: an `R` query sent by unicast is not answered. The
+sharper finding is the one the control adds — the failure is not in the `R`
+form, because `Q` fares no better. **Players act on queries that arrive by
+broadcast, and ignore queries addressed to them directly.**
+
+That closes the cross-subnet question §12.4 left open. Of the two ideas it
+offered, this was the one that needed no cooperation from the network; it is
+gone, and what remains is forwarding broadcasts (which is what
+`udp-broadcast-relay-redux` does here) or a configured address list plus
+`/SyncStatus`, which is what the vendor's own desktop clients fall back to.
+
+One alternative explanation is not fully excluded **[U]**: the `R` reply is
+unicast to the port the query was sent from, and that run used an ephemeral one,
+so a stateful firewall that did not treat it as return traffic would look
+identical to silence. The `Q` run does not share the doubt — its answers would
+arrive by broadcast on 11430, the port the positive control had just proved open
+— and it is the run the conclusion rests on. Re-running `R` with
+`--listen-port 11430` would settle even that.

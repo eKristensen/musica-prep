@@ -1,4 +1,4 @@
-# lsdp-static v1.0
+# lsdp-static v1.1
 
 A static LSDP responder: it answers BluOS discovery queries on UDP 11430 from a
 list of players in a config file, the way an avahi static service file answers
@@ -252,29 +252,34 @@ from another subnet, where broadcast never arrives:
 
 ```sh
 # from a host with no route to the players' broadcast domain at all
-lsdp-static measure --query R --broadcast <ek-arm-ip> --rounds 10 --expect 4
+lsdp-static measure --query R --to <ek-arm-ip> --rounds 10 --expect 4
 ```
 
-`--broadcast` here is just "where to send the query", and for `R` that is one
-ordinary unicast address. Add `--listen-port 0` if something else on the client
-already holds 11430; this responder answers to whatever source port asked.
+`--to` is just "where to send the query", and for `R` that is one ordinary
+unicast address. Add `--listen-port 0` if something else on the client already
+holds 11430; this responder answers to whatever source port asked.
 
 If that works from the guest VLAN, then a client pointed at one known address
 gets the full player list — node id, class and real port — with no relay, no
 broadcast, and no configured address list. Worth ten minutes of testing before
 concluding that cross-subnet discovery needs infrastructure.
 
-The same command aimed at a **real player** tests something the probe left open.
-`bluos-http-api.md` records claim `C-19` — "an LSDP `R` query sent by unicast is
-answered" — as INCONCLUSIVE, because the control was silent too:
+A **real player**, however, does not answer either form of unicast query. That
+was claim `C-19` in `bluos-http-api.md`, and it has been tested and refuted —
+see [`FINDINGS.md`](FINDINGS.md) for the three runs. Only this responder is
+reachable that way, which is a property of this tool, not of the protocol as
+players implement it.
+
+The test design is worth reusing for anything like it. Give the query one send
+and a one-second window, so a player's unsolicited 57 s announce cannot be
+mistaken for a reply, and run a broadcast query first to prove the players are
+answering at all:
 
 ```sh
-lsdp-static measure --query R --broadcast <player-ip> --rounds 5 --timeout 5 -v
+lsdp-static measure --query Q --rounds 10 --expect 4                    # control
+lsdp-static measure --query R --to <player-ip> --listen-port 11430 \
+                    --schedule 0 --timeout 1 --rounds 20 --expect 1
 ```
-
-An answer settles `C-19` as confirmed, and makes the relay redundant for real.
-Silence confirms nothing by itself — a player that ignores unicast and a
-firewalled port look identical from here.
 
 ## Options worth knowing
 
