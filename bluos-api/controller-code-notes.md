@@ -110,10 +110,10 @@ full, because as far as this code is concerned Wi-Fi is on.
 |---|---|---|---|
 | Android over Wi-Fi | on | **yes** | 3–5 s |
 | Android, USB Ethernet, Wi-Fi never switched off (R3, R4) | on | **yes** | 3–5 s, 2.9–3.4 s |
-| Android, cable, **Wi-Fi explicitly disabled** (R6) | off | no | **1–1.5 s** |
+| Android, cable, **Wi-Fi explicitly disabled** (R6) | off | no | **1.0–1.5 s** |
 | Waydroid, bridged, no Wi-Fi (R7) | none | no | **1.0–1.5 s** |
 | Waydroid + instant static responder (R8) | none | no | 1.0–1.5 s, unchanged |
-| iPhone (R9) | on | n/a — Android code | instant |
+| iPhone (R9) | on | not applicable, not Android | instant |
 
 Two seconds of dead time, plus a player's own random 0–750 ms reply and
 rendering, lands squarely on the 3–5 s that was measured. The wired figure is
