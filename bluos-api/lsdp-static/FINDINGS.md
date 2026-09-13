@@ -63,5 +63,31 @@ protocol will not tell you it has.
 
 The experiment is finished in both directions. One protocol question remains,
 unrelated to any of the timings: whether a real player answers a unicast `R`
-query, which would settle claim `C-19` in `../bluos-http-api.md`. The tool can
-send one — `measure --query R` — and no shipping controller does.
+query, which would settle claim `C-19` in `../bluos-http-api.md`. No shipping
+controller sends one.
+
+**One attempt has been made and it did not settle the claim**
+([`../test-runs/lsdp-measure-20260913T164700Z/`](../test-runs/lsdp-measure-20260913T164700Z/)
+and the two runs either side of it). A unicast `R` at a single player drew
+**nothing at all** — 10 rounds, 70 query sends, zero datagrams. That is the
+result the claim is about, but on its own it cannot distinguish "`R` is not
+answered" from "the query never got through", and the run meant to control for
+that could not do the job: a `Q` is answered by **broadcast**, which is
+indistinguishable from a player's unsolicited 57 s announce arriving in the same
+12 s window. Its six sightings were four different players — four of them not
+even the one addressed — and their number matches what background announces
+alone predict.
+
+A second problem is visible in the broadcast-`Q` control from the same session:
+every player answered in **0–2 ms**, where the identical command a day earlier
+([`../test-runs/lsdp-measure-20260912T185206Z/`](../test-runs/lsdp-measure-20260912T185206Z/))
+produced the expected 8–749 ms spread. Something was answering instantly, which
+is what `serve` is for, so it is not established that the real players were the
+ones replying during that session at all.
+
+What would settle it, with nothing else on the network answering: a **single**
+query and a **one-second** window, so background announces cannot be mistaken
+for a reply — `--schedule 0 --timeout 1 --rounds 20`, once with `--query R
+--listen-port 0` and once with `--query Q`, both `--to` one player. A real
+answer hits nearly every round and comes from the addressed player; background
+noise hits about one round in fourteen and comes from anyone.

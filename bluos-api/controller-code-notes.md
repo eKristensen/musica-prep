@@ -38,12 +38,23 @@ classes, and resource-id renumbering behind them.
 
 So on Android there is no build gap between this file and the measurements.
 
-On the desktop there is none either for Windows: the source read here is
+There is none on the desktop either. The source read here is Windows
 **4.16.1**, and D1 and D3 were measured on **4.16.1 build 6281** — the same
-build. D2 ran the Linux AppImage, which reports **4.16.0 build 5930**, one
-release behind; it is the official Electron app repackaged, so the Windows
-source is very likely an accurate account of it, but that is an inference and
-not a comparison **[U]**.
+build. D2 ran the Linux AppImage, **4.16.0 build 5930**, whose source was
+recovered the same way and compared:
+
+- **`app-main/src` is byte-identical between the two.** That includes all three
+  discovery modules — `lsdpDiscovery.ts`, `bonjourDiscovery.ts` and
+  `staticPlayersDiscovery.ts` — which are the whole basis of the Windows half of
+  this file.
+- One file differs in the entire recovered tree: `SettingItem.vue` in the shared
+  `@lenbrook/vue-settings` package, where 4.16.1 lets a readonly text setting
+  render without a POST url. A settings-UI fix, nothing to do with discovery.
+
+So the repackaging really did leave the app code alone, and everything below
+about the desktop describes both builds. It remains a code-level comparison
+only: it says nothing about what the unofficial packaging may add around the app
+— launch scripts, bundled native binaries — which has not been examined **[U]**.
 
 ---
 
@@ -511,6 +522,22 @@ modules sit there together.
 
 The renderer bundle (`@app/renderer/dist/assets/*.js`) ships **no** source map,
 so it stays minified — nothing above is read from it.
+
+### Linux
+
+One container fewer: an AppImage is an ELF binary with a SquashFS filesystem
+appended, so there is no NSIS or 7-Zip nesting to get through.
+
+```sh
+chmod +x bluos-controller-linux-4_16_0.AppImage
+./bluos-controller-linux-4_16_0.AppImage --appimage-extract   # -> ./squashfs-root/
+npx @electron/asar extract squashfs-root/resources/app.asar asar_out
+```
+
+No install, no root, no FUSE. From `asar_out` the layout and the source-map
+trick are identical to Windows: `@app/main/dist/index.js` and
+`@app/preload/dist/exposed.mjs` carry embedded maps, and
+`@lenbrook/vue-settings/dist/index.js.map` sits beside its bundle.
 
 The Android classes worth reading are `com.lenbrook.sovi.discovery.PlayerDiscoveryManager`
 (and its `$LSDPProbeRetry`), `LSDPPlayerDiscoveryOnSubscribe`,

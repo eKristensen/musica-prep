@@ -2079,7 +2079,10 @@ COMMON
   --port N             UDP port (default 11430)
   --iface NAME         only use this interface; repeatable (default: all up,
                        broadcast-capable, non-loopback interfaces)
-  --broadcast ADDR     send to this broadcast address; repeatable, overrides --iface
+  --to ADDR            send to this address instead of the interfaces' broadcast
+                       addresses; repeatable, overrides --iface.  Any address:
+                       a broadcast address, or a single host for a unicast
+                       query.  (`--broadcast` is the old name, still accepted)
   --no-reuseport       do not set SO_REUSEPORT (it is what allows a second
                        listener, e.g. a capture, on the same port)
   -v, --verbose        more detail
@@ -2137,8 +2140,12 @@ DISCOVER / MEASURE
                        is written next to that directory as
                        DO-NOT-SHARE-key-<stamp>.txt
   --query Q|R          Q (default) asks for a broadcast answer, R for a unicast
-                       one back to this socket.  R plus --broadcast <host> is
-                       the cross-subnet probe: no broadcast involved at all.
+                       one back to this socket.  R plus --to <host> is the
+                       cross-subnet probe: no broadcast involved at all.
+                       Note that a Q answer is broadcast to --port, so with
+                       --query Q a reply cannot be told apart from a player's
+                       unsolicited periodic announce arriving in the same
+                       window; only R proves the query itself was answered.
   --listen-port N      bind this port instead of --port.  0 picks a free one,
                        which only works with --query R (a broadcast answer goes
                        to 11430 and would never arrive)
@@ -2156,7 +2163,8 @@ impl Args {
         let takes_value = |f: &str| {
             matches!(
                 f,
-                "--port" | "--iface" | "--broadcast" | "--config" | "--player" | "--delay-ms"
+                "--port" | "--iface" | "--to" | "--broadcast" | "--config" | "--player"
+                | "--delay-ms"
                     | "--repeat" | "--spacing-ms" | "--interval" | "--reply-scope" | "--min-gap-ms"
                     | "--timeout" | "--rounds" | "--gap" | "--expect" | "--schedule"
                     | "--query" | "--listen-port" | "--out" | "--for"
@@ -2205,7 +2213,8 @@ impl Args {
     }
     fn check_known(&self) -> Result<(), String> {
         let known = [
-            "--port", "--iface", "--broadcast", "--no-reuseport", "-v", "--verbose", "--config",
+            "--port", "--iface", "--to", "--broadcast", "--no-reuseport", "-v", "--verbose",
+            "--config",
             "--player", "--delay-ms", "--repeat", "--spacing-ms", "--interval",
             "--no-startup-burst", "--reply-scope", "--unicast-echo", "--min-gap-ms", "--quiet",
             "--dry-run", "--timeout", "--rounds", "--gap", "--expect", "--schedule",
@@ -2220,14 +2229,18 @@ impl Args {
     }
 }
 
-/// Broadcast targets: --broadcast wins, else the directed broadcast of every
-/// selected interface, else the limited broadcast address as a last resort.
+/// Where queries and announces are sent: --to wins, else the directed broadcast
+/// of every selected interface, else the limited broadcast address as a last
+/// resort.  --to takes any address, not only a broadcast one: a single host is
+/// the whole point of the cross-subnet probe, so the flag is not named for
+/// broadcast.  `--broadcast` is kept as an alias for the older name.
 fn resolve_dests(args: &Args, ifaces: &[Iface]) -> Result<Vec<Ipv4Addr>, String> {
-    let explicit = args.all("--broadcast");
+    let mut explicit = args.all("--to");
+    explicit.extend(args.all("--broadcast"));
     if !explicit.is_empty() {
         let mut out = Vec::new();
         for s in explicit {
-            out.push(s.parse().map_err(|_| format!("bad --broadcast address {s:?}"))?);
+            out.push(s.parse().map_err(|_| format!("bad --to address {s:?}"))?);
         }
         return Ok(out);
     }
