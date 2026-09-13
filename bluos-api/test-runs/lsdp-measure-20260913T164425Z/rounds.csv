@@ -1,0 +1,11 @@
+round,players_seen,complete,first_ms,last_ms,announce_datagrams
+1,4,yes,0,1,4
+2,4,yes,0,1,4
+3,4,yes,0,0,4
+4,4,yes,1,1,4
+5,4,yes,1,1,4
+6,4,yes,0,0,4
+7,4,yes,1,2,4
+8,4,yes,0,0,4
+9,4,yes,0,1,4
+10,4,yes,0,0,4
