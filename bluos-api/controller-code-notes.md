@@ -83,6 +83,13 @@ Observable multicastLock(Context ctx, Observable source) {
 for two seconds.** Nothing is listening and nothing is sent in that window: the
 socket is opened by the subscribe, and the first LSDP query goes out after it.
 
+The lock itself is real and correctly taken: the app declares
+`CHANGE_WIFI_MULTICAST_STATE` in its manifest, creates a lock named
+`"PlayerDiscoveryManager"`, acquires it on subscribe and releases it on dispose.
+Android filters non-directed packets without one, so this is the right thing to
+do — **the cost is not a missing lock, it is the two seconds wrapped around
+taking one.**
+
 Presumably the delay exists to let the Wi-Fi driver actually start delivering
 multicast after the lock is taken. Whatever the reason, it is a flat two seconds
 on every discovery **that takes the lock** — and **none at all** on one that does
@@ -327,31 +334,6 @@ Developer Options — if the process is still there, the instant list is expecte
 
 The one thing it is *not* is a network problem. The app spends the entire cycle
 able to reach the players it is about to declare missing.
-
-## Corrections to earlier guesses
-
-**The multicast lock is acquired.** An earlier hypothesis in this work, since
-removed, was that the Wi-Fi penalty might come from the app *not* holding a
-`WifiManager.MulticastLock`, since Android filters non-directed packets without
-one. That is wrong: the app declares `CHANGE_WIFI_MULTICAST_STATE` in its
-manifest, creates a lock named `"PlayerDiscoveryManager"`, acquires it on
-subscribe and releases it on dispose.
-
-The hypothesis pointed at the right code and drew the wrong conclusion from it.
-The cost is not a missing lock; it is the two-second delay wrapped around
-taking one.
-
-**The instant list is not unicast HTTP to cached addresses.** An earlier guess
-in the measurement log was that a tap might be re-probing known addresses over
-HTTP. It is simpler and stranger than that: the list is already in memory and
-gets its timestamps reset.
-
-**"App or platform?" is answered, for the Wi-Fi penalty.** It is the app: a
-hard-coded delay in the app's own discovery composition, conditional on the
-app's own reading of the Wi-Fi radio state. No Bonjour-browser differential test
-is needed for that part.
-
----
 
 ## What the Android code does not explain
 

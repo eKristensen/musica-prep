@@ -59,12 +59,7 @@ So the tool built to test the approach carries the argument against it: a fast
 static answer is a fast wrong answer the moment anything changes, and the
 protocol will not tell you it has.
 
-## What is left
-
-Nothing. The experiment is finished in both directions, and the one protocol
-question that was still open has been answered.
-
-### `C-19`: a unicast query is not answered **[V hardware]**
+## `C-19`: a unicast query is not answered **[V hardware]**
 
 `../bluos-http-api.md` §12.4 proposes sending an `R` query **unicast** to a
 known player address as a way to reach players across a subnet boundary, where

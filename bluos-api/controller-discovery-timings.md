@@ -421,8 +421,7 @@ Not established:
   out of the picture. R8 establishes that it is
   app-side; it does not say whether the app queries late, renders late, or waits
   deliberately.
-- Whether the ~30 s / ~50 s marks are fixed. What empties the list and what
-  refills it are no longer open — both are read out of the app's own code.
+- Whether the ~30 s / ~50 s marks are fixed.
 - Whether the desktop apps would also improve with Wi-Fi off — they were on
   wired LAN throughout, so the comparison has not been run.
 - What the desktop spends its 5–6 s on.
