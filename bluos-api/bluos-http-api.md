@@ -2309,18 +2309,21 @@ No shipping client sends `R`; all three send `Q` (`0x51`).
 
 **Broadcast does not cross subnets [U].** UDP broadcast is not routed, so LSDP
 finds nothing on another VLAN or subnet however well it works locally. Two
-things are worth trying before falling back to a configured address list
-(§12.3), neither of them tested:
+things suggest themselves before falling back to a configured address list
+(§12.3). The first has since been tested and does not work:
 
 - Send an `R` query **unicast** to a known player address. Nothing in the spec
   says a query must arrive by broadcast, and the responder already knows how to
-  answer a single querier. If it works you get the node id, class and real
-  `port` back, which is strictly better than assuming 11000.
+  answer a single querier. **Tested, and it does not work [V hardware]:** a
+  player answers neither a unicast `R` nor a unicast `Q`, while answering every
+  broadcast `Q` in the same session. Claim `C-19`, DISCONFIRMED — a query has to
+  arrive by broadcast to be acted on.
 - Send `Q` or `R` to the **remote subnet's directed broadcast address**. This
   needs the router to forward directed broadcasts, which is off by default on
-  most consumer gear and a deliberate security choice.
+  most consumer gear and a deliberate security choice. Untested.
 
-If neither works, a configured address list plus `/SyncStatus` is the answer,
+With the first gone and the second needing a router that most consumer gear
+will not give you, a configured address list plus `/SyncStatus` is the answer,
 and it is what the vendor's own desktop clients fall back to.
 
 **Two implementation traps [V]:**
@@ -2831,7 +2834,7 @@ Four players (N132 ×2, N130, N110), firmware 4.16.22, schema 34.
 | `C-06` | `/GetSettings` exists, returns JSON | Integration Utility 1.8.1 | **DISCONFIRMED** | 404 on all three ports |
 | `C-16` | `/Shares` has migrated to 11000 | conjecture | **DISCONFIRMED** | 404 on 11000, 200 on 80 |
 | `C-17` | `<is_preset>` in `/Status` | Blu4Net | **DISCONFIRMED** | absent while a preset played |
-| `C-19` | an LSDP `R` query sent by unicast is answered | vendor wire format | **INCONCLUSIVE** | silent, but the unicast `Q` control was also silent |
+| `C-19` | an LSDP `R` query sent by unicast is answered | vendor wire format | **DISCONFIRMED** | 20 rounds, no answer. A unicast `Q` control is equally unanswered, so what is ignored is unicast delivery, not the `R` form |
 | `C-20` | `sid` is required on `/Browse` | bluos-api-rs | **DISCONFIRMED** | `/Browse?sid=0` returns 200 |
 | `C-21` | omitting `X-Sovi-Schema-Version` changes the response | inference | **CONFIRMED** | `/Services` body differs |
 | `C-23` | port 11001 serves settings and nothing else | this project | **CONFIRMED** | 404 for `/Status`, `/SyncStatus`, `/Shares`, `/Services`, `/ui/Configuration` |
