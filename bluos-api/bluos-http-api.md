@@ -2287,7 +2287,8 @@ Controllers accept only the four player classes: the check is
 0–750 ms at random. A node hearing a query for a class it advertises answers
 after that delay and resets its announce timer. **The reply delay is confirmed
 on hardware [V hardware]:** 20 broadcast query rounds against four players
-(N130-class, one on Wi-Fi and three wired) gave 80 first-answer times with a
+(two N132, one N130 and one N110; one on Wi-Fi, three wired) gave 80
+first-answer times with a
 pooled mean of 390 ms and a median of 393, against the 375/375 a uniform
 0–750 ms draw predicts, with all four players drawing from the same
 distribution and no difference attributable to a player's own link. Run bundle:
@@ -2317,10 +2318,16 @@ things suggest themselves before falling back to a configured address list
   answer a single querier. **Tested, and it does not work [V hardware]:** a
   player answers neither a unicast `R` nor a unicast `Q`, while answering every
   broadcast `Q` in the same session. Claim `C-19`, DISCONFIRMED — a query has to
-  arrive by broadcast to be acted on.
+  arrive by broadcast to be acted on. Run bundles:
+  `test-runs/lsdp-measure-20260913T171249Z/` (the broadcast control),
+  `…T171402Z/` (unicast `R`) and `…T171517Z/` (unicast `Q`).
 - Send `Q` or `R` to the **remote subnet's directed broadcast address**. This
   needs the router to forward directed broadcasts, which is off by default on
-  most consumer gear and a deliberate security choice. Untested.
+  most consumer gear and a deliberate security choice. Whether a player answers
+  a query that arrives that way has not been tried here, and it cannot be read
+  off the `C-19` result: that one addressed a player directly, where this
+  arrives as a broadcast on the player's own segment, which is the form players
+  do act on.
 
 With the first gone and the second needing a router that most consumer gear
 will not give you, a configured address list plus `/SyncStatus` is the answer,

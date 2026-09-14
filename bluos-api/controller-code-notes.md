@@ -164,15 +164,21 @@ query form.
 
 ---
 
-## Why the list empties itself **[V official]**
+## The list that empties itself, and comes back **[V official]**
 
-*The behaviour being explained here, and in the three sections after it, is the
-cycle timed in
+The behaviour explained in this section and its parts is the cycle timed in
 [`controller-discovery-timings.md`](controller-discovery-timings.md): with the
-app open and untouched, the player list goes empty after ~30 s, settles on "No
-Player Found" at ~50 s, and comes back in full within a second of a tap — all
+app open and untouched, the player list goes empty after ~30 s, settles on **"No
+Player Found"** at ~50 s, and comes back in full within a second of a tap — all
 with every discovery mechanism switched off, and with the selected player
-controllable throughout.*
+controllable throughout.
+
+It takes three separate pieces of the app to account for that: what deletes the
+players, what can put them back on screen without a network at all, and what
+puts them back once they have actually been deleted. They are different
+mechanisms and the third is not the second.
+
+### Why it empties
 
 Three independent timers, and they do not fit the protocol they are timing.
 
@@ -200,7 +206,10 @@ record has aged out.
 
 ---
 
-## What makes the list appear instantly, and then not **[V official]**
+### Why it can appear instantly, and then decay
+
+This is the 0 s row of that table — tap Players, all four are there at once —
+and the decay that follows it.
 
 `PlayerDiscoveryState` is a **process-wide singleton** (`INSTANCE`, `LOCK`,
 `getInstance()`) whose `allPlayers` is a plain in-memory `Map`. It outlives any
@@ -246,7 +255,10 @@ them — `iterator.remove()` on `allPlayers`, plus `selectablePlayers.remove(p)`
 — and 20 s after that the "no players found" runnable fires, whereupon
 `MainActivity.onNoPlayersFound()` calls `reset()` and clears what is left.
 
-## So how does a tap bring them back? **[V official]**
+### Why a tap refills it once it really is empty
+
+This is the last row — tap Players after "No Player Found", all four back within
+a second. It is not the mechanism above.
 
 Not from the player list, which by then is genuinely empty —
 `markAllPlayersAsSeen()` would have nothing to iterate over. **The app keeps a
@@ -287,7 +299,7 @@ network changes (`lambda$init$0`, logged as *"Network changed to [%s]. Clearing
 cache of previously discovered players"*, which also calls `reset()`), and a
 single host is dropped when its own request fails. Nothing ages it out.
 
-### Why the two behave differently
+### Why the two registries behave differently
 
 This is the inconsistency, and it is not an accident of timing — the two
 registries answer different questions and expire on different evidence:
