@@ -5,11 +5,10 @@ the protocol can possibly go, and no controller app showed players any sooner
 for it. It is also, on reflection, the wrong shape of solution even where it
 does work.
 
-This file is the verdict on the experiment. The numbers are in
-[`../controller-discovery-timings.md`](../controller-discovery-timings.md) and
-the causes, read out of the apps themselves, are in
-[`../controller-code-notes.md`](../controller-code-notes.md). Nothing is
-repeated here that lives in either.
+This file is the verdict on the experiment. For the measurements behind it see
+[`../controller-discovery-timings.md`](../controller-discovery-timings.md), and
+for the causes, read out of the apps themselves,
+[`../controller-code-notes.md`](../controller-code-notes.md).
 
 ---
 
@@ -31,8 +30,9 @@ Players arrive **together** rather than one or two at a time, and the
 `udp-broadcast-relay-redux` setup's unreliability goes with it. A phone on
 another VLAN ends up in the same position as one on the players' own segment.
 
-That is a real improvement in how the list fills. It is not an improvement in
-when the list is complete, which is what a user waits for.
+That is a real improvement in how the list fills. It does not reduce how long
+the user waits for it: the last player still appears at the same moment it did
+before, and that moment is what makes an app feel slow to open.
 
 ## Why it would be the wrong answer anyway
 
