@@ -97,26 +97,20 @@ sharper finding is the one the control adds — the failure is not in the `R`
 form, because `Q` fares no better. **Players act on queries that arrive by
 broadcast, and ignore queries addressed to them directly.**
 
-That closes the cross-subnet question §12.4 left open. Of the two ideas it
-offered, this was the one that needed no cooperation from the network; it is
-gone, and what remains is forwarding broadcasts (which is what
-`udp-broadcast-relay-redux` does here) or a configured address list plus
-`/SyncStatus`, which is what the vendor's own desktop clients fall back to.
+So there is no way to reach players across a subnet boundary that does not need
+something from the network itself. Either the broadcasts get forwarded, or the
+controller is handed the addresses and asked to fetch `/SyncStatus` from each —
+which is what the vendor's own desktop clients do (§12.3).
 
-**The one alternative explanation is excluded.** An `R` reply is unicast to the
-port the query was sent from, and the first `R` run used an ephemeral one, where
-a stateful firewall that did not treat the reply as return traffic would look
-exactly like silence. So it was run again from **port 11430** — the port the
-broadcast control had just proved open, minutes earlier — against a different
-player. Still nothing from the player addressed, across 20 rounds.
+**Testing this needs care about the port, and it is easy to get wrong.** An `R`
+reply is unicast back to the port the query went out from, so a run listening on
+an ephemeral port cannot tell a player ignoring the query from a reply a
+stateful firewall dropped on the way back — both are silence. The runs that
+count listen on **11430**, the port a broadcast control has just been answered
+on, so the reply path is known good before the question is asked. Doing it that
+way found nothing from the addressed player across 20 rounds.
 
-Both `R` runs predate the tool recording its listen port, so each carries a note
-saying which one it used — added by hand, and marked as such, rather than the
-runs being repeated to regenerate a field.
-
-The two datagrams the second run did see are what proves the socket was
-listening where it claimed to be. Both were broadcast announces from *other* players, and
-a broadcast to 11430 cannot reach a socket bound to an ephemeral port — which is
-also why the earlier `R` run saw literally nothing, not even background. The
-port was open, the socket was on it, the player was answering broadcast queries
-throughout, and it still did not answer a query addressed to it.
+A run on 11430 also proves its own listen port from what arrives: stray
+broadcast announces from other players turn up in it, and a broadcast to 11430
+cannot reach a socket bound to an ephemeral port. Their absence is the tell that
+a run was listening somewhere else.
