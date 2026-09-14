@@ -127,13 +127,25 @@ which is deferred inside. **Nothing about the discovery protocol changes the
 wait**, which is why a faster responder could not have helped and why switching
 to mDNS would not either.
 
-### The floor underneath it is not another timer **[V official]**
+### The floor underneath it is not a timer at all **[V official]**
 
-With the two seconds gone, about a second remains, and the obvious suspect is
-innocent. The only timing constants in `com.lenbrook.sovi.discovery` are 16 s
-(staleness), 60 s (in `PlayerDiscoveryState.update`), and a **1000 ms
-`setSoTimeout`** on the LSDP receive socket. That last one is a ceiling on how
-long `receive()` blocks, so the loop can re-check `isDisposed()` once a second:
+With the two seconds gone, about a second remains. **There is no fixed
+contribution to it from LSDP.** The second is made of two things that each take
+as long as they take:
+
+| | what it is | roughly |
+|---|---|---|
+| waiting for the **last** player's announce | the protocol's own random 0–750 ms reply delay (§12.1), and the list is not complete until the slowest of four has answered | measured on the wire at **448–749 ms** to hear all four |
+| then, per player, an **HTTP chain** before its row is drawn | two to three requests, serialized | the remainder, a few hundred ms |
+
+Measured end to end that is 1.0–1.5 s, and the two parts above are the whole of
+it. Neither is a wait the app chose; both are work finishing.
+
+**The 1000 ms in the receive loop is not part of it**, which is the easy mistake
+to make. It is the only second-scale constant in
+`com.lenbrook.sovi.discovery` besides 16 s (staleness) and 60 s (in
+`PlayerDiscoveryState.update`), and it is a ceiling on how long `receive()`
+blocks, so the loop can re-check `isDisposed()` about once a second:
 
 ```java
 socket.setSoTimeout(1000);
@@ -143,11 +155,11 @@ while (!emitter.isDisposed()) {
 }
 ```
 
-An arriving announce is parsed and emitted at once. **Nothing gates a player on a
-one-second boundary.**
+An announce that arrives 30 ms in is parsed 30 ms in. The timeout only matters
+when *nothing* arrives. **Nothing gates a player on a one-second boundary.**
 
-What is between the announce and the row appearing is a chain of HTTP requests,
-per player, serialized by `flatMap`:
+The second part, between an announce and its row appearing, is a chain of HTTP
+requests per player, serialized by `flatMap`:
 
 ```java
 PlayerDiscoveryManager.getInstance().discoverPlayers()   // announce -> /SyncStatus
@@ -163,11 +175,15 @@ the player. `fetchPresetSetting` asks whenever the `SyncStatus` names an
 `audioPresetUrl` or a `dynamicSettingsUrl`. Only when both have resolved does
 `updatePlayerInfo` draw the row.
 
-So the floor is **two to three serialized HTTP round trips per player after its
-announce arrives**, not a wait. That is why answering discovery instantly does
-not move it: the responder shortens the part that was already fast. Whether that
-chain accounts for the whole 1.0–1.5 s is not something static code can say —
-it depends on the players' own HTTP latency, which has not been measured **[U]**.
+**This is why answering discovery instantly did not move the number.** A static
+responder removes the 0–750 ms reply delay — the first row of the budget — and
+leaves the HTTP chain untouched. It shortens the part that was already the
+smaller of the two, in a test where the phone still had to do everything below.
+
+The split between the two rows is approximate: the 448–749 ms comes from
+`lsdp-static measure` on a wired host, not from the phone, so it bounds the
+protocol part rather than measuring it inside the app. What the HTTP chain
+actually costs has not been measured directly **[U]**.
 
 ### The gate is `isWifiEnabled()`, not "is Wi-Fi in use"
 

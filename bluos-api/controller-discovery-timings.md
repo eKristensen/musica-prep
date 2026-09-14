@@ -425,12 +425,12 @@ Not established:
   sources. So the client that behaves best here is the one nothing is known
   about, and claims in that document about what "the clients" do are claims
   about the other three.
-- *How much* of the 1.0–1.5 s floor each part of the app accounts for. R8
-  establishes that it is app-side, and the code says what it is made of — two to
-  three serialized HTTP requests per player between its announce and its row
-  being drawn, not a timer ([`controller-code-notes.md`](controller-code-notes.md)).
-  What that costs in milliseconds depends on the players' own HTTP latency,
-  which has not been measured.
+- **How the 1.0–1.5 s floor splits.** The code says what it is made of: waiting
+  for the slowest of four players to answer, which the wire says takes 448–749 ms,
+  and then two to three serialized HTTP requests per player before its row is
+  drawn — no timer in either
+  ([`controller-code-notes.md`](controller-code-notes.md)). The split between the
+  two is inferred rather than measured inside the app.
 - What the desktop spends its 5–6 s on.
 - Whether the Linux AppImage reads `staticPlayers.txt`; the vendor supports the
   file on Windows and macOS only.
