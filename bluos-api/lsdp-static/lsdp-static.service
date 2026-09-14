@@ -1,0 +1,26 @@
+# /etc/systemd/system/lsdp-static.service
+#
+# Replaces udp-broadcast-relay-bluos.service for the duration of the experiment.
+# Stop that one first -- if both run, the relay will re-broadcast these answers
+# onto the other VLANs and you will be measuring both at once:
+#
+#   systemctl stop udp-broadcast-relay-bluos
+#   systemctl start lsdp-static
+#
+[Unit]
+Description=Static LSDP responder for BluOS discovery
+After=network-online.target
+Wants=network-online.target
+Conflicts=udp-broadcast-relay-bluos.service
+
+[Service]
+ExecStart=/usr/local/sbin/lsdp-static serve \
+    --config /etc/lsdp-static/players.conf \
+    --iface lan --iface iot --iface guest
+Restart=on-failure
+# no privileges needed: port 11430 is unprivileged and nothing is written
+DynamicUser=yes
+ReadOnlyPaths=/etc/lsdp-static
+
+[Install]
+WantedBy=multi-user.target

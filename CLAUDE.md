@@ -33,6 +33,41 @@ Concretely:
 - If scope is ambiguous, ask what "done" means for the current task rather
   than defaulting to maximum thoroughness.
 
+## Write the conclusion, not the journey to it
+
+The second failure mode here, and it recurs constantly: when something
+that was open gets settled, the writing keeps the fact that it *used* to
+be open. "This closes the question X left open." "No longer an open
+item." "An earlier guess was Y." "What is left: nothing."
+
+**A settled question is just a fact. Write the fact.** The reader did not
+watch the work happen and does not need the before-and-after; they need
+what is true now. A document that narrates its own history makes the
+reader reconstruct a timeline to extract one sentence of content — and
+that narration is the part most likely to go stale, because nobody
+rereads a note about something already decided.
+
+Concretely:
+
+- State the finding. Don't frame it as a resolution of a prior state:
+  "a query has to arrive by broadcast to be acted on", not "this closes
+  the question of whether unicast works".
+- Delete status sections once their answer is "nothing" or "all done".
+  A heading whose content is "no open items" is worse than no heading.
+- Don't leave pointers to things that no longer exist — a corrected
+  hypothesis, a deleted section, a renamed flag. When the thing is gone,
+  the pointer is a dead end that reads like content.
+- If a section only exists to say work happened, delete it. The work is
+  visible in the result, and the commit history holds the rest.
+
+**The exception is a wrong turn that could be taken again.** If knowing
+why an approach failed stops someone repeating it — a control that cannot
+distinguish two hypotheses, a measurement invalidated by something left
+running, a conclusion that looked obvious and was wrong — keep it, and
+say what it costs to get it wrong. That is not history, it is a finding.
+Everything else about how the work unfolded belongs in the commit
+message, not the document.
+
 ## Otherwise
 
 Standard judgment applies: be accurate, flag real errors, ask when

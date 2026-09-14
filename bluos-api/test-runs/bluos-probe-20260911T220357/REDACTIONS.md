@@ -45,3 +45,25 @@ Every file in the bundle was re-scanned after writing for the
 original values, for private-range IPv4 addresses (RFC 1918,
 CGNAT and link-local) and for MAC-shaped strings outside the
 placeholder range. **Nothing was found.**
+
+## Correction, 2026-09-12
+
+**That verification missed the raw discovery captures.** `raw/428-discovery.txt`
+and `raw/429-discovery.txt` carry each LSDP datagram twice: once parsed into
+JSON, and once as a `raw_hex` string. The parsed copies were redacted correctly.
+The hex copies were not, and inside them 26 fields still held four real device
+MACs and the four real player addresses — the MACs as bare hex with no
+separators, which is exactly the form the scanner of the day could not see.
+`bluos-probe.py` gained `MAC_HEX_RE` for this in v1.4; this bundle predates that
+fix and was never reprocessed.
+
+The hex has now been rewritten so each datagram decodes to precisely the
+placeholders its own parsed copy already published — the same four MACs
+(`02:00:00:00:00:0b`–`0e`) and addresses (`192.0.2.11`–`.14`). Every length is
+unchanged, so the packets are still structurally what was captured. All 42
+objects were re-checked by decoding the hex and comparing it field by field
+against the parsed JSON beside it: no mismatches, and no private address or
+out-of-range MAC left anywhere in the bundle.
+
+The claim above stands for every other file; for these two it was wrong, and is
+recorded here rather than quietly corrected.

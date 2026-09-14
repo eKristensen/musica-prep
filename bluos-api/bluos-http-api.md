@@ -2190,13 +2190,15 @@ skipped rather than aborting the parse — build the parser that way, because th
 version byte is only incremented for *incompatible* changes.
 
 **A real Announce**, captured from a Bluesound Node N130 and preserved as a
-test fixture in the `nightvision` library. Decoded field by field:
+test fixture in the `nightvision` library. Decoded field by field — **The node id is redacted.** It is a real device's MAC in the original fixture, replaced here and everywhere else in this repository with an RFC 7042 documentation MAC (`00-00-5E-00-53-xx`), the same convention `bluos-probe.py` uses for its own copy of this packet. Every length is unchanged, so the structure is exactly as captured; only those six bytes differ.
+
+
 
 ```
 06 4C 53 44 50 01              header: len 6, "LSDP", version 1
 73                             message length = 115
 41                             'A' announce
-06 90 76 82 42 74 C4           nodeId, 6 bytes (a MAC)
+06 00 00 5E 00 53 03           nodeId, 6 bytes (a MAC, redacted)
 04 C0 A8 0A 0A                 address, 4 bytes = 192.168.10.10
 02                             2 announce records
    00 01                       record 1: class 0x0001, BluOS Player
@@ -2226,7 +2228,7 @@ Three things this shows that a field table does not:
 The matching Delete and Query packets from the same fixture set:
 
 ```
-06 4C 53 44 50 01  0E 44  06 90 76 82 42 74 C4  02 00 01 00 04
+06 4C 53 44 50 01  0E 44  06 00 00 5E 00 53 03  02 00 01 00 04
                    └─ len 14, 'D', nodeId, 2 classes: 0x0001 and 0x0004
 
 06 4C 53 44 50 01  07 51  02 00 01 00 04
@@ -2283,7 +2285,14 @@ Controllers accept only the four player classes: the check is
 
 **Timing.** Steady-state announce every 57 s ± 6 s. Query responses are delayed
 0–750 ms at random. A node hearing a query for a class it advertises answers
-after that delay and resets its announce timer. Node IDs are unique per node,
+after that delay and resets its announce timer. **The reply delay is confirmed
+on hardware [V hardware]:** 20 broadcast query rounds against four players
+(two N132, one N130 and one N110; one on Wi-Fi, three wired) gave 80
+first-answer times with a
+pooled mean of 390 ms and a median of 393, against the 375/375 a uniform
+0–750 ms draw predicts, with all four players drawing from the same
+distribution and no difference attributable to a player's own link. Run bundle:
+`test-runs/lsdp-measure-20260912T185206Z/`. Node IDs are unique per node,
 not per interface, and are the correct cache key. A single announcement may be
 split across several messages when it cannot hold all of a node's info — the
 CI580 is the cited case.
@@ -2301,18 +2310,28 @@ No shipping client sends `R`; all three send `Q` (`0x51`).
 
 **Broadcast does not cross subnets [U].** UDP broadcast is not routed, so LSDP
 finds nothing on another VLAN or subnet however well it works locally. Two
-things are worth trying before falling back to a configured address list
-(§12.3), neither of them tested:
+things suggest themselves before falling back to a configured address list
+(§12.3). The first has since been tested and does not work:
 
 - Send an `R` query **unicast** to a known player address. Nothing in the spec
   says a query must arrive by broadcast, and the responder already knows how to
-  answer a single querier. If it works you get the node id, class and real
-  `port` back, which is strictly better than assuming 11000.
+  answer a single querier. **Tested, and it does not work [V hardware]:** a
+  player answers neither a unicast `R` nor a unicast `Q`, while answering every
+  broadcast `Q` in the same session. Claim `C-19`, DISCONFIRMED — a query has to
+  arrive by broadcast to be acted on. Run bundles:
+  `test-runs/lsdp-measure-20260914T180831Z/` (the broadcast control) and
+  `…20260914T180935Z/` (unicast `R`, with replies listened for on 11430), plus
+  the earlier `…20260913T171249Z/`, `…T171402Z/` and `…T171517Z/`.
 - Send `Q` or `R` to the **remote subnet's directed broadcast address**. This
   needs the router to forward directed broadcasts, which is off by default on
-  most consumer gear and a deliberate security choice.
+  most consumer gear and a deliberate security choice. Whether a player answers
+  a query that arrives that way has not been tried here, and it cannot be read
+  off the `C-19` result: that one addressed a player directly, where this
+  arrives as a broadcast on the player's own segment, which is the form players
+  do act on.
 
-If neither works, a configured address list plus `/SyncStatus` is the answer,
+With the first gone and the second needing a router that most consumer gear
+will not give you, a configured address list plus `/SyncStatus` is the answer,
 and it is what the vendor's own desktop clients fall back to.
 
 **Two implementation traps [V]:**
@@ -2368,6 +2387,48 @@ The desktop controllers read a `staticPlayers.txt` file from their user-data
 directory: a comma-separated list of player addresses, each optionally
 `ip:port`. Players listed there are used directly, with no discovery. This is
 the right approach for a server-side client on a known network.
+
+**It is also documented by the vendor**, which the code-level reading above did
+not make clear. Bluesound Professional publishes it as the way to reach players
+from a remote subnet, with the Windows path and the file format:
+
+| field | value |
+|---|---|
+| Path (Windows) | `C:\Users\<user>\AppData\Roaming\BluOS Controller\staticPlayers.txt` |
+| Format | one comma-separated line of `ip:port`, no spaces |
+| Vendor example | `192.168.0.1:11000,192.168.0.1:11010,192.168.0.1:11020,192.168.0.1:11030` |
+
+The example is **one address with four ports**, which is a four-zone chassis
+rather than four players — consistent with class `0x0003` and with the SRV-port
+note in §12.2, both of which exist because a CI580's four nodes share an
+address. For a single-zone player the vendor says to list only `<ip>:11000`.
+
+Two limits are stated outright, and both matter when judging what this feature
+is for:
+
+> This method is not meant for grouping players and is not designed to support
+> grouping multiple players across different subnets.
+>
+> This setup can be performed only using the Windows or macOS version of the
+> BluOS Controller app.
+
+So it is unavailable on Android, and it is a reachability feature for
+professional installs rather than a general configuration mechanism.
+
+**The listed players are added to discovery's results, not substituted for
+them [V official].** The desktop app reads the file in a module that runs
+*alongside* its LSDP and Bonjour modules, and hands each entry to the same code
+path an announce goes through — a version fetch and a `/SyncStatus`, into the
+same device store — after checking that discovery has not already found that
+address. So "used directly, with no discovery" describes what the feature is
+for, not a code path the app skips: nothing about the file changes what a
+player must answer, or when. How the app behaves with it is
+`controller-code-notes.md`; what it costs the user is
+`controller-discovery-timings.md`.
+
+Source: [How to Discover and Control Players from a Remote
+Subnet](https://support.bluesoundprofessional.com/hc/en-us/articles/360060411413-How-to-Discover-and-Control-Players-from-a-Remote-Subnet),
+Bluesound Professional.
 
 ---
 
@@ -2782,7 +2843,7 @@ Four players (N132 ×2, N130, N110), firmware 4.16.22, schema 34.
 | `C-06` | `/GetSettings` exists, returns JSON | Integration Utility 1.8.1 | **DISCONFIRMED** | 404 on all three ports |
 | `C-16` | `/Shares` has migrated to 11000 | conjecture | **DISCONFIRMED** | 404 on 11000, 200 on 80 |
 | `C-17` | `<is_preset>` in `/Status` | Blu4Net | **DISCONFIRMED** | absent while a preset played |
-| `C-19` | an LSDP `R` query sent by unicast is answered | vendor wire format | **INCONCLUSIVE** | silent, but the unicast `Q` control was also silent |
+| `C-19` | an LSDP `R` query sent by unicast is answered | vendor wire format | **DISCONFIRMED** | 20 rounds, no answer. A unicast `Q` control is equally unanswered, so what is ignored is unicast delivery, not the `R` form |
 | `C-20` | `sid` is required on `/Browse` | bluos-api-rs | **DISCONFIRMED** | `/Browse?sid=0` returns 200 |
 | `C-21` | omitting `X-Sovi-Schema-Version` changes the response | inference | **CONFIRMED** | `/Services` body differs |
 | `C-23` | port 11001 serves settings and nothing else | this project | **CONFIRMED** | 404 for `/Status`, `/SyncStatus`, `/Shares`, `/Services`, `/ui/Configuration` |

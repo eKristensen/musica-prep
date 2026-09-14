@@ -63,7 +63,7 @@ from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
-VERSION = "1.6"
+VERSION = "1.7"
 
 # Fixture convention, so this file stays shareable.
 #
@@ -165,6 +165,10 @@ MAC_PCT_RE = re.compile(r"(?i)\b[0-9A-F]{2}(?:%3A[0-9A-F]{2}){5}\b")
 # which is a MAC with the separators removed. MAC_RE cannot see it, so every
 # shared discovery capture contained real device MACs.
 MAC_HEX_RE = re.compile(r"(?i)(?<![0-9a-f])(?:[0-9a-f]{2}){6}(?![0-9a-f])")
+# A packet dump: a long, even-length run of hex. Anything identifying inside one
+# is invisible to every pattern in this file, so it gets decoded and read as a
+# packet instead -- see `_lsdp_identifiers` and `Redactor.redact_lsdp_packet`.
+HEX_BLOB_RE = re.compile(r"(?i)(?<![0-9a-f])(?:[0-9a-f]{2}){10,}(?![0-9a-f])")
 # Do not use \b here.  Browse keys percent-encode path separators, so an IP can
 # immediately follow the ``F`` in ``%2F`` (for example
 # ``%2Fvar%2Fmnt%2F192.168.1.5-music``).  ``F`` and the leading digit are both
@@ -266,6 +270,65 @@ class Redactor:
     def reserve_mac(self, original: str, placeholder: str) -> None:
         with self._lock:
             self.map["mac"][original.lower()] = placeholder
+
+    def redact_lsdp_packet(self, data: bytes) -> bytes:
+        """Replace the identifying fields *inside* an LSDP datagram.
+
+        Text scrubbing cannot reach them, and that is not a tuning problem. A
+        node id on the wire is a bare MAC with no separators and no boundary, so
+        MAC_HEX_RE's lookarounds fail inside the longer hex run of a packet
+        dump; an address is four raw bytes that no dotted-quad pattern can see.
+        Both leaked out of shared discovery captures in the `raw_hex` copy that
+        sits beside the parsed one, while the parsed copy was redacted
+        correctly and the verifier reported the bundle clean.
+
+        Redact the bytes before parsing them and the two copies cannot
+        disagree. Placeholders are the same length as what they replace, so the
+        packet stays structurally identical and every length byte stays right.
+        """
+        if len(data) < 6 or data[1:5] != b"LSDP":
+            return data
+        out = bytearray(data)
+        i = out[0]
+        while i < len(out):
+            mlen = out[i]
+            if mlen == 0 or i + mlen > len(out):
+                break
+            base, end = i + 1, i + mlen
+            i += mlen
+            if base >= end or out[base] not in (0x41, 0x44):
+                continue                      # only Announce and Delete carry ids
+            is_announce = out[base] == 0x41
+            p = base + 1
+            if p >= end:
+                continue
+            nlen = out[p]; p += 1
+            if p + nlen > end:
+                break
+            if nlen == 6:
+                orig = ":".join("%02x" % b for b in out[p:p + 6])
+                ph = self._alloc("mac", orig)
+                out[p:p + 6] = bytes(int(x, 16) for x in ph.split(":"))
+            elif nlen:
+                out[p:p + nlen] = b"\x00" * nlen    # unseen shape: blank it rather than guess
+            if nlen:
+                self._count("mac")
+            p += nlen
+            if not is_announce or p >= end:
+                continue
+            alen = out[p]; p += 1
+            if p + alen > end:
+                break
+            if alen == 4:
+                orig = ".".join(str(b) for b in out[p:p + 4])
+                if orig not in IPV4_KEEP and not orig.startswith(IPV4_DOC_PREFIXES):
+                    ph = self._alloc("ipv4", orig)
+                    out[p:p + 4] = bytes(int(x) for x in ph.split("."))
+                    self._count("ipv4")
+            elif alen:
+                out[p:p + alen] = b"\x00" * alen
+                self._count("ipv4")
+        return bytes(out)
 
     def add_literal(self, original: str, placeholder: str) -> None:
         """Scrub an exact string everywhere (share host, SSID, real name...).
@@ -674,6 +737,32 @@ def verify_bundle(bundle: Path, redactor: Redactor) -> List[str]:
             if not m.group(0).lower().replace("%3a", ":").startswith(MAC_POOL_PREFIX):
                 findings.append(_finding_at(rel, text, m.start(),
                                             "unredacted percent-encoded MAC"))
+
+        # Packet dumps. Every check above reads the text; none of them can see
+        # inside a hex blob, where a node id is a bare MAC with no boundary and
+        # an address is four raw bytes. That blind spot is why a bundle carrying
+        # four real MACs and four real addresses was once reported clean, so the
+        # hex is decoded and inspected as a packet rather than as a string.
+        for m in HEX_BLOB_RE.finditer(text):
+            try:
+                blob = bytes.fromhex(m.group(0))
+            except ValueError:
+                continue
+            for kind, value in _lsdp_identifiers(blob):
+                if kind == "mac" and not value.startswith(MAC_POOL_PREFIX):
+                    findings.append(_finding_at(
+                        rel, text, m.start(), "unredacted MAC inside a packet dump"))
+                elif kind == "ipv4":
+                    try:
+                        addr = ipaddress.IPv4Address(value)
+                    except ValueError:
+                        continue
+                    if value in IPV4_KEEP or value.startswith(IPV4_DOC_PREFIXES):
+                        continue
+                    if any(addr in net for net in PRIVATE_NETS):
+                        findings.append(_finding_at(
+                            rel, text, m.start(),
+                            "unredacted private IPv4 address inside a packet dump"))
 
         # A secret the redactor never recognised cannot be in `originals`, so
         # matching known values alone would report "clean" while a password sat
@@ -2333,6 +2422,42 @@ def lsdp_query_packet(msg_type: int = 0x51, classes: Sequence[int] = (0xFFFF,)) 
     return LSDP_HEADER + bytes([len(body) + 1]) + body
 
 
+def _lsdp_identifiers(data: bytes) -> List[Tuple[str, str]]:
+    """Every node id and address carried by an LSDP datagram, as
+    ("mac"|"ipv4", value). Used by the bundle verifier to look inside a packet
+    dump, which no text pattern can do. Silent on anything that is not LSDP."""
+    out: List[Tuple[str, str]] = []
+    if len(data) < 6 or data[1:5] != b"LSDP":
+        return out
+    i = data[0]
+    while i < len(data):
+        mlen = data[i]
+        if mlen == 0 or i + mlen > len(data):
+            break
+        base, end = i + 1, i + mlen
+        i += mlen
+        if base >= end or data[base] not in (0x41, 0x44):
+            continue
+        is_announce = data[base] == 0x41
+        p = base + 1
+        if p >= end:
+            continue
+        nlen = data[p]; p += 1
+        if p + nlen > end:
+            break
+        if nlen == 6:
+            out.append(("mac", ":".join("%02x" % b for b in data[p:p + 6])))
+        p += nlen
+        if not is_announce or p >= end:
+            continue
+        alen = data[p]; p += 1
+        if p + alen > end:
+            break
+        if alen == 4:
+            out.append(("ipv4", ".".join(str(b) for b in data[p:p + 4])))
+    return out
+
+
 def lsdp_parse(data: bytes) -> Dict[str, Any]:
     """Parse one LSDP datagram. Length-prefixed throughout, so unknown message
     types are skipped rather than aborting the parse."""
@@ -2542,12 +2667,16 @@ def suite_discovery(run: Runner) -> List[Tuple[str, str, int]]:
     def record(title: str, dest: Any, packet: bytes, replies: List[Tuple[str, bytes]]) -> None:
         dests = [dest] if isinstance(dest, str) else list(dest)
         lines = ["sent to %s:%d" % (run.red.scrub(", ".join(dests)), LSDP_PORT),
-                 "packet: %s" % binascii.hexlify(packet).decode(),
+                 "packet: %s" % binascii.hexlify(
+                     run.red.redact_lsdp_packet(packet)).decode(),
                  "datagrams received: %d" % len(replies), ""]
         players = _lsdp_players(replies)
         found.extend(players)
         for src, data in replies:
-            parsed = lsdp_parse(data)
+            # Redact the datagram, then parse it, so the hex copy written below
+            # cannot disagree with the parsed one. `players` above is built from
+            # the untouched bytes -- those addresses are needed to reach players.
+            parsed = lsdp_parse(run.red.redact_lsdp_packet(data))
             lines.append("from %s" % run.red.scrub(src))
             lines.append(run.red.scrub(json.dumps(parsed, indent=2, ensure_ascii=False)))
             lines.append("")
@@ -3158,7 +3287,10 @@ def build_redactions(run: Runner, findings: List[str]) -> str:
         lines += ["Every file in the bundle was re-scanned after writing for the",
                   "original values, for private-range IPv4 addresses (RFC 1918,",
                   "CGNAT and link-local) and for MAC-shaped strings outside the",
-                  "placeholder range. **Nothing was found.**"]
+                  "placeholder range. Packet dumps were decoded and read as",
+                  "packets, since a node id on the wire is a bare MAC with no",
+                  "boundary and an address is four raw bytes, and no text",
+                  "pattern can see either. **Nothing was found.**"]
     lines.append("")
     return "\n".join(lines)
 
@@ -3407,6 +3539,35 @@ def _unit_tests() -> List[Tuple[str, bool, str]]:
     check("real LSDP Announce yields the player service and advertised port",
           discovered == [("10.255.255.30", "Bluesound Node", 11000)],
           "got %r" % (discovered,))
+
+    # A packet dump is the one place text redaction cannot reach: on the wire a
+    # node id is a bare MAC with no boundary and an address is four raw bytes.
+    # Redacting the datagram before parsing is what keeps the hex copy and the
+    # parsed copy from disagreeing, which is how real values once escaped.
+    leaky = bytes.fromhex(
+        "06 4C 53 44 50 01 25 41 06 90 56 82 46 E7 66 04 C0 A8 6B 17 01 "
+        "00 01 02 04 6E 61 6D 65 04 54 65 73 74 04 70 6F 72 74 05 31 31 30 30 30")
+    red_pkt = Redactor()
+    cleaned = red_pkt.redact_lsdp_packet(leaky)
+    check("redact_lsdp_packet removes the node id from the bytes",
+          b"\x90\x56\x82\x46\xe7\x66" not in cleaned)
+    check("redact_lsdp_packet removes the address from the bytes",
+          b"\xc0\xa8\x6b\x17" not in cleaned)
+    check("redact_lsdp_packet keeps the packet the same length",
+          len(cleaned) == len(leaky), "%d vs %d" % (len(cleaned), len(leaky)))
+    check("redacted packet still parses, with placeholder identifiers",
+          _lsdp_identifiers(cleaned) == [("mac", "02:00:00:00:00:01"),
+                                         ("ipv4", "192.0.2.101")],
+          "got %r" % (_lsdp_identifiers(cleaned),))
+    check("redact_lsdp_packet leaves non-identifying payload alone",
+          b"name" in cleaned and b"11000" in cleaned)
+    check("redact_lsdp_packet passes a non-LSDP datagram through untouched",
+          red_pkt.redact_lsdp_packet(b"not lsdp") == b"not lsdp")
+    check("text scrubbing alone does NOT reach inside a packet dump",
+          "90568246e766" in Redactor().scrub(binascii.hexlify(leaky).decode()),
+          "if this fails the blind spot is gone and the note above is stale")
+    check("_lsdp_identifiers is silent on anything that is not LSDP",
+          _lsdp_identifiers(b"\x06NOPE\x01\x05Q\x01\xff\xff") == [])
 
     # --- body sniffing
     check("sniffs XML", sniff_body_kind(b"<?xml version='1.0'?><a/>", "text/xml") == "xml")

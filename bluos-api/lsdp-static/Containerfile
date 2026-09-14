@@ -1,0 +1,27 @@
+# Build lsdp-static without putting a Rust toolchain on the host: compile inside
+# a throwaway container and take one static binary out.  See build-with-podman.sh,
+# which drives this end to end.
+#
+# rust:1-alpine targets musl, so `cargo build --release` already produces a
+# statically linked binary -- no runtime dependencies, and nothing that has to
+# stay in step with the host's glibc.  The image is multi-arch, so an arm64 host
+# builds an arm64 binary with no cross-compilation setup.
+
+FROM docker.io/library/rust:1-alpine AS build
+# Belt and braces: alpine rust images have not always shipped the musl link bits.
+RUN apk add --no-cache musl-dev
+WORKDIR /src
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
+RUN cargo build --release --locked
+# A real build gate: the wire codec is checked against the captured N130 packet.
+# The interface check inside selftest only warns, because a build container has
+# no broadcast-capable interface and that says nothing about the code.
+RUN ./target/release/lsdp-static selftest
+
+# Nothing but the binary, so `podman cp` out of it is unambiguous -- and the
+# image is also directly runnable with --network=host if you would rather not
+# install anything at all.
+FROM scratch
+COPY --from=build /src/target/release/lsdp-static /lsdp-static
+ENTRYPOINT ["/lsdp-static"]

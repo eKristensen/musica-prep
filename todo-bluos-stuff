@@ -18,3 +18,29 @@ so the search so far has been GitHub-heavy. There may be more.
 Decide what to do with the ChatGPT/AI analysis idea for finding new music.
 ibeex/blue_cli (github.com/ibeex/blue_cli) does something along those lines
 and is the closest existing example found.
+
+-----
+
+Compare the problems documented here with the first Claude chat about the
+BluOS Android app's behaviour, to see what was already suspected then and
+what has since been settled or overturned:
+https://claude.ai/chat/f9b68d13-ae8f-4a09-9190-931757f92cbe
+
+-----
+
+Build a proof-of-concept discovery-only Android app, to be able to show
+Bluesound "it can be done much better, see here". Open questions to explore
+first:
+
+- How fast is the fastest possible discovery? There is a lot of LSDP data in
+  bluos-api/ already; mDNS data is missing entirely.
+- Is Android's own mDNS stack (NsdManager) any better in practice than what
+  the BluOS Controller app does today?
+
+-----
+
+Reconsider Roon.
+
+- Check it against the current list of requirements.
+- Check whether HDMI playback in Stue works with Roon.
+- Work out what the problem was the last time it was tried.

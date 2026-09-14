@@ -1,0 +1,11 @@
+[package]
+name = "lsdp-static"
+version = "1.2.0"
+edition = "2021"
+description = "Static LSDP responder for BluOS discovery experiments"
+
+[dependencies]
+
+[profile.release]
+opt-level = "s"
+panic = "abort"
