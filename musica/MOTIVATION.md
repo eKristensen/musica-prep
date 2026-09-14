@@ -31,11 +31,11 @@ of it.
 I have only been able to reproduce the problems with the official app on an
 Android phone. The Windows and iOS apps do not appear to have them when I test
 in my setup. The Windows app does share the slow start — five to six seconds
-from launch to players visible, of which roughly two to three is discovery once
-the window is up — but the list then stays put. The repackaged Linux build
-behaves the same on different hardware, so I take that timing to be simply how
-the desktop app works rather than a fault. I have no Mac, so the Mac app is
-untested.
+from launch to players visible — but the list then stays put. The repackaged
+Linux build behaves the same on different hardware, and both machines were on
+Wi-Fi throughout. Handing the app a fixed list of players and switching
+discovery off does not make either of them faster, so that wait is not time
+spent finding players. I have no Mac, so the Mac app is untested.
 
 ---
 
@@ -61,6 +61,13 @@ fifteen seconds. Normal status updates appear to arrive on a cycle of about ten
 seconds, so the margin between "healthy" and "removed" is only a few seconds.
 Any hiccup — a roaming event, a slow response, a moment of power saving —
 crosses it.
+
+The whole list does it too, and that one I have timed. With the app open and
+untouched, the phone on a different VLAN from the players and the relays that
+carry discovery across the boundary switched off — so nothing could reach it —
+the list empties after about thirty seconds and settles on "No Player Found" at
+about fifty. A single tap brings all four back within a second. The player I
+had selected stayed controllable throughout.
 
 **Impact:** this is the single most disruptive issue. It makes the list feel
 unreliable even when every player is online and reachable.
@@ -160,20 +167,20 @@ response and in many cases it would be correct.
   discovery traffic and resolves the players quickly and consistently.
 - **Not one bad device.** The problems move around between players rather than
   sticking to one.
+- **Not the discovery protocols.** The same Android app, bridged and wired
+  under Waydroid, shows all four players in one to one and a half seconds,
+  complete every time. A different Android, no Google Play, a sideloaded build,
+  virtualised hardware — none of it moved that number. Nor did putting a
+  responder on the network that answers discovery queries instantly: the number
+  did not change at all, so that remaining second and a half is the app's own
+  and nothing done to the network will remove it.
 
-One comparison I would have put in that list does not belong there. Running the
-same Android app under Waydroid on a wired laptop, discovery is fast and the
-list stays put, and I took that to rule out the app's own logic. I no longer
-think it does. Under Waydroid the app is never killed or pushed out of memory
-the way it is on a phone, so it discovers once and then keeps a warm list for
-as long as it stays open — which may be the whole of what I was seeing, and the
-discovery itself may not have been as quick as I remember. A wired container
-does avoid wireless multicast loss and mobile power management, both of which
-are real constraints, but it also avoids the eviction I now think matters most.
-That needs a measured retest before I rest anything on it.
-
-The comparison I do still lean on is iOS, because that is a phone, with the
-same radio and the same power management, and it does not have the problem.
+What the measurements do point at is the Wi-Fi radio, and not in the way I
+expected. On a cable, with the radio left switched on, the phones take around
+three seconds. On the same cable, with Wi-Fi explicitly switched off, they take
+about one, complete every single run. The traffic went over the wire either
+way. What changed the result was whether a radio that was carrying none of it
+happened to be enabled.
 
 ---
 
@@ -213,15 +220,17 @@ player is online and reachable.
   protocols, the players, or the network. What is left is what each client does
   with the results: how long it retains a player it has already found, whether
   it keeps asking, and what makes it decide a player is gone. On iOS the
-  players simply stay in the list. My guess is that the mDNS cache on iOS works
-  better.
+  players simply stay in the list. An iPhone and an Android phone on the same
+  Wi-Fi, through the same access point, to the same players, behave completely
+  differently — one variable changed and the outcome flipped, so it is not the
+  network, the access point, or Wi-Fi as a medium.
 
-- **Why desktop is different.** Windows machines, and Waydroid on a laptop,
-  have no aggressive radio power management and no wireless multicast
-  filtering, and the app is never evicted from memory. Discovery tends to
-  succeed on the first attempt and the list then simply stays, so the app's
-  behaviour under lossy conditions is never exercised. The initial wait is
-  still there on the desktop — it just only has to be paid once.
+- **Why desktop is different.** Both desktop machines were on Wi-Fi for every
+  run, so whatever the desktop has going for it, a wired link is not it. What
+  it has is that the app stays running: discovery happens once at startup and
+  the list then stays, so the app's behaviour under lossy conditions is never
+  exercised. The startup wait is still there — it is simply paid once, and it
+  is not discovery.
 
 What I cannot explain is why the iOS and Android experience is so different so
 many years after the first BluOS controller shipped.
