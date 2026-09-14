@@ -110,8 +110,12 @@ exactly like silence. So it was run again from **port 11430** — the port the
 broadcast control had just proved open, minutes earlier — against a different
 player. Still nothing from the player addressed, across 20 rounds.
 
-The two datagrams that run did see are what proves the socket was listening
-where it claimed to be. Both were broadcast announces from *other* players, and
+Both `R` runs predate the tool recording its listen port, so each carries a note
+saying which one it used — added by hand, and marked as such, rather than the
+runs being repeated to regenerate a field.
+
+The two datagrams the second run did see are what proves the socket was
+listening where it claimed to be. Both were broadcast announces from *other* players, and
 a broadcast to 11430 cannot reach a socket bound to an ephemeral port — which is
 also why the earlier `R` run saw literally nothing, not even background. The
 port was open, the socket was on it, the player was answering broadcast queries

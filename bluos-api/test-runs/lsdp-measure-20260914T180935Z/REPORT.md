@@ -22,6 +22,25 @@ within this run, so the same player is the same name in every line.
 | complete rounds | 2/20 |
 | most players seen in one round | 1 |
 
+## Note added by hand, 2026-09-14
+
+This run was produced by `lsdp-static` v1.0, which did not record the port
+replies were listened for on. That is the setting this run turns on, so it is
+written down here rather than left to be inferred. The field is printed by the
+tool from v1.2.0; nothing else in this file has been altered.
+
+**Replies were listened for on UDP 11430.**
+
+An `R` answer is unicast back to the port the query was sent from, so that is
+where an answer from `192.0.2.13` would have arrived. 11430 is also the port the
+broadcast control run minutes earlier was answered on, so it is known to have
+been open and reachable at the time.
+
+The two datagrams below corroborate it independently: both are broadcast
+announces from *other* players, and a broadcast to 11430 cannot be delivered to
+a socket bound to an ephemeral port. The socket was on 11430, and the player
+addressed still never answered.
+
 ## Rounds
 
 | round | players | first (ms) | all (ms) | announce datagrams |

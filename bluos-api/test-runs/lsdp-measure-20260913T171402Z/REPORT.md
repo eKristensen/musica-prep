@@ -22,6 +22,29 @@ within this run, so the same player is the same name in every line.
 | complete rounds | 0/20 |
 | most players seen in one round | 0 |
 
+## Note added by hand, 2026-09-14
+
+This run was produced by `lsdp-static` v1.0, which did not record the port
+replies were listened for on. That is the setting this run turns on, so it is
+written down here rather than left to be inferred. The field is printed by the
+tool from v1.2.0; nothing else in this file has been altered.
+
+**Replies were listened for on an ephemeral port, chosen by the kernel (`--listen-port 0`).**
+
+An `R` answer is unicast back to the port the query was sent from, so an answer
+would have arrived there. **This run therefore cannot distinguish a player that
+ignores the query from a reply dropped on the way back**, since a stateful
+firewall that did not treat it as return traffic would look identical to
+silence.
+
+It is also why this run recorded zero datagrams of any kind, where runs
+listening on 11430 pick up the occasional unsolicited announce: those are
+broadcast to 11430 and never reach an ephemeral port.
+
+The question was settled by re-running from 11430 —
+`lsdp-measure-20260914T180935Z/` — which found the same silence with the
+firewall explanation ruled out.
+
 ## Rounds
 
 | round | players | first (ms) | all (ms) | announce datagrams |
