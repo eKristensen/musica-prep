@@ -78,7 +78,7 @@ Three runs, one session, nothing else on the network answering:
 | [`…171402Z`](../test-runs/lsdp-measure-20260913T171402Z/) | **`R` unicast** | one player | 20 | **0/20 — not one datagram** |
 | [`…171517Z`](../test-runs/lsdp-measure-20260913T171517Z/) | **`Q` unicast** | the same player | 20 | 2/20, and both explained by background |
 | [`…180831Z`](../test-runs/lsdp-measure-20260914T180831Z/) | `Q` broadcast | the interfaces' broadcast addresses | 10 | **10/10, all four players**, 55–743 ms |
-| [`…180935Z`](../test-runs/lsdp-measure-20260914T180935Z/) | **`R` unicast, replying to 11430** | a same player | 20 | **0/20 from the player addressed** |
+| [`…180935Z`](../test-runs/lsdp-measure-20260914T180935Z/) | **`R` unicast, replying to 11430** | the same player | 20 | **0/20 from the player addressed** |
 
 The first run is what makes the other two mean anything: the same players, minutes
 earlier, answering every broadcast query with the full 0–750 ms spread §12.1
