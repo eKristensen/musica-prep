@@ -127,6 +127,48 @@ which is deferred inside. **Nothing about the discovery protocol changes the
 wait**, which is why a faster responder could not have helped and why switching
 to mDNS would not either.
 
+### The floor underneath it is not another timer **[V official]**
+
+With the two seconds gone, about a second remains, and the obvious suspect is
+innocent. The only timing constants in `com.lenbrook.sovi.discovery` are 16 s
+(staleness), 60 s (in `PlayerDiscoveryState.update`), and a **1000 ms
+`setSoTimeout`** on the LSDP receive socket. That last one is a ceiling on how
+long `receive()` blocks, so the loop can re-check `isDisposed()` once a second:
+
+```java
+socket.setSoTimeout(1000);
+while (!emitter.isDisposed()) {
+    socket.receive(packet);            // returns the instant a datagram arrives
+    parseResponse(packet, emitter);    // emitted immediately, not on a tick
+}
+```
+
+An arriving announce is parsed and emitted at once. **Nothing gates a player on a
+one-second boundary.**
+
+What is between the announce and the row appearing is a chain of HTTP requests,
+per player, serialized by `flatMap`:
+
+```java
+PlayerDiscoveryManager.getInstance().discoverPlayers()   // announce -> /SyncStatus
+    .flatMap(fetchSchemaVersion())                       // -> /schemaVersion, sometimes
+    .flatMap(fetchPresetSetting())                       // -> the preset/dynamic-settings url
+    .retryWhen(...)
+    .subscribe(pair -> updatePlayerInfo(pair.first, pair.second));   // <- the row is drawn here
+```
+
+`fetchSchemaVersion` short-circuits with `Observable.just` when the `SyncStatus`
+already carries a version or a cached `PlayerInfo` has one, and otherwise asks
+the player. `fetchPresetSetting` asks whenever the `SyncStatus` names an
+`audioPresetUrl` or a `dynamicSettingsUrl`. Only when both have resolved does
+`updatePlayerInfo` draw the row.
+
+So the floor is **two to three serialized HTTP round trips per player after its
+announce arrives**, not a wait. That is why answering discovery instantly does
+not move it: the responder shortens the part that was already fast. Whether that
+chain accounts for the whole 1.0–1.5 s is not something static code can say —
+it depends on the players' own HTTP latency, which has not been measured **[U]**.
+
 ### The gate is `isWifiEnabled()`, not "is Wi-Fi in use"
 
 This is the part that matters for the measurements. The check asks whether the
@@ -381,13 +423,9 @@ able to reach the players it is about to declare missing.
 
 ## What the Android code does not explain
 
-- **The remaining 1.0–1.5 s** when the delay is skipped. R8 answered discovery
-  instantly and did not shorten it, so it is not the network; nothing found here
-  accounts for it either. Candidates not yet
-  read: the socket receive loop in `LSDPPlayerDiscoveryOnSubscribe.subscribe`
-  (which sets `setReuseAddress`, `setBroadcast` and a `setSoTimeout` whose value
-  was not extracted), the `/SyncStatus` round trip each discovered player needs
-  before it is usable, and list rendering.
+- **The remaining 1.0–1.5 s** when the delay is skipped, as a *duration*. The
+  shape of it is now readable (below); what it costs in milliseconds is not,
+  because that depends on how fast the players answer HTTP.
 - **`PlayerDiscoveryState.update` has a 60 s constant** that was not chased down.
 
 ---
@@ -513,6 +551,19 @@ saying each restart tears down and rebinds the socket.
 
 `bonjourDiscovery.ts` has `setInterval(resetBonjour, 10000)` — the ten-second
 rebuild of the whole mDNS browser that §12.2 describes, confirmed here.
+
+## There is no Wi-Fi gate on the desktop **[V official]**
+
+Nothing in the desktop source branches on link type. `lsdpDiscovery.ts`
+enumerates every interface from `networkInterfaces()`, broadcasts the query to
+each, and sends the first at `delays[0] = 0` — no `isWifiEnabled()` equivalent,
+no multicast lock, no conditional wait. The single mention of Wi-Fi in the whole
+recovered tree is a comment in `networkChangeMonitor.ts` explaining why it
+watches for interfaces changing under a running app.
+
+So the Android finding does not carry over, and there is no reason to expect the
+desktop to start faster with Wi-Fi switched off. Its 5–6 s is the same on any
+link.
 
 ## What the Windows code does not explain
 

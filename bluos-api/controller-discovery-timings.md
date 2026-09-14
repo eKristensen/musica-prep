@@ -350,10 +350,11 @@ discovered in that second by either protocol. The app remembers the players'
 *addresses* separately from the list it emptied, and asks each one directly over
 HTTP; see [`controller-code-notes.md`](controller-code-notes.md).
 
-**The timings are not arbitrary, and neither is the refill.** The app's own
-constants account for the ~30 s and ~50 s marks exactly, and for why players age
-out long before they would next announce; the refill is a separate mechanism
-that survives the emptying. Both are in
+**The timings are not arbitrary, and neither is the refill.** The ~30 s and
+~50 s marks are inline constants in the app, with no configuration path, so they
+are fixed rather than a property of this network; they also account for why
+players age out long before they would next announce. The refill is a separate
+mechanism that survives the emptying. Both are in
 [`controller-code-notes.md`](controller-code-notes.md).
 
 ### What this does and does not affect
@@ -424,13 +425,12 @@ Not established:
   sources. So the client that behaves best here is the one nothing is known
   about, and claims in that document about what "the clients" do are claims
   about the other three.
-- *What* the app spends its 1.0–1.5 s floor on, once the two-second delay is
-  out of the picture. R8 establishes that it is
-  app-side; it does not say whether the app queries late, renders late, or waits
-  deliberately.
-- Whether the ~30 s / ~50 s marks are fixed.
-- Whether the desktop apps would also improve with Wi-Fi off — they were on
-  wired LAN throughout, so the comparison has not been run.
+- *How much* of the 1.0–1.5 s floor each part of the app accounts for. R8
+  establishes that it is app-side, and the code says what it is made of — two to
+  three serialized HTTP requests per player between its announce and its row
+  being drawn, not a timer ([`controller-code-notes.md`](controller-code-notes.md)).
+  What that costs in milliseconds depends on the players' own HTTP latency,
+  which has not been measured.
 - What the desktop spends its 5–6 s on.
 - Whether the Linux AppImage reads `staticPlayers.txt`; the vendor supports the
   file on Windows and macOS only.
