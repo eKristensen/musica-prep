@@ -35,9 +35,9 @@ another VLAN ends up in the same position as one on the players' own segment.
 
 ## Why it would be the wrong answer anyway
 
-Even a responder that *had* been fast enough is the wrong shape, and reading
-`players.conf` is enough to see why: **it goes stale, and it goes stale
-silently.**
+Even if the responder had made players show up faster, it would still be a poor
+solution by design, and reading `players.conf` is enough to see why: **it is a
+hand-kept cache, and it goes stale silently.**
 
 Every field in the file — address, port, name, model, firmware version — is a
 hand-kept copy of something that lives on a player. A firmware update, a renamed
