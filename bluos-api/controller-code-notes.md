@@ -569,9 +569,9 @@ no multicast lock, no conditional wait. The single mention of Wi-Fi in the whole
 recovered tree is a comment in `networkChangeMonitor.ts` explaining why it
 watches for interfaces changing under a running app.
 
-So the Android finding does not carry over, and there is no reason to expect the
-desktop to start faster with Wi-Fi switched off. Its 5–6 s is the same on any
-link.
+So the Android finding does not carry over. The desktop measurements bear that
+out from the other side: every one of them ran over Wi-Fi, and none showed the
+penalty or the incompleteness the Android app shows on the same kind of link.
 
 ## What the Windows code does not explain
 

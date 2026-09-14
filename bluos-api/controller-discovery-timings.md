@@ -39,12 +39,15 @@ markers are not used for it.
 | **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11 (API 30), `RKQ1.200826.002`. App **4.16.2 build 3217** from the Play Store. **No battery-saver restrictions** on the BluOS app |
 | **Waydroid** | LineageOS 20 — Android 13 — image `20-20260403-VANILLA-waydroid_x86_64`, minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
 | **iPhone 16** | iOS 26.6.2. BluOS Controller **4.16.2** |
-| **Windows** | BluOS Controller **4.16.1 build 6281** (Electron) |
-| **Linux** | [`bluos-controller-linux`](https://gitlab.com/zquestz/bluos-controller-linux) — **4.16.0 build 5930**, the official Electron app repackaged as an AppImage |
+| **Windows** | BluOS Controller **4.16.1 build 6281** (Electron), on a laptop over **Wi-Fi** |
+| **Linux** | [`bluos-controller-linux`](https://gitlab.com/zquestz/bluos-controller-linux) — **4.16.0 build 5930**, the official Electron app repackaged as an AppImage, on a second laptop over **Wi-Fi** |
 
 USB Ethernet on the phones is a wired adapter; "Wi-Fi" means the phone's own
 radio. The Waydroid guest is wired throughout — a host bridge, no radio anywhere
 in its path.
+
+The two desktop machines are a Dell and a Lenovo laptop, one running each build.
+**Neither was ever plugged into a cable**: every desktop run is a Wi-Fi run.
 
 All four controllers report a BluOS version of **4.16.22**, which is the
 players' firmware rather than anything about the controller: the number is the
@@ -100,9 +103,9 @@ All on 2026-09-12, in the order given.
 | R7 | **Waydroid** (LineageOS, no Google Play, app 4.16.3) | **bridged, wired**, own IP on the players' VLAN | players directly | **timer** | **1.0–1.5 s** | **always, however many times tried** |
 | R8 | **Waydroid**, same as R7 | same as R7 | **`lsdp-static serve` on the players' network**, answering instantly | **timer** | **1.0–1.5 s — no difference** | always |
 | R9 | **iPhone** | **Wi-Fi**, and separately wired with Wi-Fi off | players directly, same VLAN | **not timed** — impression only | **instant, no "Discovering…" at all** | **always, on either link** |
-| D1 | Windows | wired LAN | with and without `lsdp-static serve` | counted | 5–6 s from launch | — |
-| D2 | Linux AppImage | wired LAN | with and without `lsdp-static serve` | counted | 5–6 s from launch, no measurable difference | — |
-| D3 | Windows | wired LAN | **`staticPlayers.txt`, with mDNS and LSDP discovery disabled** | counted | **no faster than before** | only the listed players appear |
+| D1 | Windows laptop | **Wi-Fi** | with and without `lsdp-static serve` | counted | 5–6 s from launch | — |
+| D2 | Linux laptop, AppImage | **Wi-Fi** | with and without `lsdp-static serve` | counted | 5–6 s from launch, no measurable difference | — |
+| D3 | Windows laptop, same as D1 | **Wi-Fi** | **`staticPlayers.txt`, with mDNS and LSDP discovery disabled** | counted | **no faster than before** | only the listed players appear |
 
 ### R6 is the result that matters
 
@@ -267,6 +270,11 @@ known **[U]**.
 The desktop is at least stable once up: none of the list-emptying seen on
 Android **[V hardware]**.
 
+**And it was on Wi-Fi throughout.** Both laptops ran the app over their own
+radios, never a cable, and neither showed the incompleteness or the trickle the
+Android app shows on Wi-Fi. Together with the iPhone that makes two non-Android
+clients using the same access point without the penalty **[V hardware]**.
+
 ### `staticPlayers.txt` is built for a different problem
 
 Bluesound Professional documents it for reaching players across subnets, scopes
@@ -412,6 +420,8 @@ Established **[V hardware]**:
   is stable once up.
 - **iOS does not have the Wi-Fi problem at all**, on the same network and the
   same players, which rules the network and the access point out as the cause.
+  Neither do the two desktop laptops, which ran over Wi-Fi throughout — three
+  non-Android clients on that access point, none of them penalised.
 - Android battery management is not the cause either: the app has background
   usage allowed on the Fairphone and no battery-saver restrictions on the Mi 9,
   and both still show the penalty.
