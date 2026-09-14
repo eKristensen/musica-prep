@@ -184,56 +184,71 @@ happened to be enabled.
 
 ---
 
-### What I think is going on
+### What the measurements show
 
-This section is interpretation rather than observation. I may be wrong about
-the causes; the symptoms above are what I would stand behind.
+The wait breaks into three parts, and only one of them can be removed.
 
-**Short version:** the Android controller appears to keep its list of players
-only while it is in the foreground, and to have several independent mechanisms
-that can each add or remove a player from that list. Each of them most likely
-has its own timings. The result is a list that is inconsistent even when every
-player is online and reachable.
+- **About a second and a half belongs to the app.** Putting a responder on the
+  network that answers discovery queries instantly does not shorten it, so
+  nothing done to the network will.
+- **Two to four seconds sit on top whenever the Wi-Fi radio is enabled**, even
+  with a cable attached and the radio carrying none of the traffic. The
+  incomplete lists live here too: over Wi-Fi roughly one attempt in five comes
+  back short of all four players, and with the radio switched off I have not
+  seen that happen once.
+- **The discovery protocol contributes none of it.** Queried from a wired
+  machine on the same network, all four players answer within about
+  three-quarters of a second, in every one of twenty rounds. That finishes well
+  inside the app's own floor.
 
-- **The list is short-lived.** Shortly after the app leaves the foreground it
-  seems to forget the players, presumably on the assumption that discovery will
-  find them again quickly. When discovery is slow or lossy, that assumption
-  fails. Observation 7 is the clearest case: one screen finds every player, and
-  the next screen shows one.
+**The list does not hold what it finds.** Probing stops ten to twelve seconds
+after the player screen opens (observation 1), and a player nobody probes
+announces itself only about once a minute. Between the two there is a long
+window in which nothing refreshes an entry. The cycle in observation 2 is that
+window playing out: the app open, untouched and unable to hear anything,
+emptying its own list on a timer. Observation 7 is the same thing across a
+restart — a screen that has just found every player, then a screen showing one.
 
-- **Several mechanisms, acting independently.** At least two discovery
-  protocols are in use — mDNS, and a Lenbrook-specific UDP broadcast protocol
-  (LSDP) — plus something separate that decides whether an already-known player
-  is still available. Lenbrook has been reported as saying they wrote their own
-  because
-  [their customers cannot be relied on to configure their networks](https://content-bluesound-com.s3.amazonaws.com/uploads/BluOS-Custom-Integration-API_v1.7.pdf),
-  a statement that goes back
-  [as far as 2020](https://web.archive.org/web/20210120042844/https://nadelectronics.com/wp-content/uploads/2020/12/Custom-Integration-API-v1.0_Dec_2020.pdf).
-  A developer who implemented both protocols in 2022 also found the BluOS mDNS
-  announcements slow and unreliable, which matches what I see years later
-  ([reference](https://blog.jonasbengtson.se/lsdp-lenbrook-service-discovery-protocol)).
+This is not about the app being in the background. The cycle above runs with
+the app open and on screen.
 
-- **Why iOS is different — and it isn't the protocols.** I captured traffic and
-  the iOS controller sends the same UDP broadcast discovery packets. Both
-  platforms use both discovery mechanisms, on the same network, with the same
-  players, and behave completely differently. So the explanation cannot be the
-  protocols, the players, or the network. What is left is what each client does
-  with the results: how long it retains a player it has already found, whether
-  it keeps asking, and what makes it decide a player is gone. On iOS the
-  players simply stay in the list. An iPhone and an Android phone on the same
-  Wi-Fi, through the same access point, to the same players, behave completely
-  differently — one variable changed and the outcome flipped, so it is not the
-  network, the access point, or Wi-Fi as a medium.
+**Two discovery protocols are in use** — mDNS, and a Lenbrook-specific UDP
+broadcast protocol (LSDP). Lenbrook has been reported as saying they wrote
+their own because
+[their customers cannot be relied on to configure their networks](https://content-bluesound-com.s3.amazonaws.com/uploads/BluOS-Custom-Integration-API_v1.7.pdf),
+a statement that goes back
+[as far as 2020](https://web.archive.org/web/20210120042844/https://nadelectronics.com/wp-content/uploads/2020/12/Custom-Integration-API-v1.0_Dec_2020.pdf).
+A developer who implemented both protocols in 2022 found the BluOS mDNS
+announcements slow and unreliable, which matches what I see years later
+([reference](https://blog.jonasbengtson.se/lsdp-lenbrook-service-discovery-protocol)).
+Neither protocol is the bottleneck, but two of them means more than one
+mechanism can add or remove a player from the list.
 
-- **Why desktop is different.** Both desktop machines were on Wi-Fi for every
-  run, so whatever the desktop has going for it, a wired link is not it. What
-  it has is that the app stays running: discovery happens once at startup and
-  the list then stays, so the app's behaviour under lossy conditions is never
-  exercised. The startup wait is still there — it is simply paid once, and it
-  is not discovery.
+**Why iOS is different.** I captured traffic and the iOS controller sends the
+same UDP broadcast discovery packets, so both platforms use both mechanisms. An
+iPhone and an Android phone on the same Wi-Fi, through the same access point,
+to the same players, then behave completely differently. One variable changed
+and the outcome flipped, so it is not the protocols, the players, the network,
+the access point, or Wi-Fi as a medium.
 
-What I cannot explain is why the iOS and Android experience is so different so
-many years after the first BluOS controller shipped.
+**Why desktop is different.** Both desktop machines were on Wi-Fi for every
+run, so whatever the desktop has going for it, a wired link is not it. What it
+has is that the app stays running: discovery happens once at startup and the
+list then stays, so the app's behaviour under lossy conditions is never
+exercised. The startup wait is still there — it is simply paid once, and it is
+not discovery.
+
+**There is a configuration in which the official app is fine.** A cable, with
+the Wi-Fi radio switched off, gives all four players in about a second, every
+time. That is a real result and it is not a solution: a phone is a phone
+because it is not plugged into anything, and an adapter I have to carry and a
+radio I have to remember to disable is a worse daily experience than the
+problem it fixes. It does tell me the app can be fast, and that what stands
+between me and that speed is not my network.
+
+What I cannot explain is why enabling a radio that carries none of the traffic
+costs several seconds, or why none of this happens on iOS, so many years after
+the first BluOS controller shipped.
 
 ---
 
