@@ -2319,8 +2319,9 @@ things suggest themselves before falling back to a configured address list
   player answers neither a unicast `R` nor a unicast `Q`, while answering every
   broadcast `Q` in the same session. Claim `C-19`, DISCONFIRMED — a query has to
   arrive by broadcast to be acted on. Run bundles:
-  `test-runs/lsdp-measure-20260913T171249Z/` (the broadcast control),
-  `…T171402Z/` (unicast `R`) and `…T171517Z/` (unicast `Q`).
+  `test-runs/lsdp-measure-20260914T180831Z/` (the broadcast control) and
+  `…20260914T180935Z/` (unicast `R`, with replies listened for on 11430), plus
+  the earlier `…20260913T171249Z/`, `…T171402Z/` and `…T171517Z/`.
 - Send `Q` or `R` to the **remote subnet's directed broadcast address**. This
   needs the router to forward directed broadcasts, which is off by default on
   most consumer gear and a deliberate security choice. Whether a player answers

@@ -27,16 +27,17 @@ at all.
 ## What it did change
 
 The improvement is in how the player list fills in the BluOS Android app.
-Instead of players appearing one by one, they appear **together**. And a phone
-on another VLAN, which reaches the players only through
-`udp-broadcast-relay-redux`, ends up in the same position as one on the players'
-own segment: R1 ran through the responder from another VLAN and R2 ran against
-the players directly on their own, and the two were indistinguishable.
+Instead of players appearing one by one, they appear **together** — which
+forwarding broadcasts across the VLAN boundary never achieved.
 
-**The time until every player is displayed does not change.** Nor does the
-responder make a round complete more often: R1 was 9 of 10 with it running,
-which is the same one-in-five-to-one-in-ten rate the Wi-Fi rows show without it.
-Incomplete rounds are an Android-over-Wi-Fi property, not a relay one.
+It also removes the penalty for being on a different VLAN from the players.
+With the responder running, a phone on its own VLAN behaves the same as one
+sitting on the players' segment: the boundary stops making any difference the
+app can see.
+
+**The time until every player is displayed does not change**, and neither does
+how often a round comes back short of all four. Incomplete rounds are a property
+of the Android app over Wi-Fi, not of how the queries reached the phone.
 
 ## Why it would be the wrong answer anyway
 
@@ -76,6 +77,8 @@ Three runs, one session, nothing else on the network answering:
 | [`…171249Z`](../test-runs/lsdp-measure-20260913T171249Z/) | `Q` broadcast | the interfaces' broadcast addresses | 10 | **10/10, all four players**, 21–746 ms |
 | [`…171402Z`](../test-runs/lsdp-measure-20260913T171402Z/) | **`R` unicast** | one player | 20 | **0/20 — not one datagram** |
 | [`…171517Z`](../test-runs/lsdp-measure-20260913T171517Z/) | **`Q` unicast** | the same player | 20 | 2/20, and both explained by background |
+| [`…180831Z`](../test-runs/lsdp-measure-20260914T180831Z/) | `Q` broadcast | the interfaces' broadcast addresses | 10 | **10/10, all four players**, 55–743 ms |
+| [`…180935Z`](../test-runs/lsdp-measure-20260914T180935Z/) | **`R` unicast, replying to 11430** | a different player | 20 | **0/20 from the player addressed** |
 
 The first run is what makes the other two mean anything: the same players, minutes
 earlier, answering every broadcast query with the full 0–750 ms spread §12.1
@@ -100,10 +103,16 @@ gone, and what remains is forwarding broadcasts (which is what
 `udp-broadcast-relay-redux` does here) or a configured address list plus
 `/SyncStatus`, which is what the vendor's own desktop clients fall back to.
 
-One alternative explanation is not fully excluded **[U]**: the `R` reply is
-unicast to the port the query was sent from, and that run used an ephemeral one,
-so a stateful firewall that did not treat it as return traffic would look
-identical to silence. The `Q` run does not share the doubt — its answers would
-arrive by broadcast on 11430, the port the positive control had just proved open
-— and it is the run the conclusion rests on. Re-running `R` with
-`--listen-port 11430` would settle even that.
+**The one alternative explanation is excluded.** An `R` reply is unicast to the
+port the query was sent from, and the first `R` run used an ephemeral one, where
+a stateful firewall that did not treat the reply as return traffic would look
+exactly like silence. So it was run again from **port 11430** — the port the
+broadcast control had just proved open, minutes earlier — against a different
+player. Still nothing from the player addressed, across 20 rounds.
+
+The two datagrams that run did see are what proves the socket was listening
+where it claimed to be. Both were broadcast announces from *other* players, and
+a broadcast to 11430 cannot reach a socket bound to an ephemeral port — which is
+also why the earlier `R` run saw literally nothing, not even background. The
+port was open, the socket was on it, the player was answering broadcast queries
+throughout, and it still did not answer a query addressed to it.

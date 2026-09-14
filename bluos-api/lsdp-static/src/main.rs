@@ -1742,6 +1742,7 @@ first-party client does",
             schedule: &[0.0, 1.0],
             timeout: Duration::from_secs(12),
             query_kind: MSG_QUERY_BROADCAST,
+            listen_port: LSDP_PORT,
             dests: &["192.0.2.255".to_string()],
             rows: &[(1, 1, 40, 40, 1), (2, 1, 700, 700, 1), (3, 1, 120, 120, 1)],
             firsts: &[40, 120, 700],
@@ -1839,6 +1840,10 @@ struct Measurement<'a> {
     schedule: &'a [f64],
     timeout: Duration,
     query_kind: u8,
+    /// The port replies were listened for on.  For an `R` query this is where
+    /// the answer comes back, so a run that saw nothing is only interpretable
+    /// if the record says which port that was.
+    listen_port: u16,
     dests: &'a [String],
     /// round, players seen, first ms, last ms, announce datagrams
     rows: &'a [(usize, usize, u128, u128, usize)],
@@ -1884,6 +1889,16 @@ fn report_markdown(m: &Measurement) -> String {
     );
     let _ = writeln!(s, "| query sent at | {} s |", sched.join(", "));
     let _ = writeln!(s, "| listen timeout | {:.0} s |", m.timeout.as_secs_f64());
+    let _ = writeln!(
+        s,
+        "| replies listened for on | UDP {}{} |",
+        m.listen_port,
+        if m.query_kind == MSG_QUERY_UNICAST {
+            " -- an `R` answer is unicast back to this port"
+        } else {
+            " -- a `Q` answer is broadcast to it"
+        }
+    );
     let _ = writeln!(
         s,
         "| round ends early at | {} |",
@@ -2666,6 +2681,7 @@ fn run() -> Result<(), String> {
                         schedule: &schedule,
                         timeout,
                         query_kind,
+                        listen_port,
                         dests: &dests_red,
                         rows: &rows,
                         firsts: &firsts,
