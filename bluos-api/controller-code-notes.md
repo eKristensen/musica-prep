@@ -13,6 +13,12 @@ This file explains measurements; it does not add any. **[V official]** is
 `bluos-http-api.md`'s marker for something read out of a first-party Controller
 build, and its legend already names this exact APK.
 
+**Run ids** are used throughout without re-describing the run: `R1`–`R9` are the
+phone, Waydroid and iPhone runs and `D1`–`D3` the desktop ones, all in the Runs
+table of
+[`controller-discovery-timings.md`](controller-discovery-timings.md). (`R8`
+inside a sentence about bytecode is the Android shrinker, not run 8.)
+
 ## Does the read build match the measured ones? **[V official]**
 
 The Android source read here is **4.16.2 build 3217**, which is exactly what the
@@ -39,9 +45,9 @@ classes, and resource-id renumbering behind them.
 So on Android there is no build gap between this file and the measurements.
 
 There is none on the desktop either. The source read here is Windows
-**4.16.1**, and the Windows measurements were taken on **4.16.1 build 6281** —
-the same build. The Linux measurement ran the AppImage, **4.16.0 build 5930**,
-whose source was recovered the same way and compared:
+**4.16.1**, and the Windows runs D1 and D3 were measured on **4.16.1 build
+6281** — the same build. D2 ran the Linux AppImage, **4.16.0 build 5930**, whose
+source was recovered the same way and compared:
 
 - **`app-main/src` is byte-identical between the two.** That includes all three
   discovery modules — `lsdpDiscovery.ts`, `bonjourDiscovery.ts` and
@@ -375,8 +381,8 @@ able to reach the players it is about to declare missing.
 
 ## What the Android code does not explain
 
-- **The remaining 1.0–1.5 s** when the delay is skipped. Answering discovery
-  instantly did not shorten it, so it is not the network; nothing found here
+- **The remaining 1.0–1.5 s** when the delay is skipped. R8 answered discovery
+  instantly and did not shorten it, so it is not the network; nothing found here
   accounts for it either. Candidates not yet
   read: the socket receive loop in `LSDPPlayerDiscoveryOnSubscribe.subscribe`
   (which sets `setReuseAddress`, `setBroadcast` and a `setSoTimeout` whose value
@@ -478,7 +484,7 @@ elapsed.
 ### What this does *not* explain
 
 The 5–6 s the desktop takes from launch. The file is not on that path, and
-neither is waiting for discovery answers: the same 5–6 s was measured with every
+neither is waiting for discovery answers: D3 measured the same 5–6 s with every
 discovery mechanism switched off, so there were no answers to wait for. What
 is left is the app's own startup: Electron and Vue booting, the modules being
 constructed and enabled, and then at least one `/SyncStatus` round trip before
