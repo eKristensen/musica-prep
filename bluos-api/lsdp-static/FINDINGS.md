@@ -26,14 +26,12 @@ at all.
 
 ## What it did change
 
-Players arrive **together** rather than one or two at a time, and the
-`udp-broadcast-relay-redux` setup's unreliability goes with it. A phone on
+The improvement is in how the player list fills in the BluOS Android app.
+Instead of players appearing one by one, they appear **together** — and the
+`udp-broadcast-relay-redux` setup's unreliability goes with them, so a phone on
 another VLAN ends up in the same position as one on the players' own segment.
 
-That is a real improvement in how the list fills. It does not reduce how long
-the user waits for it: the last player still appears at the same moment it did
-before, and until then not all players are showing. The app opens quickly
-enough; it is the waiting before you can use it that is the problem.
+**The time until every player is displayed does not change.**
 
 ## Why it would be the wrong answer anyway
 
