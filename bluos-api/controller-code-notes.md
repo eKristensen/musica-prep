@@ -39,9 +39,9 @@ classes, and resource-id renumbering behind them.
 So on Android there is no build gap between this file and the measurements.
 
 There is none on the desktop either. The source read here is Windows
-**4.16.1**, and D1 and D3 were measured on **4.16.1 build 6281** — the same
-build. D2 ran the Linux AppImage, **4.16.0 build 5930**, whose source was
-recovered the same way and compared:
+**4.16.1**, and the Windows measurements were taken on **4.16.1 build 6281** —
+the same build. The Linux measurement ran the AppImage, **4.16.0 build 5930**,
+whose source was recovered the same way and compared:
 
 - **`app-main/src` is byte-identical between the two.** That includes all three
   discovery modules — `lsdpDiscovery.ts`, `bonjourDiscovery.ts` and
