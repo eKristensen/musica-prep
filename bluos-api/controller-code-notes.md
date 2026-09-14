@@ -97,6 +97,30 @@ not. There is no middle setting and no shortening of it: the branch either runs
 or it does not, which is why the measured times fall into two groups rather than
 onto a spread.
 
+### mDNS waits too — the delay is upstream of both protocols
+
+The two seconds are not an LSDP problem. `multicastLock` is applied to the
+**merged** discovery observable, with both protocols already inside it:
+
+```java
+Observable createPlayerDiscoveryObservable(Context ctx) {
+    return multicastLock(ctx,                                   // <-- the 2 s sits here
+        Observable.defer(() -> Observable.fromIterable(getNetworkAddressesForDiscovery()))
+            .flatMap(addr -> Observable.merge(
+                logAndResumeOnError("Error during LSDP discovery",
+                    createLSDPPlayerDiscoveryObservable(addr)).unsubscribeOn(IO),
+                logAndResumeOnError("Error during mDNS discovery",
+                    JmDNSPlayerDiscoveryOnSubscribe.createObservable(addr)).unsubscribeOn(IO))));
+}
+```
+
+`delaySubscription` delays the subscription to that merge, so neither branch
+starts. The app's mDNS path is JmDNS rather than Android's own `NsdManager`, and
+it pays the same two seconds LSDP does — as does the interface enumeration,
+which is deferred inside. **Nothing about the discovery protocol changes the
+wait**, which is why a faster responder could not have helped and why switching
+to mDNS would not either.
+
 ### The gate is `isWifiEnabled()`, not "is Wi-Fi in use"
 
 This is the part that matters for the measurements. The check asks whether the
@@ -169,9 +193,11 @@ query form.
 The behaviour explained in this section and its parts is the cycle timed in
 [`controller-discovery-timings.md`](controller-discovery-timings.md): with the
 app open and untouched, the player list goes empty after ~30 s, settles on **"No
-Player Found"** at ~50 s, and comes back in full within a second of a tap — all
-with every discovery mechanism switched off, and with the selected player
-controllable throughout.
+Player Found"** at ~50 s, and comes back in full within a second of a tap. It
+was provoked with the phone on a different VLAN from the players and both relays
+that would carry discovery across the boundary switched off, so **no announce
+could reach the app for the whole cycle** — and the selected player stayed
+controllable throughout it.
 
 It takes three separate pieces of the app to account for that: what deletes the
 players, what can put them back on screen without a network at all, and what
@@ -349,17 +375,13 @@ able to reach the players it is about to declare missing.
 
 ## What the Android code does not explain
 
-- **The remaining 1.0–1.5 s** when the delay is skipped. R8 already showed it is
-  not the network; nothing found here accounts for it either. Candidates not yet
+- **The remaining 1.0–1.5 s** when the delay is skipped. Answering discovery
+  instantly did not shorten it, so it is not the network; nothing found here
+  accounts for it either. Candidates not yet
   read: the socket receive loop in `LSDPPlayerDiscoveryOnSubscribe.subscribe`
   (which sets `setReuseAddress`, `setBroadcast` and a `setSoTimeout` whose value
   was not extracted), the `/SyncStatus` round trip each discovered player needs
   before it is usable, and list rendering.
-- **The desktop's 5–6 s.** Different codebase; the Windows build was not
-  available for this pass.
-- **Whether the 2 s delay is also on the mDNS path.** `multicastLock` wraps a
-  composed observable; which discovery sources are inside it was not traced.
-  `JmDNSPlayerDiscoveryOnSubscribe` exists alongside the LSDP one.
 - **`PlayerDiscoveryState.update` has a 60 s constant** that was not chased down.
 
 ---
@@ -456,8 +478,8 @@ elapsed.
 ### What this does *not* explain
 
 The 5–6 s the desktop takes from launch. The file is not on that path, and
-neither is waiting for discovery answers — D3 measured the same 5–6 s with no
-discovery mechanism running at all, so there were no answers to wait for. What
+neither is waiting for discovery answers: the same 5–6 s was measured with every
+discovery mechanism switched off, so there were no answers to wait for. What
 is left is the app's own startup: Electron and Vue booting, the modules being
 constructed and enabled, and then at least one `/SyncStatus` round trip before
 any player can be drawn. None of that can be read off as a duration from this
