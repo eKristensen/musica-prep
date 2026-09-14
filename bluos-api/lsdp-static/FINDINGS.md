@@ -27,11 +27,16 @@ at all.
 ## What it did change
 
 The improvement is in how the player list fills in the BluOS Android app.
-Instead of players appearing one by one, they appear **together** — and the
-`udp-broadcast-relay-redux` setup's unreliability goes with them, so a phone on
-another VLAN ends up in the same position as one on the players' own segment.
+Instead of players appearing one by one, they appear **together**. And a phone
+on another VLAN, which reaches the players only through
+`udp-broadcast-relay-redux`, ends up in the same position as one on the players'
+own segment: R1 ran through the responder from another VLAN and R2 ran against
+the players directly on their own, and the two were indistinguishable.
 
-**The time until every player is displayed does not change.**
+**The time until every player is displayed does not change.** Nor does the
+responder make a round complete more often: R1 was 9 of 10 with it running,
+which is the same one-in-five-to-one-in-ten rate the Wi-Fi rows show without it.
+Incomplete rounds are an Android-over-Wi-Fi property, not a relay one.
 
 ## Why it would be the wrong answer anyway
 
