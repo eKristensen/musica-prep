@@ -403,17 +403,65 @@ enable(): void {
 }
 ```
 
-Three things follow, and together they settle the measurement:
+### The renderer treats it as one more discovery source
+
+`foundStaticPlayers` is one of the channels the preload script exposes, beside
+`lsdpAnnounce`, `deviceDiscovered` (Bonjour) and `deviceLost`. All of them land
+in the same Vuex `devices` store, by the same route — fetch the device's
+version, fetch its `/SyncStatus`, and let the UI render whatever the store now
+holds. Reconstructed from the renderer bundle, which is minified, so the names
+are mine but the structure and the string constants are not:
+
+```js
+// the discovery sources
+ipc.on("deviceDiscovered",  d  => addDevice(d.id, d.version));   // Bonjour
+ipc.on("lsdpAnnounce",      d  => addDevice(d.id, d.version));   // LSDP
+ipc.on("pastDiscoveredDevicesFound", ids => ids.forEach(addDevice));
+
+// the static list — same destination, two differences
+ipc.on("foundStaticPlayers", list => {
+  list.filter(s => isValidIp(s.split(":")[0]))
+      .map(s => DeviceId.fromString(s))
+      .forEach(id => {
+        if (store.getters["devices/hasDeviceByDeviceId"](id)) return;   // (1)
+        getVersion(id)                                                  // (2)
+          .then(v  => store.dispatch("devices/setVersion", { deviceId: id, version: v }))
+          .then(() => store.dispatch("devices/retrieveDeviceSyncStatus", { deviceId: id }));
+      });
+});
+```
+
+**(1)** is the guard that settles the measurement outright: a listed player that
+discovery has already found is **skipped**. The list cannot replace discovery's
+results because it explicitly defers to them.
+
+**(2)** is why a listed player is the *slowest* kind to appear. A device is only
+displayable once its `/SyncStatus` comes back, and an LSDP announce carries the
+version with it, so a discovered player costs one HTTP round trip. A file entry
+carries nothing but an address, so it costs a `/GitVersion` **and then** a
+`/SyncStatus`, chained rather than parallel — after the three-second timer has
+elapsed.
+
+### So the file cannot speed anything up
 
 - **It adds players; it never stops discovery.** LSDP and Bonjour run exactly as
-  they would without the file. The reading that the static list is "used
-  directly, with no discovery" describes the vendor's intent for the feature,
-  not the code.
-- **It cannot make startup faster, by construction.** Its players are delivered
-  on a 3-second timer, which is *slower* than a working discovery round. Nothing
-  it does is on the critical path to a player appearing sooner.
+  they would without the file. "Used directly, with no discovery" describes the
+  vendor's intent for the feature, not the code.
+- **It is last by construction**, on every axis: a 3 s timer before it starts, a
+  serialized pair of HTTP requests after, and a guard that yields to anything
+  discovery already found.
 - **It creates an empty `staticPlayers.txt` when none exists**, which is why the
   file turns up on machines that never used the feature.
+
+### What this does *not* explain
+
+The 5–6 s the desktop takes from launch. The file is not on that path, and
+neither is waiting for discovery answers — D3 measured the same 5–6 s with no
+discovery mechanism running at all, so there were no answers to wait for. What
+is left is the app's own startup: Electron and Vue booting, the modules being
+constructed and enabled, and then at least one `/SyncStatus` round trip before
+any player can be drawn. None of that can be read off as a duration from this
+source; it would have to be timed, and has not been **[U]**.
 
 ## The same LSDP schedule, written out **[V official]**
 

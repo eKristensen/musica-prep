@@ -2414,15 +2414,16 @@ is for:
 So it is unavailable on Android, and it is a reachability feature for
 professional installs rather than a general configuration mechanism.
 
-**It does not make startup faster [V hardware].** Tested on Windows with mDNS
-and LSDP discovery both disabled: only the listed players appeared, confirming
-the file took effect, and startup was no faster than with discovery running —
-and the controller still displayed its "Discovering…" stage. So the listed
-players appear to be **added to** whatever discovery returns rather than
-replacing it, and "used directly, with no discovery" describes the feature's
-purpose rather than a code path the app skips **[U]**. What the test does show
-is that the controller is not waiting for discovery *answers*: there were none
-to wait for, and the wait was unchanged. See `controller-discovery-timings.md`.
+**The listed players are added to discovery's results, not substituted for
+them [V official].** The desktop app reads the file in a module that runs
+*alongside* its LSDP and Bonjour modules, and hands each entry to the same code
+path an announce goes through — a version fetch and a `/SyncStatus`, into the
+same device store — after checking that discovery has not already found that
+address. So "used directly, with no discovery" describes what the feature is
+for, not a code path the app skips: nothing about the file changes what a
+player must answer, or when. How the app behaves with it is
+`controller-code-notes.md`; what it costs the user is
+`controller-discovery-timings.md`.
 
 Source: [How to Discover and Control Players from a Remote
 Subnet](https://support.bluesoundprofessional.com/hc/en-us/articles/360060411413-How-to-Discover-and-Control-Players-from-a-Remote-Subnet),

@@ -257,6 +257,13 @@ players on its own three-second timer — see
 on its own as well: with no discovery mechanism running there were no answers to
 wait for, and the wait was unchanged.
 
+**Which leaves the question of what it is waiting for.** Not this file, and not
+discovery replies. The app's own startup is what is left — Electron and Vue
+booting, the discovery modules being constructed and enabled, and then at least
+one `/SyncStatus` round trip before any player can be drawn. That is where the
+5–6 s has to be, but none of it has been timed, so which part dominates is not
+known **[U]**.
+
 The desktop is at least stable once up: none of the list-emptying seen on
 Android **[V hardware]**.
 
