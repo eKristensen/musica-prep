@@ -127,25 +127,16 @@ which is deferred inside. **Nothing about the discovery protocol changes the
 wait**, which is why a faster responder could not have helped and why switching
 to mDNS would not either.
 
-### The floor underneath it is not a timer at all **[V official]**
+### The floor underneath it is not a timer, and is not explained **[V official]**
 
-With the two seconds gone, about a second remains. **There is no fixed
-contribution to it from LSDP.** The second is made of two things that each take
-as long as they take:
+With the two seconds gone, about a second remains, and three of the obvious
+explanations are ruled out.
 
-| | what it is | roughly |
-|---|---|---|
-| waiting for the **last** player's announce | the protocol's own random 0–750 ms reply delay (§12.1), and the list is not complete until the slowest of four has answered | measured on the wire at **448–749 ms** to hear all four |
-| then, per player, an **HTTP chain** before its row is drawn | two to three requests, serialized | the remainder, a few hundred ms |
-
-Measured end to end that is 1.0–1.5 s, and the two parts above are the whole of
-it. Neither is a wait the app chose; both are work finishing.
-
-**The 1000 ms in the receive loop is not part of it**, which is the easy mistake
-to make. It is the only second-scale constant in
-`com.lenbrook.sovi.discovery` besides 16 s (staleness) and 60 s (in
-`PlayerDiscoveryState.update`), and it is a ceiling on how long `receive()`
-blocks, so the loop can re-check `isDisposed()` about once a second:
+**It is not a timer in the discovery code.** The only second-scale constants in
+`com.lenbrook.sovi.discovery` are 16 s (staleness), 60 s (in
+`PlayerDiscoveryState.update`), and a 1000 ms `setSoTimeout` on the LSDP receive
+socket. The last is a ceiling on how long `receive()` blocks so the loop can
+re-check `isDisposed()` about once a second:
 
 ```java
 socket.setSoTimeout(1000);
@@ -156,34 +147,35 @@ while (!emitter.isDisposed()) {
 ```
 
 An announce that arrives 30 ms in is parsed 30 ms in. The timeout only matters
-when *nothing* arrives. **Nothing gates a player on a one-second boundary.**
+when nothing arrives. **Nothing gates a player on a one-second boundary.**
 
-The second part, between an announce and its row appearing, is a chain of HTTP
-requests per player, serialized by `flatMap`:
+**It is not the protocol's reply delay.** R8 removed that entirely — a responder
+answering in microseconds — and the number did not move.
+
+**It is not the HTTP the app does per player.** There is a chain, serialized by
+`flatMap`, and a row is not drawn until it finishes:
 
 ```java
 PlayerDiscoveryManager.getInstance().discoverPlayers()   // announce -> /SyncStatus
-    .flatMap(fetchSchemaVersion())                       // -> /schemaVersion, sometimes
-    .flatMap(fetchPresetSetting())                       // -> the preset/dynamic-settings url
+    .flatMap(fetchSchemaVersion())                       // a request, unless the status carries a version
+    .flatMap(fetchPresetSetting())                       // a request, when it names a preset/settings url
     .retryWhen(...)
     .subscribe(pair -> updatePlayerInfo(pair.first, pair.second));   // <- the row is drawn here
 ```
 
 `fetchSchemaVersion` short-circuits with `Observable.just` when the `SyncStatus`
-already carries a version or a cached `PlayerInfo` has one, and otherwise asks
-the player. `fetchPresetSetting` asks whenever the `SyncStatus` names an
-`audioPresetUrl` or a `dynamicSettingsUrl`. Only when both have resolved does
-`updatePlayerInfo` draw the row.
+already carries a version or a cached `PlayerInfo` has one; `fetchPresetSetting`
+asks whenever the status names an `audioPresetUrl` or a `dynamicSettingsUrl`. So
+one to three requests per player. But these players answer HTTP in a **median of
+11 ms** (402 timed probes, `test-runs/bluos-probe-20260911T220357/`), so the
+whole chain is tens of milliseconds. It cannot be the bulk of a second.
 
-**This is why answering discovery instantly did not move the number.** A static
-responder removes the 0–750 ms reply delay — the first row of the budget — and
-leaves the HTTP chain untouched. It shortens the part that was already the
-smaller of the two, in a test where the phone still had to do everything below.
-
-The split between the two rows is approximate: the 448–749 ms comes from
-`lsdp-static measure` on a wired host, not from the phone, so it bounds the
-protocol part rather than measuring it inside the app. What the HTTP chain
-actually costs has not been measured directly **[U]**.
+**So the floor is unexplained.** Everything this file can see accounts for a
+small fraction of it. What has not been read: what happens between the fragment
+subscribing and the first query leaving — interface enumeration, socket bind,
+the `Schedulers.IO` hop — the `retryWhen` wrapper and `LSDPProbeRetry`, the
+`observeOn(mainThread)` hand-off, and the list rendering itself, none of which
+were traced **[U]**.
 
 ### The gate is `isWifiEnabled()`, not "is Wi-Fi in use"
 

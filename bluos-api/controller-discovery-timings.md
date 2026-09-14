@@ -425,12 +425,12 @@ Not established:
   sources. So the client that behaves best here is the one nothing is known
   about, and claims in that document about what "the clients" do are claims
   about the other three.
-- **How the 1.0–1.5 s floor splits.** The code says what it is made of: waiting
-  for the slowest of four players to answer, which the wire says takes 448–749 ms,
-  and then two to three serialized HTTP requests per player before its row is
-  drawn — no timer in either
-  ([`controller-code-notes.md`](controller-code-notes.md)). The split between the
-  two is inferred rather than measured inside the app.
+- **What the 1.0–1.5 s floor is.** Still open, and now with three explanations
+  ruled out rather than none: it is not a timer in the discovery code, not the
+  protocol's reply delay (R8 removed that and the number held), and not the
+  app's per-player HTTP, which these players answer in a median of 11 ms. See
+  [`controller-code-notes.md`](controller-code-notes.md) for what has not been
+  read.
 - What the desktop spends its 5–6 s on.
 - Whether the Linux AppImage reads `staticPlayers.txt`; the vendor supports the
   file on Windows and macOS only.
