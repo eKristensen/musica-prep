@@ -32,7 +32,8 @@ another VLAN ends up in the same position as one on the players' own segment.
 
 That is a real improvement in how the list fills. It does not reduce how long
 the user waits for it: the last player still appears at the same moment it did
-before, and that moment is what makes an app feel slow to open.
+before, and until it does there is a player you cannot pick. The app opens
+quickly enough; it is the waiting before you can use it that is the problem.
 
 ## Why it would be the wrong answer anyway
 
