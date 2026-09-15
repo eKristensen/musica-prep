@@ -7,6 +7,67 @@ requirements.
 
 ---
 
+## Open ends — working notes, delete before publishing
+
+Things the argument does not close yet. The first four could still end with
+nothing being built, which is the outcome I would rather have.
+
+1. **Ask Bluesound.** The document says I never did, and gives "it can be hard
+   to prove where the problem lies" as the reason. That reason no longer holds:
+   there is a controlled comparison (iPhone against Android, same access point,
+   same players), a toggle that makes the delay come and go on the same cable,
+   and twenty rounds of on-wire timings showing the protocol is not at fault.
+   That is a better bug report than most vendors get. Cheapest way to not build
+   anything.
+
+2. **Fixing an existing project is never considered.** The survey asks whether
+   each candidate meets the requirements and moves on when it does not. It
+   never asks whether one could be fixed. BluOS NAD remote is open source, on
+   Android, and fails on sorting, search and grouping. Amp is open source, web,
+   and fails on search and multi-player. Adding sorting to something that
+   exists may be less work than a server plus a frontend. If the answer is that
+   I do not want to adopt someone else's stack, that is a decision worth
+   writing down rather than leaving unasked.
+
+3. **Four candidates were never actually run.** Kindofblu was never started,
+   Amp was not looked at in depth, BluRemote could not be tested without a Mac,
+   and the Home Assistant Core integration was dismissed as "mostly the same"
+   as bluesound_alt without being tried. Amp is the one I would test first: it
+   is a web interface, so R1, R2 and the Linux bonus come free, and the
+   multi-player judgement is a guess from the repository rather than a result.
+
+4. **A whole ecosystem category is missing from the survey.** ECOSYSTEM.md
+   lists CLIs and TUIs, and BluOS Dashboard, none of which appear here. R2
+   rules CLIs out by definition, but that is never said, so a reader comparing
+   the two files finds a dozen unaddressed projects. BluOS Dashboard is worth
+   an actual look before dismissing; the name does not sound like a CLI.
+
+5. **The document never argues that Musica fixes any of this.** Eight problems,
+   a requirements filter nothing passes, and then a conclusion about being one
+   more entry in the collection. A reader never learns that holding state on a
+   server means no discovery at launch, no staleness timer dropping players,
+   and that manual addresses mean no discovery at all. README says it; this
+   document does not.
+
+6. **An argument I am not making.** If Bluesound fixed Android tomorrow, R4 and
+   R5 would still be unmet. The browsing half of the motivation survives the
+   best case of item 1, and neither a bug report nor a fork reaches it. That
+   strengthens the case and is currently left out.
+
+7. **Desktop is a preference, not a need,** by my own evidence: the AppImage
+   works, the startup wait is paid once, the list stays put. The document
+   half-concedes this and then argues past it. Saying it plainly costs nothing.
+
+In the hardware section, before it goes public: the Onkyo bankruptcy claim
+needs a date and ideally a source, the Roon discovery claim is load-bearing for
+rejecting Roon and should be backed, and WiiM is listed as evaluated without a
+reason — that lineup moves fast on room correction, so it is worth recording
+which models were considered and when. Also, when that section is merged, its
+hardware requirements must not end up reading as R8 onwards; they are a
+different kind of thing from the controller requirements.
+
+---
+
 ## My setup
 
 - Four Bluesound players (2 x N132, 1 x N130 and 1 x N110) on a dedicated VLAN.
