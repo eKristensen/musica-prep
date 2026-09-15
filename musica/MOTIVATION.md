@@ -473,6 +473,60 @@ might be acceptable.
 
 ---
 
+## "Alright, we get it — the Android app is bad. So why keep using Bluesound?"
+
+The BluOS Android app has real, well-documented problems, and building an
+alternative controller is a reasonable response to that. But it's worth being
+explicit that the app is a *software* complaint, not a *hardware* or *platform*
+one — and it's important not to conflate the two when deciding whether to keep
+the Node N110/N130/N132 units this project is meant to control.
+
+Over the course of researching this, the following were evaluated as potential
+replacements: Sonos, Denon HEOS, Yamaha MusicCast, WiiM, Naim, Cambridge Audio,
+Arcam (ST5, SA35/45, and the new AVP45 processor), Lyngdorf's TDAI-1120,
+Onkyo's P-80, StormAudio's processors, Volumio, and a Roon-based DIY approach.
+None of them combine, in one product, the specific things this setup depends
+on:
+
+- **Dirac Live room correction** (or a comparably regarded alternative —
+  Lyngdorf's RoomPerfect is the only serious contender found)
+- **HDMI eARC** for TV audio pass-through
+- **A 12V trigger output** for automated power control
+- **Genuine hi-res multiroom sync** — not AirPlay 2 or Chromecast, both of
+  which cap resolution/bit-depth and were independently ruled out (no Apple
+  devices for AirPlay; Chromecast's sound quality was judged unacceptable)
+- **A mature, stable, native Tidal implementation**, not a beta-quality Connect
+  integration
+
+The closest matches all require a real trade-off: Arcam's SA35/45 forces you to
+buy an unused amplifier section; the new Arcam AVP45 is an unproven, oversized
+home-theater processor; Onkyo's P-80 checks every box but comes from a recently
+bankrupt company; Lyngdorf is excellent but leans on AirPlay 2/Chromecast for
+multiroom like everyone else; and a Roon-based setup adds an ongoing
+subscription cost, an interface that's already been trialed and rejected, and —
+ironically, given the original complaint about Bluesound's proprietary LSDP
+protocol — its own unresolved, still-current discovery problems across VLANs
+and segmented networks, with no manual-IP fallback.
+
+**A platform switch doesn't even solve the original complaint.** The BluOS app
+itself works noticeably better on iOS than on Android — discovery is more
+reliable, fewer of the rough edges show up. That's telling: it confirms the
+underlying BluOS platform and protocol aren't inherently broken, since the same
+software works fine on different client hardware. It also means switching to an
+Apple-centric setup to "fix" this by using AirPlay would be solving a problem
+that iOS's *native BluOS app* already solves on its own — there'd be no reason
+to route through AirPlay at all, and doing so would only reintroduce the
+resolution/bit-depth compromises AirPlay carries anyway.
+
+Given all this, the pragmatic conclusion is: **the hardware and BluOS platform
+are doing their job well — the failure point is specifically the Android
+client.** That failure is narrow and self-contained enough to fix directly, by
+building a better controller against BluOS's existing control API, rather than
+by replacing an ecosystem that already works correctly everywhere except one
+app.
+
+---
+
 ## Conclusion
 
 There is a wide ecosystem with many interpretations of how it makes sense to
