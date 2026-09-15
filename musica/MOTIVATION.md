@@ -1,8 +1,9 @@
 # Why Musica exists
 
-This document describes the motivation for building Musica. It has two parts:
-1) several daily annoyances while using the official Android app, and 2) the
-lack of an alternative to the official app that meets my requirements.
+This document describes the motivation for building Musica. It has two
+parts: 1) several daily annoyances while using the official Android app,
+and 2) the lack of an alternative to the official app that meets my
+requirements.
 
 ---
 
@@ -61,13 +62,6 @@ fifteen seconds. Normal status updates appear to arrive on a cycle of about ten
 seconds, so the margin between "healthy" and "removed" is only a few seconds.
 Any hiccup — a roaming event, a slow response, a moment of power saving —
 crosses it.
-
-The whole list does it too, and that one I have timed. With the app open and
-untouched, the phone on a different VLAN from the players and the relays that
-carry discovery across the boundary switched off — so nothing could reach it —
-the list empties after about thirty seconds and settles on "No Player Found" at
-about fifty. A single tap brings all four back within a second. The player I
-had selected stayed controllable throughout.
 
 **Impact:** this is the single most disruptive issue. It makes the list feel
 unreliable even when every player is online and reachable.
@@ -204,13 +198,9 @@ The wait breaks into three parts, and only one of them can be removed.
 **The list does not hold what it finds.** Probing stops ten to twelve seconds
 after the player screen opens (observation 1), and a player nobody probes
 announces itself only about once a minute. Between the two there is a long
-window in which nothing refreshes an entry. The cycle in observation 2 is that
-window playing out: the app open, untouched and unable to hear anything,
-emptying its own list on a timer. Observation 7 is the same thing across a
-restart — a screen that has just found every player, then a screen showing one.
-
-This is not about the app being in the background. The cycle above runs with
-the app open and on screen.
+window in which nothing refreshes an entry, which is what observations 2 and 3
+look like from the outside. Observation 7 is the same thing across a restart —
+a screen that has just found every player, then a screen showing one.
 
 **Two discovery protocols are in use** — mDNS, and a Lenbrook-specific UDP
 broadcast protocol (LSDP). Lenbrook has been reported as saying they wrote
@@ -259,6 +249,10 @@ alternatives.
 
 ### Requirements
 
+Not crashing applies to all of these rather than to any one of them. I happened
+to meet it while searching, but an app that falls over has failed whatever it
+was doing at the time.
+
 **R1: Must work on Android.** It is not relevant to me if I cannot use it on my
 Android phone. A browser variant may be acceptable.
 
@@ -276,7 +270,7 @@ able to pick the sorting to get them in the order I added them rather than in
 alphabetical order is essential for me.
 
 **R5: Search.** It must be possible to search Tidal in an easy and intuitive
-way without the app crashing.
+way.
 
 **R6: Grouping.** Grouping in the BluOS controller app is fairly reliable,
 however it is not that easy to group players that do not show up. I use
