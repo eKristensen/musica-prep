@@ -44,3 +44,15 @@ Reconsider Roon.
 - Check it against the current list of requirements.
 - Check whether HDMI playback in Stue works with Roon.
 - Work out what the problem was the last time it was tried.
+
+-----
+
+The old forum API reference several projects build on: the archived link is
+saved, in musica/ECOSYSTEM.md under Honourable mentions. The live
+helpdesk.bluesound.com thread is gone; the entry already points at the web
+archive snapshot instead.
+
+What is missing is the link where it is actually used. bluos-api cites this
+source as "2015 forum" for several claims (C-10, C-32 among them) without a
+URL, so the reference for those rows lives in a different folder under a
+different name. Worth putting the archive URL next to the source name there.
