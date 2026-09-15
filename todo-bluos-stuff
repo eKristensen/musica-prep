@@ -47,23 +47,6 @@ Reconsider Roon.
 
 -----
 
-I have tried static mDNS records, but not static LSDP records — if that is even
-possible. It might turn out to be the simple fix: two to three seconds of
-discovery is something I could live with if it were consistent, and then there
-is nothing to develop.
-
------
-
-Retest discovery under Waydroid, measured rather than from impression. The
-comparison does not support what MOTIVATION.md used to claim from it: under
-Waydroid the app is never killed or pushed out of memory the way it is on a
-phone, so it discovers once and then keeps a warm list for as long as it stays
-open. The good impression may be entirely that, and the discovery itself may
-not have been as quick as I remember.
-
-
------
-
 The old forum API reference several projects build on: the archived link is
 saved, in musica/ECOSYSTEM.md under Honourable mentions. The live
 helpdesk.bluesound.com thread is gone; the entry already points at the web
