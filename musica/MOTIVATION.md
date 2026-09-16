@@ -21,11 +21,9 @@ What the argument still does not close.
    over, and whether one solution should cover both desktop and phone. Both are
    now pointed at from here, so a dangling pointer is worse than the gap was.
 
-3. **Two eliminations rest on reading rather than testing, and are the two
-   where that is arguable.** Amp is a web interface that looked like it could
-   be a controller, and it is now out on scope; the Home Assistant Core
-   integration is still dismissed as "mostly the same" as bluesound_alt. Both
-   are defensible, neither is demonstrated.
+3. **One elimination rests on an assumption rather than on the scope tests.**
+   The Home Assistant Core integration is dismissed as "mostly the same" as
+   bluesound_alt. That is probably right, and it is not demonstrated.
 
 4. **`WHY_BLUESOUND.md` needs its claims dated and sourced before it is
    public** — the Onkyo bankruptcy, the Roon discovery problems, and which WiiM
@@ -303,7 +301,9 @@ advance, so any crash has to be weighed on its own — but most of them will be
 disqualifying.
 
 **R1: Must work on Android.** It is not relevant to me if I cannot use it on my
-Android phone. A browser variant may be acceptable.
+Android phone. A browser variant may be acceptable — but not the players' own:
+the web UI on port 80 exposes settings only, with no playback control, so there
+is no vendor-provided way to control a player without the app.
 
 **R2: A GUI with basic controls.** I want to be able to click on what I want to
 search for, see album covers, and interact with players visually at a glance.
