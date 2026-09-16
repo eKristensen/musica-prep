@@ -39,8 +39,7 @@ What the argument still does not close.
 ## My setup
 
 - Four Bluesound players (2 x N132, 1 x N130 and 1 x N110) on a dedicated VLAN.
-- mDNS reflection configured between VLANs, verified working — `avahi-browse`
-  on a laptop resolves the players quickly and reliably.
+- mDNS reflection configured between VLANs.
 - UDP replication for the LSDP protocol across VLANs.
 
 ---
@@ -51,98 +50,58 @@ A summary of the problems I run into with the official Android app on a
 smartphone.
 
 For a long time I reported none of this. I know nobody else running Bluesound
-from Android who could tell me whether it is specific to my setup, the
+with Android phones who could tell me whether it is specific to my setup. The
 discovery mechanism is complicated enough that proving where the fault lies is
 hard, and looking for another solution seemed more likely to get me somewhere
 than persuading Bluesound to acknowledge the problem. I have since changed my
 mind: a support ticket went in on 16 September 2026, built on the measurements
 below.
 
-I have only been able to reproduce the problems with the official app on an
-Android phone. The Windows and iOS apps do not appear to have them when I test
-in my setup. The Windows app does share the slow start — five to six seconds
-from launch to players visible — but the list then stays put. The repackaged
-Linux build behaves the same on different hardware, and both machines were on
-Wi-Fi throughout. Handing the app a fixed list of players and switching
-discovery off does not make either of them faster, so that wait is not time
-spent finding players. I have no Mac, so the Mac app is untested.
-
 ---
 
-### 1. Discovery is a slightly delayed short burst, then silence
+### 1. Discovery is forgetful, slow and unreliable
 
-Watching UDP traffic while I open the player list, the app waits two seconds,
-then sends a small number of discovery probes over roughly the next ten to
-twelve seconds, and then stops. After that it appears to listen
-passively only.
+There is always a delay before all players show up. The app seem to be in search mode for a fixed amount of time. Any player that does not answer inside that search window never appears at all. On Wi-Fi a lost broadcast frame is common enough for that to happen regularly. The only way to trigger another attempt if a player does not show up is backing out of the player list and re-entering is .
 
-**Impact:** there is almost always a delay before all players show up. A player
-that does not answer inside that window never appears at all, and on Wi-Fi a
-lost broadcast frame is common enough for that to happen regularly. Waiting
-does not help; backing out of the player list and re-entering is the only way
-to trigger another attempt.
+Even worse, the whole process have to be repeated as soon as the app is no longer activly running, i.e. in the background e.g. after lock screen or after using smartphone to do something else. In essen it appears like the app have no cache. If discovery was very fast it would not matter, but that is not the case. Lifting battery restrictions have no impact.
+
+**Impact:** It easily take 10-15 seconds every time I want to interact my Bluesound players before I can perform that action. I often find myself opening the Bluesound app, putting my phone on a table while doing something else and then go back to it and hope all players were discovered.
 
 ### 2. Players sometimes disappear and come back
 
 A player that is present and playing sometimes vanishes from the list for a
-while and then returns, with no action on my part. To reproduce it
-deliberately I blocked a player's HTTP port and timed what followed: the entry
-disappears after roughly fifteen seconds. Normal status updates appear to
-arrive on a cycle of about ten seconds, so the margin between "healthy" and
-"removed" is only a few seconds.
-Any hiccup — a roaming event, a slow response, a moment of power saving —
-crosses it.
+while and then returns, with no action on my part. Even the currenlty selected player can disappear!
 
-**Impact:** this is the single most disruptive issue. It makes the list feel
-unreliable even when every player is online and reachable.
-
-It also makes grouping risky rather than merely slow. The list reflows as
+**Impact:** it makes it harder to group layers than it needs to be. The list reflows as
 players come and go, so the entry under my thumb can change between the moment
 I decide to tap and the moment the tap registers, and I have then grouped the
-wrong player. That happens far too often. Recovering means backing out,
-waiting through discovery again and retrying. Reliable grouping needs a list
-that holds still. Creating a group appears to make players disappear as well,
-which slows down whatever I try to do next — I have not timed that one, but it
-happens often enough that I have no doubt it is real.
+wrong player. Even worse, if the currently selected player disappears, which happens way too often, it makes grouping awkward, because a player you cannot see is a player you cannot group. Recovery requies backing out of the player list and re-entering, waiting through discovery again and retrying.
 
-### 3. The currently selected player is sometimes missing from the list
-
-I can be connected to a player, with working controls and volume, while that
-same player is absent from the player overview. It appears later, seconds after
-everything else.
-
-**Impact:** confusing, and it makes grouping awkward, because a player you
-cannot see is a player you cannot group.
-
-### 4. Partial lists that differ depending on what you select
+### 3. Partial lists that differ depending on what you select
 
 With several players and groups, selecting one player sometimes shows one
 subset; selecting another shows a different subset. Repeatedly refreshing
 eventually converges on the full set, but it takes several attempts and a
 noticeable amount of time.
 
-### 5. Ungrouping leaves a player unusable for a while
+**Impact:** again it makes grouping hard, because a player you cannot see is a player you cannot add to a group. Again recovery requies backing out of the player list and re-entering, waiting through discovery again and retrying.
+
+### 4. Ungrouping leaves a player unusable for a while
 
 After removing a player from a group, that player often cannot be selected for
-another ten to twenty seconds. The app behaves as though it is still a group
-member, even though the player itself has already left the group. It resolves
-on its own eventually.
+about ten to twenty seconds. The app behaves as though it is still a group
+member for a short while, even though the player itself has already left the group. Even worse sometimes ungrouping players, makes some of the players on the list disappear and they might not even have been related to the selected group!
 
-### 6. The app refuses to work over VPN, even though the network works
+**Impact:** grouping and ungrouping players is slower and more frustrating than it needs to be.
 
-Over WireGuard the app sometimes functions for a while, and then stops for no
-apparent reason. The tunnel keeps working the whole time — I can reach the
-players by other means throughout, for example the built-in web UI on the
-player. The restriction appears to be based on connection type rather than on
-whether the players are actually reachable.
+### 5. The app refuses to work over VPN, even though the network works
 
-**Impact:** no remote control of my own equipment on my own network, for no
-technical reason I can identify. If I forget to pause the music before leaving
-home, fixing that should be no harder from outside the house than it would have
-been on my way out the door. It also makes it impossible to build an
-alternative, potentially more stable, path for the discovery packets over VPN.
+Over VPN the app sometimes functions for a while, and then stops for no
+apparent reason. I can reach the players by its web interface via VPN. The restriction appears to be based on connection type rather than on whether the players are actually reachable.
 
-### 7. A full rediscovery whose results are then thrown away
+**Impact:** if I forget to pause the music before leaving home I have no other native choice than to use the web ui to reboot the player, but that is not an elegant solution at all. The most actionable scenario is forgotten Tidal playback that then prevents tidal playback on my phone while not at home. It also makes it impossible to build an alternative, potentially more stable, path for the discovery packets over VPN.
+
+### 6. A full rediscovery whose results are then thrown away
 
 Occasionally the app opens with a message saying BluOS lost connection to my
 player, and the normal interface is replaced by a full-screen discovery view.
@@ -155,18 +114,18 @@ and had to be discovered again from scratch.
 the most conspicuous version of the problem, because the app visibly finds all
 the players and then visibly forgets them a second later.
 
-### 8. None of this happens on iOS
+### None of this happens on iOS
 
-The iOS controller, on the same network, with the same players, exhibits none
+The BluOS iOS controller, on the same network, with the same players, exhibits none
 of the problems above. Players appear promptly and stay in the list. Whatever
 is going wrong is specific to the Android controller rather than to BluOS, to
 my network, or to my players.
 
+Some of my family use Sonos, and discovery on Android is rock solid there.
+
 Restarting the iOS app, reloading, refreshing, closing and opening it from the
 home screen — no matter what I do, players show up instantly and stay rock
 solid. I wonder why I cannot get the same experience on Android.
-
-Family of mine use Sonos, and discovery on Android is rock solid there too.
 
 ---
 
@@ -178,26 +137,25 @@ response and in many cases it would be correct.
 - **Not mDNS reflection.** Reproduced with the phone on the same VLAN as the
   players.
 - **Not missing or slow mDNS records.** I published static IPv4 host and
-  service entries with Avahi and confirmed from a laptop that they resolved
-  quickly and consistently. Neither of two Android phones, from different
-  vendors, behaved measurably better for it: still the last-connected player
-  first, then a pause, then the rest. Making the records better available on
-  the wire does not help if the client only asks for a moment.
+  service entries. Neither of two Android phones, from different
+  vendors, behaved measurably better: still the last-connected player
+  first, then a pause, then the rest.
+- **Not LSDP bad discovery.** Instantly served static LSDP records improves player list completeness, not speed. Players show up together more often with statis LSDP records served by a central service rather than the players.
 - **Not the players.** They respond promptly to direct HTTP requests
   throughout, including while the app shows them as missing.
-- **Not one access point, or one firmware.** The same behaviour has followed me
-  across several access points and many firmware versions over a long period.
-- **Not general network health.** A wired machine on the same network sees
-  discovery traffic and resolves the players quickly and consistently.
 - **Not one bad device.** The problems move around between players rather than
-  sticking to one.
-- **Not the discovery protocols.** The same Android app, bridged and wired
-  under Waydroid, shows all four players in one to one and a half seconds,
-  complete every time. A different Android, no Google Play, a sideloaded build,
-  virtualised hardware — none of it moved that number. Nor did putting a
-  responder on the network that answers discovery queries instantly: the number
-  did not change at all, so that remaining second and a half is the app's own
-  and nothing done to the network will remove it.
+  sticking to one. AI question: Can not the players and not one bad device be merged?
+- **Not one bad Android device** The same Android app, bridged and wired
+  under Waydroid, shows all four players in the same speed as a different virtualised Android device with no Google Play.
+- **Not one access point, switch, router or one firmware.** The same behaviour has followed me
+  across several access points, switches and routers and many firmware versions over a long period.
+- **Not general network health.** A wired machine on the same network sees
+  discovery traffic and resolves the players quickly and consistently on both mDNS an LSDP. The network performance for wired and wireless players are indisgiguishable.
+
+---
+
+### What the measurements show
+
 
 What the measurements do point at is the Wi-Fi radio, and not in the way I
 expected. On a cable, with the radio left switched on, the phones take around
@@ -205,9 +163,14 @@ three seconds. On the same cable, with Wi-Fi explicitly switched off, they take
 about one, complete every single run. What changed the result was whether a
 radio carrying none of the traffic happened to be switched on.
 
----
-
-### What the measurements show
+I have only been able to reproduce the problems with the official app on an
+Android phone. The Windows and iOS apps do not appear to have them when I test
+in my setup. The Windows app does share the slow start — five to six seconds
+from launch to players visible — but the list then stays put. The repackaged
+Linux build behaves the same on different hardware, and both machines were on
+Wi-Fi throughout. Handing the app a fixed list of players and switching
+discovery off does not make either of them faster, so that wait is not time
+spent finding players. I have no Mac, so the Mac app is untested.
 
 The wait breaks into three parts, and only one of them can be removed.
 
@@ -278,26 +241,6 @@ Having decided the official app was too frustrating to keep using, I went
 looking for alternatives. The full list of alternatives found can be seen in
 [ECOSYSTEM.md](ECOSYSTEM.md).
 
-### Scope
-
-Before a project is worth measuring against the requirements at all, it has to
-clear two much lower bars:
-
-- **Be alive.** There must be activity, or some evidence that the project is
-  actively developed. Examples of elimination: more than two years since the
-  last commit, fewer than ten commits in total, a single author.
-- **Look like it could replace a controller.** Many projects set out to solve
-  one narrow task, and I need more than that. Examples of elimination:
-  dashboards, single-purpose tools, and libraries that do not amount to a
-  controller on their own.
-
-Most of the [ECOSYSTEM.md](ECOSYSTEM.md) list falls at one of those two. The
-ecosystem is large and arguing against each project individually would take far
-longer than it is worth, so I do not. **Any project not discussed below can be
-taken to have failed one of the two tests above** — that is a judgement made
-by reading the project, not by running it, and for a dead or narrow project
-that is enough.
-
 ### Requirements
 
 **R0: At least as stable as the official BluOS Controller.** Frustrating as its
@@ -335,6 +278,28 @@ grouping fairly often, so that feature must be present and easy to use.
 **R7: Easy player selection.** I switch between players often, so it should be
 easy to change to another player. On a side note: sometimes the official app
 forgets which player I had selected when I open it again.
+
+---
+
+### Scope
+
+Before a project is worth measuring against the requirements at all, it has to
+clear two much lower bars:
+
+- **Be alive.** There must be activity, or some evidence that the project is
+  actively developed. Examples of elimination: more than two years since the
+  last commit, fewer than ten commits in total, a single author.
+- **Look like it could replace a controller.** Many projects set out to solve
+  one narrow task, and I need more than that. Examples of elimination:
+  dashboards, single-purpose tools, and libraries that do not amount to a
+  controller on their own.
+
+Most of the [ECOSYSTEM.md](ECOSYSTEM.md) list falls at one of those two. The
+ecosystem is large and arguing against each project individually would take far
+longer than it is worth, so I do not. **Any project not discussed below can be
+taken to have failed one of the two tests above** — that is a judgement made
+by reading the project, not by running it, and for a dead or narrow project
+that is enough.
 
 ---
 
@@ -518,27 +483,19 @@ worth saying why I think this is a problem I can actually solve. **The
 advantage is not skill, it is scope.** Bluesound has to support every player
 they have ever sold, on every phone, on every network, for every customer. I
 have to support four players, one network, and the features I actually use.
-Almost everything that makes their job hard is something I am allowed to simply
-not do. That is not a claim to be better at this than they are — it is a much
-smaller problem.
+Almost everything that makes their job hard is something I am allowed skip. That is not a claim to be better at this than they are — it is a claim that I can make it a much smaller problem.
 
-I am a software engineer by education, from the Technical University of
-Denmark, and the work I have done and enjoyed most is networking, web
+I have a Master in Computer Science, and the work I have done and enjoyed most is networking, web
 applications and backend services, which is the half of this project that
 carries the weight. **The half I am weakest at is Android**, where I started
-with no development experience at all. That is part of why the solution takes
-the shape it does: a web app installed as a PWA, with as much as possible
-solved on the server and as little as possible resting on the platform I know
-least.
+with no development experience at all. I intend to play on my strong sides and avoid building programs I cannot support or understand.
 
 This is a one-person, off-hours, AI-accelerated project, and without that
 acceleration I do not think it would be attemptable at the feature set I would
 actually want day to day. What matters most is not prompting but description:
 time spent writing down how something really works is repaid, because the
 alternative is spending it working against whatever the model guessed instead.
-That is why so much of this repository is research rather than code — the notes
-on how the API behaves exist before the implementation does. It also means the
-project carries a dependency it did not choose: AI assistance is currently
+That is why so much of this repository is research rather than code. I have researched how the API behaves and I will share that with the AI agent building the code. It also means the project carries a dependency it did not choose: AI assistance is currently
 cheap enough for a hobby project to use at this scale. If that stops being
 true, the arithmetic changes.
 
