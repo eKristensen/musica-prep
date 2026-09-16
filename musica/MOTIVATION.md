@@ -9,63 +9,27 @@ requirements.
 
 ## Open ends — working notes, delete before publishing
 
-Things the argument does not close yet. The first four could still end with
-nothing being built, which is the outcome I would rather have.
+What the argument still does not close.
 
-1. **Ask Bluesound.** The document says I never did, and gives "it can be hard
-   to prove where the problem lies" as the reason. That reason no longer holds:
-   there is a controlled comparison (iPhone against Android, same access point,
-   same players), a toggle that makes the delay come and go on the same cable,
-   and twenty rounds of on-wire timings showing the protocol is not at fault.
-   That is a better bug report than most vendors get. Cheapest way to not build
-   anything.
-Note: Bluesound-ticket.txt has been sent on September 16, 2026.
+1. **Waiting on Bluesound.** `Bluesound-ticket.txt` was sent on 16 September
+   2026. If it comes back with a fix, or a reason, most of this document
+   changes. Nothing else here is worth finishing until there is an answer or a
+   decent interval of silence.
 
-2. **Fixing an existing project is never considered.** The survey asks whether
-   each candidate meets the requirements and moves on when it does not. It
-   never asks whether one could be fixed. BluOS NAD remote is open source, on
-   Android, and fails on sorting, search and grouping. Amp is open source, web,
-   and fails on search and multi-player. Adding sorting to something that
-   exists may be less work than a server plus a frontend. If the answer is that
-   I do not want to adopt someone else's stack, that is a decision worth
-   writing down rather than leaving unasked.
+2. **Two decisions are promised to `DESIGN_PRINCIPLES.md` and have to actually
+   land there:** whether to build on somebody else's project rather than start
+   over, and whether one solution should cover both desktop and phone. Both are
+   now pointed at from here, so a dangling pointer is worse than the gap was.
 
-3. **Four candidates were never actually run.** Kindofblu was never started,
-   Amp was not looked at in depth, BluRemote could not be tested without a Mac,
-   and the Home Assistant Core integration was dismissed as "mostly the same"
-   as bluesound_alt without being tried. Amp is the one I would test first: it
-   is a web interface, so R1, R2 and the Linux bonus come free, and the
-   multi-player judgement is a guess from the repository rather than a result.
+3. **Two eliminations rest on reading rather than testing, and are the two
+   where that is arguable.** Amp is a web interface that looked like it could
+   be a controller, and it is now out on scope; the Home Assistant Core
+   integration is still dismissed as "mostly the same" as bluesound_alt. Both
+   are defensible, neither is demonstrated.
 
-4. **A whole ecosystem category is missing from the survey.** ECOSYSTEM.md
-   lists CLIs and TUIs, and BluOS Dashboard, none of which appear here. R2
-   rules CLIs out by definition, but that is never said, so a reader comparing
-   the two files finds a dozen unaddressed projects. BluOS Dashboard is worth
-   an actual look before dismissing; the name does not sound like a CLI.
-
-5. **The document never argues that Musica fixes any of this.** Eight problems,
-   a requirements filter nothing passes, and then a conclusion about being one
-   more entry in the collection. A reader never learns that holding state on a
-   server means no discovery at launch, no staleness timer dropping players,
-   and that manual addresses mean no discovery at all. README says it; this
-   document does not.
-
-6. **An argument I am not making.** If Bluesound fixed Android tomorrow, R4 and
-   R5 would still be unmet. The browsing half of the motivation survives the
-   best case of item 1, and neither a bug report nor a fork reaches it. That
-   strengthens the case and is currently left out.
-
-7. **Desktop is a preference, not a need,** by my own evidence: the AppImage
-   works, the startup wait is paid once, the list stays put. The document
-   half-concedes this and then argues past it. Saying it plainly costs nothing.
-
-In the hardware section, before it goes public: the Onkyo bankruptcy claim
-needs a date and ideally a source, the Roon discovery claim is load-bearing for
-rejecting Roon and should be backed, and WiiM is listed as evaluated without a
-reason — that lineup moves fast on room correction, so it is worth recording
-which models were considered and when. Also, when that section is merged, its
-hardware requirements must not end up reading as R8 onwards; they are a
-different kind of thing from the controller requirements.
+4. **`WHY_BLUESOUND.md` needs its claims dated and sourced before it is
+   public** — the Onkyo bankruptcy, the Roon discovery problems, and which WiiM
+   models were considered and when.
 
 ---
 
@@ -310,25 +274,40 @@ With the official app declared too frustrating to use, I decided to look for
 alternatives. The full list of alternatives found can be seen in
 [ECOSYSTEM.md](ECOSYSTEM.md).
 
-### Scope (TODO: This is my way to solve open end number 2, 3 and 4. Does it work? Does it make sense to keep seperate from Requirements?)
+### Scope
 
-In order for an alternative to be interesting it must fulfill som basic requirements. This is what the project need to do before I even consider the project as a candidate:
+Before a project is worth measuring against the requirements at all, it has to
+clear two much lower bars:
 
-- Be alive. There must be some activity or evidence that the project is activly developed. Example elemination: 2+ years since last commit, fewer than 10 commits in general, single arthur.
-- Look like it can be a controller replacement. Many projects go out to solve one very specific narrow task. I need more. Example eleminations: Dashboards, single purpose tools, libaries that do not form a controller on their own.
+- **Be alive.** There must be activity, or some evidence that the project is
+  actively developed. Examples of elimination: more than two years since the
+  last commit, fewer than ten commits in total, a single author.
+- **Look like it could replace a controller.** Many projects set out to solve
+  one narrow task, and I need more than that. Examples of elimination:
+  dashboards, single-purpose tools, and libraries that do not amount to a
+  controller on their own.
 
-Several candidates from the [ECOSYSTEM.md](ECOSYSTEM.md) list are eleminated based on these two requirements. As the ecosystem is huge it would take a lot of time to argue against projects that trivially does not meet the requirements above, therefore there are specific arguments for projects not considered below. All projects not mentioned below can be assumed to not have passed the requirements above.
+Most of the [ECOSYSTEM.md](ECOSYSTEM.md) list falls at one of those two. The
+ecosystem is large and arguing against each project individually would take far
+longer than it is worth, so I do not. **Any project not discussed below can be
+taken to have failed one of the two tests above** — that is a judgement made
+by reading the project, not by running it, and for a dead or narrow project
+that is enough.
 
 ### Requirements
 
-**R0: Be at least as stable as the official BluOS Controller** While the discovery mechanism is frustrating the official app does never crash, my phone heat up, spend too much battery power or lock up. This is hard to judge. Any crashes must be evaluated but most likely it will be deemed unacceptable. 
+**R0: At least as stable as the official BluOS Controller.** Frustrating as its
+discovery is, the official app never crashes, never makes my phone heat up,
+never drains the battery and never locks up. This one is hard to judge in
+advance, so any crash has to be weighed on its own — but most of them will be
+disqualifying.
 
 **R1: Must work on Android.** It is not relevant to me if I cannot use it on my
 Android phone. A browser variant may be acceptable.
 
 **R2: A GUI with basic controls.** I want to be able to click on what I want to
 search for, see album covers, and interact with players visually at a glance.
-Listing the current playback queue is a nice bonus to R2, but not a requirement.
+Listing the current playback queue is a welcome bonus here, not a requirement.
 
 **R3: Manual player entry.** Auto discovery is a major pain point with the
 official app. If I could enter the players manually and not depend on the
@@ -400,8 +379,13 @@ buggy when grouping players, so this solution fails R6 and R7. I could not find
 any search, and at least with bluesound_alt I could not get it to show all the
 songs in my Tidal collection, ultimately failing R4 and R5.
 
-I tested most of the functionality with the bluesound_alt integration, and
-while the other integrations might fix some of my problems, I know the Core
+I tested most of the functionality with the bluesound_alt integration, and I
+went further with that one than with any other candidate: I forked it and
+fixed its group playback before concluding that the remaining requirements
+would never follow. Whether to build on somebody else's project rather than
+start over is a decision in its own right, and it is taken in
+[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md) rather than here. While
+the other integrations might fix some of my problems, I know the Core
 variant is mostly the same, and the last project looks like a two-day rush with
 no sign of any development since. There is potential in using Home Assistant as
 a core, but the UI is not great and I do not believe it can be much better than
@@ -409,10 +393,10 @@ what I have already seen. Home Assistant as the primary controller is out.
 
 ---
 
-# Why Bluesound?
+## Why Bluesound?
 
-With the official android app discovery mechanism in chaos why stick around with
-Bluesound? See [WHY_BLUESOUND.md](WHY_BLUESOUND.md).
+With the official Android app's discovery mechanism in chaos, why stick with
+Bluesound at all? See [WHY_BLUESOUND.md](WHY_BLUESOUND.md).
 
 ---
 
@@ -507,13 +491,12 @@ It is a fantastic community project, and I am only sorry that I discovered it
 as part of the research I did for creating Musica.
 
 It might seem hypocritical to be unhappy about something that works 99% of the
-time. The Linux desktop app does not solve all the problems I have on Android,
-and it carries over some of them. I have decided to solve the problems with the
-Android app on my own, and in my own solution I will include several things I
-wished were different in the official app. Why limit those quality-of-life
-improvements to my phone? I do not see any good argument, so I am targeting a
-solution that works on both Android and Linux with as much shared code as
-possible.
+time, and on the desktop I am not: this is a working answer for Linux, and the
+problems that drove this project are not the ones I have there. What is worth
+noticing is that the platform *looks* uniform across desktop and phone while
+the apps behave quite differently on Android, iOS and Windows. Whether one
+solution should cover both, and at what cost, is settled in
+[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md).
 
 I found evidence that it might be possible to make the desktop app start with a
 static list of players. It is good to know that if the choice comes up where
@@ -530,6 +513,16 @@ interact with BluOS. Every player speaks plain HTTP with XML bodies over the
 LAN. No TLS, no handshake, no binary framing, no token exchange, no cloud round
 trip. Anything that can make an HTTP request can control a player.
 
-With none of the existing Android options matching my needs as is, the next
-step is to consider how to build a new solution that meet the requirements. See
+With none of the existing Android options matching my needs as they stand, the
+next step is to consider how to build something that meets the requirements.
+The shape of it follows from the measurements above: a controller that does
+not have to find the players again every time I open it, because something
+else already knows where they are. How that is done is settled in
 [DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md).
+
+I would rather not have to. If the Android app stopped losing players I would
+most likely leave this project wherever it had got to and go back to using it —
+which is why the ticket went to Bluesound first. What a fix there would not
+reach is the browsing: pre-cached, sortable Tidal lists are not something
+BluOS is ever going to provide, and most of the wishlist is unlikely to arrive
+either.
