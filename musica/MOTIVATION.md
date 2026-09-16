@@ -19,6 +19,7 @@ nothing being built, which is the outcome I would rather have.
    and twenty rounds of on-wire timings showing the protocol is not at fault.
    That is a better bug report than most vendors get. Cheapest way to not build
    anything.
+Note: Bluesound-ticket.txt has been sent on September 16, 2026.
 
 2. **Fixing an existing project is never considered.** The survey asks whether
    each candidate meets the requirements and moves on when it does not. It
@@ -306,19 +307,28 @@ the first BluOS controller shipped.
 ## Finding an alternative
 
 With the official app declared too frustrating to use, I decided to look for
-alternatives.
+alternatives. The full list of alternatives found can be seen in
+[ECOSYSTEM.md](ECOSYSTEM.md).
+
+### Scope (TODO: This is my way to solve open end number 2, 3 and 4. Does it work? Does it make sense to keep seperate from Requirements?)
+
+In order for an alternative to be interesting it must fulfill som basic requirements. This is what the project need to do before I even consider the project as a candidate:
+
+- Be alive. There must be some activity or evidence that the project is activly developed. Example elemination: 2+ years since last commit, fewer than 10 commits in general, single arthur.
+- Look like it can be a controller replacement. Many projects go out to solve one very specific narrow task. I need more. Example eleminations: Dashboards, single purpose tools, libaries that do not form a controller on their own.
+
+Several candidates from the [ECOSYSTEM.md](ECOSYSTEM.md) list are eleminated based on these two requirements. As the ecosystem is huge it would take a lot of time to argue against projects that trivially does not meet the requirements above, therefore there are specific arguments for projects not considered below. All projects not mentioned below can be assumed to not have passed the requirements above.
 
 ### Requirements
 
-Not crashing applies to all of these rather than to any one of them. I happened
-to meet it while searching, but an app that falls over has failed whatever it
-was doing at the time.
+**R0: Be at least as stable as the official BluOS Controller** While the discovery mechanism is frustrating the official app does never crash, my phone heat up, spend too much battery power or lock up. This is hard to judge. Any crashes must be evaluated but most likely it will be deemed unacceptable. 
 
 **R1: Must work on Android.** It is not relevant to me if I cannot use it on my
 Android phone. A browser variant may be acceptable.
 
 **R2: A GUI with basic controls.** I want to be able to click on what I want to
 search for, see album covers, and interact with players visually at a glance.
+Listing the current playback queue is a nice bonus to R2, but not a requirement.
 
 **R3: Manual player entry.** Auto discovery is a major pain point with the
 official app. If I could enter the players manually and not depend on the
@@ -340,12 +350,6 @@ grouping fairly often, so that feature must be present and easy to use.
 **R7: Easy player selection.** I switch between players often, so it should be
 easy to change to another player. On a side note: sometimes the official app
 forgets which player I had selected when I open it again.
-
-**Bonus 1:** working on Linux as well is a big plus. However, if it works fine
-on Android only that is acceptable, as the status quo would remain unchanged
-after years of Linux desktop use without a Bluesound app for control.
-
-**Bonus 2:** list the playback queue.
 
 ---
 
@@ -403,28 +407,12 @@ no sign of any development since. There is potential in using Home Assistant as
 a core, but the UI is not great and I do not believe it can be much better than
 what I have already seen. Home Assistant as the primary controller is out.
 
-### Web interfaces
+---
 
-**[Kindofblu](https://github.com/mfit/kindofblu)** is very basic, clearly a
-proof of concept, and has had no commits since 2020. Even so, R1, R2 and the
-Linux bonus are easily fulfilled. I did not spin the app up to check anything
-else.
+# Why Bluesound?
 
-**[Amp](https://github.com/great-horn/amp)** does the basics right, but lacks
-Tidal search and there is no evidence of work on multi-player support. I did
-not investigate this one in depth.
-
-The BluOS players have a built-in web UI on port 80. In version 4.16.22 I only
-found settings there, no player control.
-
-### Other solutions
-
-I have tried Roon, and it has always felt a bit off to me, especially
-considering the price. I also remember that a feature I use a lot was missing
-the last time I tried Roon.
-
-I have not tested any voice assistant. Even if they did work great, they are
-not a solution for me, as I prefer a written and visual format.
+With the official android app discovery mechanism in chaos why stick around with
+Bluesound? See [WHY_BLUESOUND.md](WHY_BLUESOUND.md).
 
 ---
 
@@ -532,59 +520,6 @@ static list of players. It is good to know that if the choice comes up where
 supporting both desktop and mobile becomes very hard, an Android-only focus
 might be acceptable.
 
----
-
-## "Alright, we get it — the Android app is bad. So why keep using Bluesound?"
-
-The BluOS Android app has real, well-documented problems, and building an
-alternative controller is a reasonable response to that. But it's worth being
-explicit that the app is a *software* complaint, not a *hardware* or *platform*
-one — and it's important not to conflate the two when deciding whether to keep
-the Node N110/N130/N132 units this project is meant to control.
-
-Over the course of researching this, the following were evaluated as potential
-replacements: Sonos, Denon HEOS, Yamaha MusicCast, WiiM, Naim, Cambridge Audio,
-Arcam (ST5, SA35/45, and the new AVP45 processor), Lyngdorf's TDAI-1120,
-Onkyo's P-80, StormAudio's processors, Volumio, and a Roon-based DIY approach.
-None of them combine, in one product, the specific things this setup depends
-on:
-
-- **Dirac Live room correction** (or a comparably regarded alternative —
-  Lyngdorf's RoomPerfect is the only serious contender found)
-- **HDMI eARC** for TV audio pass-through
-- **A 12V trigger output** for automated power control
-- **Genuine hi-res multiroom sync** — not AirPlay 2 or Chromecast, both of
-  which cap resolution/bit-depth and were independently ruled out (no Apple
-  devices for AirPlay; Chromecast's sound quality was judged unacceptable)
-- **A mature, stable, native Tidal implementation**, not a beta-quality Connect
-  integration
-
-The closest matches all require a real trade-off: Arcam's SA35/45 forces you to
-buy an unused amplifier section; the new Arcam AVP45 is an unproven, oversized
-home-theater processor; Onkyo's P-80 checks every box but comes from a recently
-bankrupt company; Lyngdorf is excellent but leans on AirPlay 2/Chromecast for
-multiroom like everyone else; and a Roon-based setup adds an ongoing
-subscription cost, an interface that's already been trialed and rejected, and —
-ironically, given the original complaint about Bluesound's proprietary LSDP
-protocol — its own unresolved, still-current discovery problems across VLANs
-and segmented networks, with no manual-IP fallback.
-
-**A platform switch doesn't even solve the original complaint.** The BluOS app
-itself works noticeably better on iOS than on Android — discovery is more
-reliable, fewer of the rough edges show up. That's telling: it confirms the
-underlying BluOS platform and protocol aren't inherently broken, since the same
-software works fine on different client hardware. It also means switching to an
-Apple-centric setup to "fix" this by using AirPlay would be solving a problem
-that iOS's *native BluOS app* already solves on its own — there'd be no reason
-to route through AirPlay at all, and doing so would only reintroduce the
-resolution/bit-depth compromises AirPlay carries anyway.
-
-Given all this, the pragmatic conclusion is: **the hardware and BluOS platform
-are doing their job well — the failure point is specifically the Android
-client.** That failure is narrow and self-contained enough to fix directly, by
-building a better controller against BluOS's existing control API, rather than
-by replacing an ecosystem that already works correctly everywhere except one
-app.
 
 ---
 
@@ -595,6 +530,6 @@ interact with BluOS. Every player speaks plain HTTP with XML bodies over the
 LAN. No TLS, no handshake, no binary framing, no token exchange, no cloud round
 trip. Anything that can make an HTTP request can control a player.
 
-With none of the existing Android options matching my needs, this project will
-be one more entry in the collection of software out there that kind of works
-with BluOS.
+With none of the existing Android options matching my needs as is, the next
+step is to consider how to build a new solution that meet the requirements. See
+[DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md).
