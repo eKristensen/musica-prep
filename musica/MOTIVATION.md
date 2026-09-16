@@ -7,8 +7,8 @@ requirements.
 
 It describes the situation as of September 2026, on firmware 4.16.22 with
 BluOS Controller 4.16.2 and 4.16.3. Everything dated here — the measurements,
-the products on sale, what has and has not been fixed — is a record of that
-moment rather than a standing claim.
+the state of the projects I looked at, what has and has not been fixed — is a
+record of that moment rather than a standing claim.
 
 ---
 
