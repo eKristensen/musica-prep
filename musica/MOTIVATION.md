@@ -61,21 +61,36 @@ below.
 
 ### 1. Discovery is forgetful, slow and unreliable
 
-There is always a delay before all players show up. The app seem to be in search mode for a fixed amount of time. Any player that does not answer inside that search window never appears at all. On Wi-Fi a lost broadcast frame is common enough for that to happen regularly. The only way to trigger another attempt if a player does not show up is backing out of the player list and re-entering is .
+There is always a delay before all players show up. The app seems to be in
+search mode for a fixed amount of time, and any player that does not answer
+inside that search window never appears at all. On Wi-Fi a lost broadcast frame
+is common enough for that to happen regularly. Backing out of the player list
+and re-entering is the only way to trigger another attempt.
 
-Even worse, the whole process have to be repeated as soon as the app is no longer activly running, i.e. in the background e.g. after lock screen or after using smartphone to do something else. In essen it appears like the app have no cache. If discovery was very fast it would not matter, but that is not the case. Lifting battery restrictions have no impact.
+Worse, the whole process has to be repeated as soon as the app stops running
+actively — after the lock screen, or after using the phone for something else.
+In essence the app appears to have no cache. If discovery were fast that would
+not matter, but it is not, and lifting battery restrictions makes no
+difference.
 
-**Impact:** It easily take 10-15 seconds every time I want to interact my Bluesound players before I can perform that action. I often find myself opening the Bluesound app, putting my phone on a table while doing something else and then go back to it and hope all players were discovered.
+**Impact:** it easily takes ten to fifteen seconds before I can do anything
+with my players. I often find myself opening the app, putting the phone down
+to do something else, and coming back hoping every player has turned up.
 
 ### 2. Players sometimes disappear and come back
 
 A player that is present and playing sometimes vanishes from the list for a
-while and then returns, with no action on my part. Even the currenlty selected player can disappear!
+while and then returns, with no action on my part. Even the currently selected
+player can disappear — while I am still controlling it, with working transport
+and volume, it is simply absent from the list.
 
-**Impact:** it makes it harder to group layers than it needs to be. The list reflows as
+**Impact:** it makes grouping harder than it needs to be. The list reflows as
 players come and go, so the entry under my thumb can change between the moment
 I decide to tap and the moment the tap registers, and I have then grouped the
-wrong player. Even worse, if the currently selected player disappears, which happens way too often, it makes grouping awkward, because a player you cannot see is a player you cannot group. Recovery requies backing out of the player list and re-entering, waiting through discovery again and retrying.
+wrong player. When the selected player is the one that vanishes, which happens
+far too often, grouping becomes awkward for a simpler reason: a player I cannot
+see is a player I cannot group. Recovery means backing out of the player list
+and re-entering, waiting through discovery again and retrying.
 
 ### 3. Partial lists that differ depending on what you select
 
@@ -84,22 +99,33 @@ subset; selecting another shows a different subset. Repeatedly refreshing
 eventually converges on the full set, but it takes several attempts and a
 noticeable amount of time.
 
-**Impact:** again it makes grouping hard, because a player you cannot see is a player you cannot add to a group. Again recovery requies backing out of the player list and re-entering, waiting through discovery again and retrying.
+**Impact:** grouping again, for the same reason: a player I cannot see is a
+player I cannot add to a group, and recovery again means backing out,
+re-entering and waiting through discovery.
 
 ### 4. Ungrouping leaves a player unusable for a while
 
 After removing a player from a group, that player often cannot be selected for
 about ten to twenty seconds. The app behaves as though it is still a group
-member for a short while, even though the player itself has already left the group. Even worse sometimes ungrouping players, makes some of the players on the list disappear and they might not even have been related to the selected group!
+member for a short while, even though the player itself has already left the
+group. Ungrouping sometimes makes other players vanish from the list too, and
+they need not have had anything to do with the group I was changing.
 
-**Impact:** grouping and ungrouping players is slower and more frustrating than it needs to be.
+**Impact:** grouping and ungrouping players is slower and more frustrating
+than it needs to be.
 
 ### 5. The app refuses to work over VPN, even though the network works
 
-Over VPN the app sometimes functions for a while, and then stops for no
-apparent reason. I can reach the players by its web interface via VPN. The restriction appears to be based on connection type rather than on whether the players are actually reachable.
+Over VPN the app sometimes works for a while, and then stops for no apparent
+reason. I can still reach the players' own web interface through the tunnel
+throughout. The restriction appears to be based on connection type rather than
+on whether the players are actually reachable.
 
-**Impact:** if I forget to pause the music before leaving home I have no other native choice than to use the web ui to reboot the player, but that is not an elegant solution at all. The most actionable scenario is forgotten Tidal playback that then prevents tidal playback on my phone while not at home. It also makes it impossible to build an alternative, potentially more stable, path for the discovery packets over VPN.
+**Impact:** if I forget to pause the music before leaving home, my only native
+option is to reboot the player from its web UI, which is hardly elegant. The
+case that bites most often is forgotten Tidal playback, which then blocks Tidal
+on my phone while I am out. It also makes it impossible to build an
+alternative, potentially more stable, path for the discovery packets over VPN.
 
 ### 6. A full rediscovery whose results are then thrown away
 
@@ -116,8 +142,8 @@ the players and then visibly forgets them a second later.
 
 ### None of this happens on iOS
 
-The BluOS iOS controller, on the same network, with the same players, exhibits none
-of the problems above. Players appear promptly and stay in the list. Whatever
+The BluOS iOS controller, on the same network, with the same players, exhibits
+none of the problems above. Players appear promptly and stay in the list. Whatever
 is going wrong is specific to the Android controller rather than to BluOS, to
 my network, or to my players.
 
@@ -140,17 +166,24 @@ response and in many cases it would be correct.
   service entries. Neither of two Android phones, from different
   vendors, behaved measurably better: still the last-connected player
   first, then a pause, then the rest.
-- **Not LSDP bad discovery.** Instantly served static LSDP records improves player list completeness, not speed. Players show up together more often with statis LSDP records served by a central service rather than the players.
+- **Not slow LSDP discovery.** Serving static LSDP records instantly, from a
+  central service rather than from the players, does not make the list appear
+  any sooner. It does make the list more often complete, with the players
+  showing up together rather than one at a time.
 - **Not the players.** They respond promptly to direct HTTP requests
   throughout, including while the app shows them as missing.
-- **Not one bad device.** The problems move around between players rather than
-  sticking to one. AI question: Can not the players and not one bad device be merged?
-- **Not one bad Android device** The same Android app, bridged and wired
-  under Waydroid, shows all four players in the same speed as a different virtualised Android device with no Google Play.
-- **Not one access point, switch, router or one firmware.** The same behaviour has followed me
-  across several access points, switches and routers and many firmware versions over a long period.
-- **Not general network health.** A wired machine on the same network sees
-  discovery traffic and resolves the players quickly and consistently on both mDNS an LSDP. The network performance for wired and wireless players are indisgiguishable.
+- **Not one bad player.** The problems move around between players rather than
+  sticking to one.
+- **Not one bad Android device.** The same Android app, bridged and wired under
+  Waydroid, shows all four players as quickly as a different virtualised
+  Android device with no Google Play.
+- **Not one access point, switch, router or firmware.** The same behaviour has
+  followed me across several access points, switches and routers, and many
+  firmware versions, over a long period.
+- **Not general network health.** A wired machine on the same network sees the
+  discovery traffic and resolves the players quickly and consistently over both
+  mDNS and LSDP. Wired and wireless players are indistinguishable in response
+  time.
 
 ---
 
@@ -282,7 +315,7 @@ forgets which player I had selected when I open it again.
 
 ### Scope
 
-Before a project is worth measuring against the requirements at all, it has to
+Before a project is worth measuring against the requirements above, it has to
 clear two much lower bars:
 
 - **Be alive.** There must be activity, or some evidence that the project is
@@ -482,20 +515,26 @@ worth saying why I think this is a problem I can actually solve. **The
 advantage is not skill, it is scope.** Bluesound has to support every player
 they have ever sold, on every phone, on every network, for every customer. I
 have to support four players, one network, and the features I actually use.
-Almost everything that makes their job hard is something I am allowed skip. That is not a claim to be better at this than they are — it is a claim that I can make it a much smaller problem.
+Almost everything that makes their job hard is something I am allowed to skip.
+That is not a claim to be better at this than they are — it is a claim that I
+can make it a much smaller problem.
 
-I have a Master in Computer Science, and the work I have done and enjoyed most is networking, web
-applications and backend services, which is the half of this project that
-carries the weight. **The half I am weakest at is Android**, where I started
-with no development experience at all. I intend to play on my strong sides and avoid building programs I cannot support or understand.
+I have a Master's in Computer Science, and the work I have done and enjoyed
+most is networking, web applications and backend services, which is the half of
+this project that carries the weight. **The half I am weakest at is Android**,
+where I started with no development experience at all. I intend to play to my
+strengths and avoid building things I cannot support or understand.
 
 This is a one-person, off-hours, AI-accelerated project, and without that
 acceleration I do not think it would be attemptable at the feature set I would
 actually want day to day. What matters most is not prompting but description:
 time spent writing down how something really works is repaid, because the
 alternative is spending it working against whatever the model guessed instead.
-That is why so much of this repository is research rather than code. I have researched how the API behaves and I will share that with the AI agent building the code. It also means the project carries a dependency it did not choose: AI assistance is currently
-cheap enough for a hobby project to use at this scale. If that stops being
+That is why so much of this repository is research rather than code: I have
+worked out how the API behaves, and that is what I hand to the agent writing
+the implementation. It also means the project carries a dependency it did not
+choose — AI assistance is currently cheap enough for a hobby project to use at
+this scale. If that stops being
 true, the arithmetic changes.
 
 ---
