@@ -156,21 +156,8 @@ response and in many cases it would be correct.
 
 ### What the measurements show
 
-
-What the measurements do point at is the Wi-Fi radio, and not in the way I
-expected. On a cable, with the radio left switched on, the phones take around
-three seconds. On the same cable, with Wi-Fi explicitly switched off, they take
-about one, complete every single run. What changed the result was whether a
-radio carrying none of the traffic happened to be switched on.
-
-I have only been able to reproduce the problems with the official app on an
-Android phone. The Windows and iOS apps do not appear to have them when I test
-in my setup. The Windows app does share the slow start — five to six seconds
-from launch to players visible — but the list then stays put. The repackaged
-Linux build behaves the same on different hardware, and both machines were on
-Wi-Fi throughout. Handing the app a fixed list of players and switching
-discovery off does not make either of them faster, so that wait is not time
-spent finding players. I have no Mac, so the Mac app is untested.
+The problems are specific to Android. Neither the iOS controller nor the
+desktop builds show them, and what follows is where the Android time goes.
 
 The wait breaks into three parts, and only one of them can be removed.
 
@@ -187,13 +174,21 @@ The wait breaks into three parts, and only one of them can be removed.
   three-quarters of a second, in every one of twenty rounds. That finishes well
   inside the app's own floor.
 
+The middle one is the surprise, and not in the way I expected. On a cable with
+the radio left switched on, the phones take around three seconds. On the same
+cable with Wi-Fi switched off, they take about one, complete every single run.
+What changed the result was whether a radio carrying none of the traffic
+happened to be switched on.
+
 **The list does not hold what it finds.** Probing stops ten to twelve seconds
-after the player screen opens, as in observation 1, and a player nobody probes
-announces itself only about once a minute. Between the two there is a long
-window in which nothing refreshes an entry. That window is what observations 2
-and 3 — players vanishing, and the selected player missing — look like from the
-outside, and observation 7 is the same thing across a restart: a screen that
-has just found every player, then a screen showing one.
+after the player screen opens — the search window in observation 1 — and a
+player nobody probes announces itself only about once a minute. Between the two
+there is a long window in which nothing refreshes an entry. Blocking a player's
+HTTP port to force the case, its entry disappears after roughly fifteen
+seconds, well inside that window. That is what observations 2 and 3 — players
+vanishing, and lists that differ by selection — look like from the outside, and
+observation 6 is the same thing across a restart: a screen that has just found
+every player, then a screen showing one.
 
 **Two discovery protocols are in use** — mDNS, and a Lenbrook-specific UDP
 broadcast protocol (LSDP). Lenbrook has been reported as saying they wrote
@@ -210,16 +205,20 @@ mechanism can add or remove a player from the list.
 **Why iOS is different.** I captured traffic and the iOS controller sends the
 same UDP broadcast discovery packets, so both platforms use both mechanisms. An
 iPhone and an Android phone on the same Wi-Fi, through the same access point,
-to the same players, behave completely differently. One variable changed
-and the outcome flipped, so it is not the protocols, the players, the network,
-the access point, or Wi-Fi as a medium.
+to the same players, behave completely differently. One variable changed and
+the outcome flipped, so it is not the protocols, the players, the network, the
+access point, or Wi-Fi as a medium.
 
-**Why desktop is different.** Both desktop machines were on Wi-Fi for every
-run, so whatever the desktop has going for it, a wired link is not it. What it
-has is that the app stays running: discovery happens once at startup and the
-list then stays, so the app's behaviour under lossy conditions is never
-exercised. The startup wait is still there — it is simply paid once, and it is
-not discovery.
+**Why desktop is different.** The Windows app shares the slow start — five to
+six seconds from launch to players visible — but the list then stays put, and
+the repackaged Linux build behaves the same on different hardware. Both desktop
+machines were on Wi-Fi for every run, so whatever the desktop has going for it,
+a wired link is not it. What it has is that the app keeps running: discovery
+happens once at startup and the list then stays, so its behaviour under lossy
+conditions is never exercised. Handing either build a fixed list of players and
+switching discovery off does not make it faster, so that startup wait is not
+time spent finding players — it is simply paid once. I have no Mac, so the Mac
+app is untested.
 
 **There is a configuration in which the official app is fine.** A cable, with
 the Wi-Fi radio switched off, gives all four players in about a second, every
