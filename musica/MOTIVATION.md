@@ -143,9 +143,9 @@ the players and then visibly forgets them a second later.
 ### None of this happens on iOS
 
 The BluOS iOS controller, on the same network, with the same players, exhibits
-none of the problems above. Players appear promptly and stay in the list. Whatever
-is going wrong is specific to the Android controller rather than to BluOS, to
-my network, or to my players.
+none of the problems above. Players appear promptly and stay in the list.
+Whatever is going wrong is specific to the Android controller rather than to
+BluOS, to my network, or to my players.
 
 Some of my family use Sonos, and discovery on Android is rock solid there.
 
