@@ -78,17 +78,18 @@ passively only.
 
 **Impact:** there is almost always a delay before all players show up. A player
 that does not answer inside that window never appears at all, and on Wi-Fi a
-lost broadcast frame is common enough for that to happen regularly. Waiting doesn't help.
-Backing out of the player list and re-entering is the only way to trigger
-another attempt.
+lost broadcast frame is common enough for that to happen regularly. Waiting
+does not help; backing out of the player list and re-entering is the only way
+to trigger another attempt.
 
 ### 2. Players sometimes disappear and come back
 
 A player that is present and playing sometimes vanishes from the list for a
 while and then returns, with no action on my part. To reproduce it
 deliberately I blocked a player's HTTP port and timed what followed: the entry
-disappears after roughly fifteen seconds. Normal status updates appear to arrive on a cycle of about ten
-seconds, so the margin between "healthy" and "removed" is only a few seconds.
+disappears after roughly fifteen seconds. Normal status updates appear to
+arrive on a cycle of about ten seconds, so the margin between "healthy" and
+"removed" is only a few seconds.
 Any hiccup — a roaming event, a slow response, a moment of power saving —
 crosses it.
 
@@ -559,7 +560,8 @@ else already knows where they are. How that is done is settled in
 
 I would rather not build it at all. If the Android app stopped losing players
 I would most likely leave this project wherever it had got to and go back to
-using it — which is why the ticket went to Bluesound first. What a fix there would not
-reach is the browsing: pre-cached, sortable Tidal lists are not something
+using it — which is why the ticket went to Bluesound first. What a fix there
+would not reach is the browsing: pre-cached, sortable Tidal lists are not
+something
 BluOS is ever going to provide, and most of the wishlist is unlikely to arrive
 either.
