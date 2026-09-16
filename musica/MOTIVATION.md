@@ -506,6 +506,45 @@ might be acceptable.
 
 ---
 
+## Why I think I can build it
+
+Being annoyed is not the same as being able to do anything about it, and a
+motivation that ends at annoyance is only a complaint. So it is worth saying
+why I think this is a problem I can actually solve.
+
+**The advantage is not skill, it is scope.** Bluesound has to support every
+player they have ever sold, on every phone, on every network, for every
+customer. I have to support four players, one network, and the features I
+actually use. Almost everything that makes their job hard is something I am
+allowed to simply not do. That is not a claim to be better at this than they
+are — it is a much smaller problem.
+
+I am a software engineer by education, from the Technical University of
+Denmark, and the work I have done and enjoyed most is networking, web
+applications and backend services, which is the half of this project that
+carries the weight.
+
+**The half I am weakest at is Android**, where I have no development experience
+at all. That is a real gap, and it is part of why the solution takes the shape
+it does: a web app installed as a PWA, with as much as possible solved on the
+server and as little as possible resting on the platform I know least.
+
+This is a one-person, off-hours, AI-accelerated project, and without that
+acceleration I do not think it would be attemptable at the feature set I would
+actually want day to day. What I have found matters most is not prompting but
+description: time spent researching and writing down how something really works
+is repaid, because the alternative is spending it working against whatever the
+model guessed instead. That is why so much of this repository is research
+rather than code, and it is probably what separates this from the other
+AI-assisted BluOS projects — the notes on how the API behaves exist before the
+implementation does.
+
+It also means the project carries a dependency it did not choose: AI assistance
+is currently cheap enough for a hobby project to use at this scale. If that
+stops being true, the arithmetic changes.
+
+---
+
 ## Conclusion
 
 There is a wide ecosystem with many interpretations of how it makes sense to
