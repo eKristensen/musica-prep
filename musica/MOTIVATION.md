@@ -562,6 +562,5 @@ I would rather not build it at all. If the Android app stopped losing players
 I would most likely leave this project wherever it had got to and go back to
 using it — which is why the ticket went to Bluesound first. What a fix there
 would not reach is the browsing: pre-cached, sortable Tidal lists are not
-something
-BluOS is ever going to provide, and most of the wishlist is unlikely to arrive
-either.
+something BluOS is ever going to provide, and most of the wishlist is unlikely
+to arrive either.
