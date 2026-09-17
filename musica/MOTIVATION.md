@@ -97,13 +97,12 @@ and re-entering, waiting through discovery again and retrying.
 ### 3. Partial lists that differ depending on what you select
 
 With several players and groups, selecting one player sometimes shows one
-subset; selecting another shows a different subset. Repeatedly refreshing
-eventually converges on the full set, but it takes several attempts and a
-noticeable amount of time.
+subset; selecting another shows a different subset.
 
 **Impact:** grouping again, for the same reason: a player I cannot see is a
-player I cannot add to a group, and recovery again means backing out,
-re-entering and waiting through discovery.
+player I cannot add to a group. Refreshing repeatedly does converge on the full
+set eventually, but it takes several attempts and a noticeable amount of time,
+each one a trip out of the player list and back in through discovery.
 
 ### 4. Ungrouping leaves a player unusable for a while
 
