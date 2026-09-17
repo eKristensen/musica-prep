@@ -4,9 +4,9 @@ Hi Charmain,
 
 Taking your suggestions in order:
 
-Location: the BluOS app already had the location permission on both Android
-phones, granted well before any of the testing I described, so that was already
-in place when I wrote.
+Location: the BluOS app already had the location permission on every Android
+phone I have tested, granted well before any of the testing I described, so
+that was already in place when I wrote.
 
 Mobile data: my Android phones differ here — two are Wi-Fi only with no
 cellular radio at all, one has both. All of them show the same behaviour, so
@@ -14,12 +14,9 @@ mobile data cannot be involved on the two without it. I have now tested it
 explicitly on the phone that does have cellular: airplane mode on, Wi-Fi
 switched back on, so Wi-Fi up with no mobile data. Four runs back to back, by
 the same method as before, and the result was identical to my earlier numbers.
-
-I have since added a third Android phone to the comparison, a Google Pixel
-3a XL on Android 12, app 4.16.3 build 3224, Wi-Fi only and on the same layer 2
-network as the players. Force stopping the app and reopening it puts it exactly
-where the other two phones are, four runs out of four. So that is three phones
-from three manufacturers, on Android 11, 12 and 15.
+I have also added a third phone since I first wrote, so the comparison is now
+three phones from three manufacturers, on Android 11, 12 and 15, all behaving
+the same way.
 
 VPN: there is one on the phone with cellular, but it only carries traffic for
 my local networks, not internet traffic. It was up during the tests I reported
@@ -39,19 +36,6 @@ I have also now tried grouping and ungrouping on the iPhone. That was a short
 session rather than daily use, so I will not claim more than it showed, but I
 could not provoke any of the grouping trouble I run into regularly on Android,
 and it was noticeably smoother.
-
-The Pixel did show me one thing worth passing on, because I think it points at
-where the problem lives. On its stock battery profile, swiping the app away and
-reopening it leaves the player list simply there, immediately. After I set the
-app to unrestricted battery usage, granted every permission and disabled
-permission auto-removal, the same swipe-and-reopen took about four seconds,
-four times in a row. Relaxing the restrictions made the everyday case worse.
-
-That only makes sense to me if the app keeps its player list in memory and
-nothing writes it down: when the system happens to keep the process alive the
-list is instantly there, and when it does not the app starts from nothing. It
-would explain why a force stop always gives the slow result, and why the
-list has to be rebuilt after the phone has been idle.
 
 I left a few things out of my first message to keep it shorter. Here they are:
 
