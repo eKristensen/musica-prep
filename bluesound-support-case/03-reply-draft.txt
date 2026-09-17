@@ -1,0 +1,58 @@
+Subject: #560728
+
+Hi Charmain,
+
+Taking your suggestions in order:
+
+Location: the BluOS app already had the location permission on both Android
+phones, granted well before any of the testing I described, so that was already
+in place when I wrote.
+
+Mobile data: my two Android phones differ here — one has Wi-Fi only and no
+cellular radio at all, the other has both. Both show the same behaviour, so
+mobile data cannot be involved on the Wi-Fi-only phone. I have now tested it
+explicitly on the phone that does have cellular: airplane mode on, Wi-Fi
+switched back on, so Wi-Fi up with no mobile data. Four runs back to back, by
+the same method as before, and the result was identical to my earlier numbers.
+
+VPN: no VPN was active during any of the tests I have reported, before or now.
+
+I have sent the diagnostic logs from the players. I would like to point out
+again, though, that I also have an iPhone available, and on the same network
+with the same players I see none of these problems there. I have now also tried
+grouping and ungrouping on it briefly and could not provoke any of the grouping
+trouble I run into regularly on Android; it was noticeably smoother. That was a
+short test rather than long-term use, but the contrast was clear.
+
+I left a few things out of my first message to keep it shorter. They are worth
+including now, because none of them look like network problems:
+
+1) Occasionally the app opens with a message saying BluOS lost connection to my
+player, and the normal interface is replaced by a full-screen discovery view. I
+waited through it once: it found every player, slowly, one at a time, and then
+the normal interface appeared, showing only the player I had selected before
+closing the app. Everything the previous screen had just found was gone, and
+had to be discovered again from scratch.
+
+2) Sometimes the app comes back with a different player selected than the one I
+was using when I closed it. Nothing I did changed the selection; it changes on
+its own between one session and the next.
+
+3) Ungrouping sometimes makes other players vanish from the list as well, and
+they need not have had anything to do with the group I was changing.
+
+4) A clarification on something I did mention. A player that is present and
+playing sometimes vanishes from the list for a while and then returns, with no
+action on my part. Even the currently selected player can disappear: while I am
+still controlling it, with play, pause and volume all working, it is simply
+absent from the list. So it is not a matter of the player being unreachable.
+
+Finally, to restate the result I think is the most useful clue, since it points
+away from my network. Attaching a USB Ethernet adapter to the phone makes no
+difference on its own. Only when Wi-Fi is switched off as well does the
+discovery time drop and the player list become reliable. A virtualised Android
+instance, wired to the same layer 2 network as the players, shows that same
+fast and reliable result.
+
+Best regards,
+Emil Kristensen
