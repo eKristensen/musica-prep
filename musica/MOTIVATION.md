@@ -533,6 +533,11 @@ Almost everything that makes their job hard is something I am allowed to skip.
 That is not a claim to be better at this than they are — it is a claim that I
 can make it a much smaller problem.
 
+**I also already run a home server.** Whatever shape the answer takes, it needs
+something that is always on, and I have one — powered, maintained and already
+earning its keep on other jobs. That removes a cost and a piece of upkeep that
+would otherwise land on this project before a line of it was written.
+
 I have a Master's in Computer Science, and the work I have done and enjoyed
 most is networking, web applications and backend services, which is the half of
 this project that carries the weight. **The half I am weakest at is Android**,

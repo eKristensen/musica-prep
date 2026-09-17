@@ -63,3 +63,10 @@ The app sometimes opens with a different player selected than the one in use
 when it was closed, which forces another trip through discovery. Check the
 source for this one the way the other problems were checked — it was not among
 them, so nobody has looked at why the stored selection is not honoured.
+
+-----
+
+Try grouping and ungrouping on the iOS app, and see whether any of the problems
+reproduce there. Then use it as the everyday controller for a while: the
+comparison so far is about discovery, and it says nothing about whether iOS is
+actually pleasant to live with.
