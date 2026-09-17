@@ -35,8 +35,8 @@ markers are not used for it.
 
 | device | detail |
 |---|---|
-| **Fairphone 5 5G** | Android 15 (API 35), build `FP5.VT31.C.114.20260804`. App **4.16.3 build 3224** from the Play Store. **Background usage allowed** for the BluOS app |
-| **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11 (API 30), `RKQ1.200826.002`. App **4.16.2 build 3217** from the Play Store. **No battery-saver restrictions** on the BluOS app |
+| **Fairphone 5 5G** | Android 15 (API 35), build `FP5.VT31.C.114.20260804`. App **4.16.3 build 3224** from the Play Store. **Background usage allowed** and **location granted** for the BluOS app |
+| **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11 (API 30), `RKQ1.200826.002`. App **4.16.2 build 3217** from the Play Store. **No battery-saver restrictions** and **location granted** for the BluOS app |
 | **Waydroid** | LineageOS 20 — Android 13 — image `20-20260403-VANILLA-waydroid_x86_64`, minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
 | **iPhone 16** | iOS 26.6.2. BluOS Controller **4.16.2** |
 | **Windows** | BluOS Controller **4.16.1 build 6281** (Electron), on a laptop over **Wi-Fi** |
@@ -246,6 +246,15 @@ usage on the Fairphone and exempt from battery-saver restrictions on the Mi 9,
 and both still show the penalty — so Android, and MIUI especially, killing or
 throttling background apps is ruled out.
 
+**Nor is a missing permission.** The app holds the location permission on both
+phones, which is what Android requires before an app may see anything about the
+Wi-Fi network it is attached to. It was granted before any of the runs above.
+
+**Nor is cellular data competing with Wi-Fi [V hardware].** With the Fairphone
+in airplane mode and Wi-Fi switched back on — Wi-Fi up, no mobile data at all —
+four back-to-back runs by the method above came out no different from the
+ordinary Wi-Fi rows.
+
 ### D3: the desktop delay is not waiting for answers
 
 With `staticPlayers.txt` in place and **mDNS and LSDP discovery both switched
@@ -424,7 +433,9 @@ Established **[V hardware]**:
   non-Android clients on that access point, none of them penalised.
 - Android battery management is not the cause either: the app has background
   usage allowed on the Fairphone and no battery-saver restrictions on the Mi 9,
-  and both still show the penalty.
+  and both still show the penalty. Neither is a missing location permission,
+  which both phones grant, nor mobile data competing with Wi-Fi — airplane mode
+  with Wi-Fi back on changes nothing across four runs.
 
 Not established:
 
