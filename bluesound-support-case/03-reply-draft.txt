@@ -32,7 +32,7 @@ part I have tested hardest there: cold start after cold start, all four players
 appear at once and stay, every time, however often I restart the app. I have
 not seen a single one of the discovery problems above on it.
 
-I have also now tried grouping and ungrouping on the iPhone. That was a short
+I have now also tried grouping and ungrouping on the iPhone. That was a short
 session rather than daily use, so I will not claim more than it showed, but I
 could not provoke any of the grouping trouble I run into regularly on Android,
 and it was noticeably smoother.
