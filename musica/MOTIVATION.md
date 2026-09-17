@@ -76,7 +76,8 @@ difference either.
 
 **Impact:** it easily takes ten to fifteen seconds before I can do anything
 with my players. I often find myself opening the app, putting the phone down
-to do something else, and coming back hoping every player has turned up.
+to do something else, and coming back hoping the players I need this time have
+turned up. I gave up expecting all four a long time ago.
 
 ### 2. Players sometimes disappear and come back
 
