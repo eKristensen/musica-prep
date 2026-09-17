@@ -63,8 +63,8 @@ below.
 
 There is always a delay before all players show up. The app seems to be in
 search mode for a fixed amount of time, and any player that does not answer
-inside that search window never appears at all. On Wi-Fi a lost broadcast frame
-is common enough for that to happen regularly. Backing out of the player list
+inside that search window never appears at all. On Wi-Fi a lost broadcast or
+multicast frame is common enough for that to happen regularly. Backing out of the player list
 and re-entering is the only way to trigger another attempt.
 
 Worse, the whole process has to be repeated as soon as the app stops running
