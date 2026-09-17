@@ -150,18 +150,24 @@ and had to be discovered again from scratch.
 the most conspicuous version of the problem, because the app visibly finds all
 the players and then visibly forgets them a second later.
 
-### None of this happens on iOS
+### Discovery does not behave this way on iOS
 
-The BluOS iOS controller, on the same network, with the same players, exhibits
-none of the problems above. Players appear promptly and stay in the list.
-Whatever is going wrong is specific to the Android controller rather than to
-BluOS, to my network, or to my players.
+The BluOS controller on an iPhone, on the same network, through the same access
+point, to the same players, shows all four immediately and keeps them.
+Restarting the app, reloading, refreshing, closing it and opening it again from
+the home screen — whatever I do, the list is there and it is complete.
 
-Some of my family use Sonos, and discovery on Android is rock solid there.
+What I have tested on iOS is exactly that, and only that: cold starts, and
+whether the player list fills. I have not tried grouping or ungrouping on the
+iPhone, and I have not used it as my everyday controller, so the rest of the
+problems above are untested there rather than absent.
 
-Restarting the iOS app, reloading, refreshing, closing and opening it from the
-home screen — no matter what I do, players show up instantly and stay rock
-solid. I wonder why I cannot get the same experience on Android.
+That is still enough for the one thing this needs to establish. The discovery
+problems are not caused by BluOS, by my network or by my players, because none
+of those changed between the two phones.
+
+Some of my family use Sonos, and discovery on Android is rock solid there. I
+wonder why I cannot get the same experience on Android with Bluesound.
 
 ---
 
@@ -201,8 +207,9 @@ response and in many cases it would be correct.
 
 ### What the measurements show
 
-The problems are specific to Android. Neither the iOS controller nor the
-desktop builds show them, and what follows is where the Android time goes.
+The slow, incomplete player list is specific to Android. Neither the iOS
+controller nor the desktop builds show it, and what follows is where the
+Android time goes.
 
 The wait breaks into three parts, and only one of them can be removed.
 
