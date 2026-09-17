@@ -23,12 +23,16 @@ on and Wi-Fi back on. Four runs, unchanged.
 Diagnostic logs: you already have the log from the first player, and I am
 sending the remaining three.
 
-I would like to point out again, though, that I also have an iPhone available,
-and on the same network with the same players I see none of these problems
-there. I have now also tried
-grouping and ungrouping on it briefly and could not provoke any of the grouping
-trouble I run into regularly on Android; it was noticeably smoother. That was a
-short test rather than long-term use, but the contrast was clear.
+I would like to point out again, though, what the iPhone does on the same
+network, through the same access point, to the same players. Discovery is the
+part I have tested hardest there: cold start after cold start, all four players
+appear at once and stay, every time, however often I restart the app. I have
+not seen a single one of the discovery problems above on it.
+
+I have also now tried grouping and ungrouping on the iPhone. That was a short
+session rather than daily use, so I will not claim more than it showed, but I
+could not provoke any of the grouping trouble I run into regularly on Android,
+and it was noticeably smoother.
 
 I left a few things out of my first message to keep it shorter. Here they are:
 
