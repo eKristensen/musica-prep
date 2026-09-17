@@ -37,6 +37,7 @@ markers are not used for it.
 |---|---|
 | **Fairphone 5 5G** | Android 15 (API 35), build `FP5.VT31.C.114.20260804`. App **4.16.3 build 3224** from the Play Store. **Background usage allowed** and **location granted** for the BluOS app |
 | **Xiaomi Mi 9** | MIUI Global 12.5.1, Android 11 (API 30), `RKQ1.200826.002`. App **4.16.2 build 3217** from the Play Store. **No battery-saver restrictions** and **location granted** for the BluOS app |
+| **Google Pixel 3a XL** | Android 12 (API 32), build `SP2A.220505.008`. App **4.16.3 build 3224**. Tested on the stock **Optimized** battery profile and again on **Unrestricted**, with all permissions granted and permission auto-removal disabled. Wi-Fi only |
 | **Waydroid** | LineageOS 20 — Android 13 — image `20-20260403-VANILLA-waydroid_x86_64`, minimal Android with **no Google Play**. App **4.16.3**, APK from APKMirror. Bridged to the host's network, with its own address on the players' VLAN |
 | **iPhone 16** | iOS 26.6.2. BluOS Controller **4.16.2** |
 | **Windows** | BluOS Controller **4.16.1 build 6281** (Electron), on a laptop over **Wi-Fi** |
@@ -103,6 +104,8 @@ All on 2026-09-12, in the order given.
 | R7 | **Waydroid** (LineageOS, no Google Play, app 4.16.3) | **bridged, wired**, own IP on the players' VLAN | players directly | **timer** | **1.0–1.5 s** | **always, however many times tried** |
 | R8 | **Waydroid**, same as R7 | same as R7 | **`lsdp-static serve` on the players' network**, answering instantly | **timer** | **1.0–1.5 s — no difference** | always |
 | R9 | **iPhone** | **Wi-Fi**, and separately wired with Wi-Fi off | players directly, same VLAN | **not timed** — impression only | **instant, no "Discovering…" at all** | **always, on either link** |
+| R10 | **Google Pixel 3a XL**, **Optimized** battery profile | Wi-Fi | players directly, same layer 2 | counted | **swipe away and reopen: the list is simply there.** Force stop and reopen: as the other phones over Wi-Fi | list kept on swipe; 4 of 4 on force stop |
+| R11 | **Google Pixel 3a XL**, **Unrestricted** battery profile | Wi-Fi | players directly, same layer 2 | counted | **≈4 s after a swipe away**, four times in a row | 4 of 4 |
 | D1 | Windows laptop | **Wi-Fi** | with and without `lsdp-static serve` | counted | 5–6 s from launch | — |
 | D2 | Linux laptop, AppImage | **Wi-Fi** | with and without `lsdp-static serve` | counted | 5–6 s from launch, no measurable difference | — |
 | D3 | Windows laptop, same as D1 | **Wi-Fi** | **`staticPlayers.txt`, with mDNS and LSDP discovery disabled** | counted | **no faster than before** | only the listed players appear |
@@ -244,7 +247,8 @@ above are measuring, and it is read out of the app in
 **Battery management is not the explanation.** The app is allowed background
 usage on the Fairphone and exempt from battery-saver restrictions on the Mi 9,
 and both still show the penalty — so Android, and MIUI especially, killing or
-throttling background apps is ruled out.
+throttling background apps is ruled out. Relaxing the restrictions does change
+one thing, on the Pixel, and it is not the penalty: see R10 and R11.
 
 **Nor is a missing permission.** The app holds the location permission on both
 phones, which is what Android requires before an app may see anything about the
@@ -254,6 +258,34 @@ Wi-Fi network it is attached to. It was granted before any of the runs above.
 in airplane mode and Wi-Fi switched back on — Wi-Fi up, no mobile data at all —
 four back-to-back runs by the method above came out no different from the
 ordinary Wi-Fi rows.
+
+### R10 and R11: what survives a swipe is the process, not a cache
+
+A third Android phone, a third vendor, Android 12. On force stop it lands
+exactly where the other two do over Wi-Fi, four runs out of four — which is the
+clean result here, because a force stop is the one way to be certain the
+process is gone.
+
+The interesting part is the pair. On the stock **Optimized** battery profile,
+swiping the app away and reopening it leaves the player list simply *there*, at
+once. After setting the app to **Unrestricted**, granting every permission and
+disabling permission auto-removal, the same swipe-and-reopen takes about four
+seconds, four times in a row. Relaxing the restrictions made the everyday case
+worse, not better.
+
+That is not a contradiction of the row above. It is about **whether the process
+survives**, not about how fast discovery runs, and it is the same code path
+[`controller-code-notes.md`](controller-code-notes.md) describes: the list lives
+in memory and nothing persists it, so an instant list after a swipe means the
+process was still alive. On the Pixel under Optimized it usually was; under
+Unrestricted it was not. Which of those happens is the system's call.
+
+**Why the profile should invert it is not established [U].** Optimized may keep
+the app resident where Unrestricted does not, but nothing here tested that —
+`adb shell ps` after the swipe would settle it, and was not run.
+
+Also noticed, and not chased: this phone's initial discovery screen is slower
+than the others, and it *sometimes* appears to keep what it found there **[U]**.
 
 ### D3: the desktop delay is not waiting for answers
 
@@ -439,6 +471,9 @@ Established **[V hardware]**:
 
 Not established:
 
+- **Why relaxing the Pixel's battery restrictions makes the everyday case
+  worse** (R10, R11). It should be about whether the process survives the
+  swipe, and one `adb shell ps` would say, but nothing here tested it.
 - Whether Waydroid being a few tenths slower than the phones means anything; a
   virtualised display is the dull explanation.
 - **What the iOS controller actually does.** `bluos-http-api.md` is built from
