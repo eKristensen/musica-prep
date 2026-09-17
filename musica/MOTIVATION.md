@@ -286,39 +286,39 @@ looking for alternatives. The full list of alternatives found can be seen in
 
 ### Requirements
 
-**R0: At least as stable as the official BluOS Controller.** Frustrating as its
+**R1: At least as stable as the official BluOS Controller.** Frustrating as its
 discovery is, the official app never crashes, never makes my phone heat up,
 never drains the battery and never locks up. This one is hard to judge in
 advance, so any crash has to be weighed on its own — but most of them will be
 disqualifying.
 
-**R1: Must work on Android.** It is not relevant to me if I cannot use it on my
+**R2: Must work on Android.** It is not relevant to me if I cannot use it on my
 Android phone. A browser variant may be acceptable — but not the players' own:
 the web UI on port 80 exposes settings only, with no playback control, so there
 is no vendor-provided way to control a player without the app.
 
-**R2: A GUI with basic controls.** I want to be able to click on what I want to
+**R3: A GUI with basic controls.** I want to be able to click on what I want to
 search for, see album covers, and interact with players visually at a glance.
 Listing the current playback queue is a welcome bonus here, not a requirement.
 
-**R3: Manual player entry.** Auto discovery is a major pain point with the
+**R4: Manual player entry.** Auto discovery is a major pain point with the
 official app. Were I able to enter players by hand and not depend on discovery
 at all, I would have been perfectly happy with it. Needless to say, I do not
 want to deal with forced auto discovery any more.
 
-**R4: Fast content browsing with sorting.** I spend a lot of time waiting for
+**R5: Fast content browsing with sorting.** I spend a lot of time waiting for
 Tidal playlists to load. I use my favourite songs on Tidal a lot, and being
 able to pick the sorting to get them in the order I added them rather than in
 alphabetical order is essential for me.
 
-**R5: Search.** It must be possible to search Tidal in an easy and intuitive
+**R6: Search.** It must be possible to search Tidal in an easy and intuitive
 way.
 
-**R6: Grouping.** Grouping in the BluOS controller app is fairly reliable in
+**R7: Grouping.** Grouping in the BluOS controller app is fairly reliable in
 itself; what is not easy is grouping players that never show up. I use
 grouping fairly often, so that feature must be present and easy to use.
 
-**R7: Easy player selection.** I switch between players often, so it should be
+**R8: Easy player selection.** I switch between players often, so it should be
 easy to change to another player. On a side note: sometimes the official app
 forgets which player I had selected when I open it again.
 
@@ -349,17 +349,17 @@ that is enough.
 ### Full controller apps
 
 **[BluOS NAD remote](https://github.com/crwsolutions/BluOsNadRemote)**: a very
-good candidate. It easily checks off R1, R2 and R3. Browsing is possible but
-not with custom sorting, making it just barely fail R4. Search is hard to find,
+good candidate. It easily checks off R2, R3 and R4. Browsing is possible but
+not with custom sorting, making it just barely fail R5. Search is hard to find,
 and I managed to make the app crash when I tried to search for something,
-failing R5. I did not find any way to group players, and switching players
-requires going to the settings, failing R6 and R7. The focus on NAD device
+failing R6. I did not find any way to group players, and switching players
+requires going to the settings, failing R7 and R8. The focus on NAD device
 features that are unusable on Bluesound players, together with the lack of
 features I need, means this app does not work out for me.
 
 **[BlueSound Controller](https://github.com/rdOxalis/bluesoundplayer)**: a GUI
-app that works on Android, ticking off R1 and R2. Manual player entry is not
-possible, failing R3. This app implements its own discovery mechanism that
+app that works on Android, ticking off R2 and R3. Manual player entry is not
+possible, failing R4. This app implements its own discovery mechanism that
 scans all networks as if they were /24 subnets, completely ignoring any subnet
 definitions — which works fine as long as your network actually is a /24.
 Detected players are removed automatically when the device is no longer
@@ -368,10 +368,10 @@ players are not visible. I moved my phone to a Wi-Fi network on the same VLAN
 as the players, and discovered that the app is very basic. When players are
 detected it is easy to switch between them and create groups, though actual
 group creation was not tested, as I found no way to do content browsing or
-search. That ticks off R7 and maybe R6, but fails R4 and R5.
+search. That ticks off R8 and maybe R7, but fails R5 and R6.
 
 **[BluRemote](https://apps.apple.com/dk/app/bluremote-bluos-controller/id6444855562)**:
-Mac only, so it fails R1, and without a Mac I cannot even test it. Not
+Mac only, so it fails R2, and without a Mac I cannot even test it. Not
 relevant.
 
 ### Home Assistant integrations
@@ -383,15 +383,15 @@ BluOS controller. I found three integrations:
 - [bluesound_alt](https://github.com/aunefyren/bluesound_alt)
 - [Pimmeke1989/bluos](https://github.com/Pimmeke1989/bluos)
 
-The positives first: R1 and R2 are fulfilled, as Home Assistant has Android
-apps and works in a browser. Players can be added manually, ticking off R3. As
+The positives first: R2 and R3 are fulfilled, as Home Assistant has Android
+apps and works in a browser. Players can be added manually, ticking off R4. As
 a bonus, this works fine from Linux via the browser.
 
 The interface via Home Assistant turns out to be clumsy — it takes many clicks
 to get to the UI where I can control the players — and the integrations are
-buggy when grouping players, so this solution fails R6 and R7. I could not find
+buggy when grouping players, so this solution fails R7 and R8. I could not find
 any search, and at least with bluesound_alt I could not get it to show all the
-songs in my Tidal collection, ultimately failing R4 and R5.
+songs in my Tidal collection, ultimately failing R5 and R6.
 
 I tested most of the functionality with the bluesound_alt integration, and I
 went further with that one than with any other candidate: I forked it and
