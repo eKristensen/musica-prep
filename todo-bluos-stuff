@@ -70,3 +70,12 @@ Try grouping and ungrouping on the iOS app, and see whether any of the problems
 reproduce there. Then use it as the everyday controller for a while: the
 comparison so far is about discovery, and it says nothing about whether iOS is
 actually pleasant to live with.
+
+-----
+
+Follow up on the Pixel 3a XL rows in bluos-api (R10, R11). Two things are
+recorded as unproven there and both are cheap to settle: run `adb shell ps`
+after a swipe away under each battery profile, which should say whether the
+process survives and so explain why relaxing the restrictions makes the
+everyday case worse; and pin down whether that phone's slower initial
+discovery screen really does sometimes keep what it found.
