@@ -1,4 +1,5 @@
 Subject: #560728
+Sent: 17 September 2026
 
 Hi Charmain,
 
@@ -23,8 +24,9 @@ my local networks, not internet traffic. It was up during the tests I reported
 earlier, so I have disabled it and run them again, including with airplane mode
 on and Wi-Fi back on. Four runs, unchanged.
 
-Diagnostic logs: you already have the log from the first player, and I am
-sending the remaining three.
+Diagnostic logs: you already have the log from the first player, and I have
+sendt the remaining three. They got these support case numbers: #560996,
+#560997 and #560998.
 
 I would like to point out again, though, what the iPhone does on the same
 network, through the same access point, to the same players. Discovery is the
