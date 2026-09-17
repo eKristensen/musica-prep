@@ -70,8 +70,9 @@ the player list and re-entering is the only way to trigger another attempt.
 Worse, the whole process has to be repeated as soon as the app stops running
 actively — after the lock screen, or after using the phone for something else.
 In essence the app appears to have no cache. If discovery were fast that would
-not matter, but it is not, and lifting battery restrictions makes no
-difference.
+not matter, but it is not. Lifting Android's battery restrictions on the app —
+unrestricted background usage, exempt from battery optimisation — makes no
+difference either.
 
 **Impact:** it easily takes ten to fifteen seconds before I can do anything
 with my players. I often find myself opening the app, putting the phone down
