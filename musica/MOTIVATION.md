@@ -158,9 +158,11 @@ point, to the same players, shows all four immediately and keeps them.
 Restarting the app, reloading, refreshing, closing it and opening it again from
 the home screen — whatever I do, the list is there and it is complete.
 
-What I have tested on iOS is exactly that, and only that: cold starts, and
-whether the player list fills. I have not tried grouping or ungrouping on the
-iPhone, and I have not used it as my everyday controller, so the rest of the
+What I have tested hardest on iOS is exactly that: cold starts, and whether the
+player list fills. I have also tried grouping and ungrouping there, though only
+briefly — I could not provoke any of the trouble I run into regularly on
+Android, and it was noticeably smoother, but a short session is not daily use.
+I have not lived with the iPhone as my everyday controller, so the rest of the
 problems above are untested there rather than absent.
 
 That is still enough for the one thing this needs to establish. The discovery
@@ -180,9 +182,8 @@ response and in many cases it would be correct.
 - **Not mDNS reflection.** Reproduced with the phone on the same VLAN as the
   players.
 - **Not missing or slow mDNS records.** I published static IPv4 host and
-  service entries. Neither of two Android phones, from different
-  vendors, behaved measurably better: still the last-connected player
-  first, then a pause, then the rest.
+  service entries. None of the phones behaved measurably better for it: still
+  the last-connected player first, then a pause, then the rest.
 - **Not slow LSDP discovery.** Serving static LSDP records instantly, from a
   central service rather than from the players, does not make the list appear
   any sooner. It does make it slightly more often complete — players arrive
@@ -193,9 +194,13 @@ response and in many cases it would be correct.
   throughout, including while the app shows them as missing.
 - **Not one bad player.** The problems move around between players rather than
   sticking to one.
-- **Not one bad Android device.** The same Android app, bridged and wired under
-  Waydroid, shows all four players as quickly as a different virtualised
-  Android device with no Google Play.
+- **Not one bad Android device.** Three phones from three manufacturers, on
+  Android 11, 12 and 15, all behave the same way. So does the app under
+  Waydroid on a fourth Android version, with no Google Play at all.
+- **Not mobile data or cellular.** Two of the three phones have no cellular
+  radio at all and behave the same as the one that has. On that one, airplane
+  mode with Wi-Fi switched back on — Wi-Fi up, no mobile data — changed nothing
+  across four runs.
 - **Not one access point, switch, router or firmware.** The same behaviour has
   followed me across several access points, switches and routers, and many
   firmware versions, over a long period.
