@@ -168,8 +168,10 @@ response and in many cases it would be correct.
   first, then a pause, then the rest.
 - **Not slow LSDP discovery.** Serving static LSDP records instantly, from a
   central service rather than from the players, does not make the list appear
-  any sooner. It does make the list more often complete, with the players
-  showing up together rather than one at a time.
+  any sooner. It does make it slightly more often complete — players arrive
+  together rather than one at a time — but not by enough to change anything in
+  practice, and simple tests suggest that even a more stable version of it
+  would not.
 - **Not the players.** They respond promptly to direct HTTP requests
   throughout, including while the app shows them as missing.
 - **Not one bad player.** The problems move around between players rather than
