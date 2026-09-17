@@ -284,7 +284,32 @@ Having decided the official app was too frustrating to keep using, I went
 looking for alternatives. The full list of alternatives found can be seen in
 [ECOSYSTEM.md](ECOSYSTEM.md).
 
+### Scope
+
+The ecosystem is large, and most of it is not in the running at all. Before a
+project is worth measuring against the requirements below, it has to clear two
+much lower bars:
+
+- **Be alive.** There must be activity, or some evidence that the project is
+  actively developed. Examples of elimination: more than two years since the
+  last commit, fewer than ten commits in total, a single author.
+- **Look like it could replace a controller.** Many projects set out to solve
+  one narrow task, and I need more than that. Examples of elimination:
+  dashboards, single-purpose tools, and libraries that do not amount to a
+  controller on their own.
+
+Most of the [ECOSYSTEM.md](ECOSYSTEM.md) list falls at one of those two, and
+arguing against each project individually would take far longer than it is
+worth, so I do not. **Any project not discussed further down can be taken to
+have failed one of the two tests above** — that is a judgement made by reading
+the project, not by running it, and for a dead or narrow project that is
+enough.
+
+---
+
 ### Requirements
+
+What survives that first cut is then measured against what I actually need.
 
 **R1: At least as stable as the official BluOS Controller.** Frustrating as its
 discovery is, the official app never crashes, never makes my phone heat up,
@@ -321,28 +346,6 @@ grouping fairly often, so that feature must be present and easy to use.
 **R8: Easy player selection.** I switch between players often, so it should be
 easy to change to another player. On a side note: sometimes the official app
 forgets which player I had selected when I open it again.
-
----
-
-### Scope
-
-Before a project is worth measuring against the requirements above, it has to
-clear two much lower bars:
-
-- **Be alive.** There must be activity, or some evidence that the project is
-  actively developed. Examples of elimination: more than two years since the
-  last commit, fewer than ten commits in total, a single author.
-- **Look like it could replace a controller.** Many projects set out to solve
-  one narrow task, and I need more than that. Examples of elimination:
-  dashboards, single-purpose tools, and libraries that do not amount to a
-  controller on their own.
-
-Most of the [ECOSYSTEM.md](ECOSYSTEM.md) list falls at one of those two. The
-ecosystem is large and arguing against each project individually would take far
-longer than it is worth, so I do not. **Any project not discussed below can be
-taken to have failed one of the two tests above** — that is a judgement made
-by reading the project, not by running it, and for a dead or narrow project
-that is enough.
 
 ---
 
