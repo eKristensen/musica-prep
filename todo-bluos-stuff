@@ -56,3 +56,10 @@ What is missing is the link where it is actually used. bluos-api cites this
 source as "2015 forum" for several claims (C-10, C-32 among them) without a
 URL, so the reference for those rows lives in a different folder under a
 different name. Worth putting the archive URL next to the source name there.
+
+-----
+
+The app sometimes opens with a different player selected than the one in use
+when it was closed, which forces another trip through discovery. Check the
+source for this one the way the other problems were checked — it was not among
+them, so nobody has looked at why the stored selection is not honoured.

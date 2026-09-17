@@ -127,7 +127,16 @@ case that bites most often is forgotten Tidal playback, which then blocks Tidal
 on my phone while I am out. It also makes it impossible to build an
 alternative, potentially more stable, path for the discovery packets over VPN.
 
-### 6. A full rediscovery whose results are then thrown away
+### 6. The app opens with a different player selected
+
+Sometimes the app comes back with a different player selected than the one I
+was using when I closed it. Nothing I did changed the selection; it changes on
+its own between one session and the next.
+
+**Impact:** getting back to the player I actually wanted means going through
+the list, and so through discovery, one more time than should be necessary.
+
+### 7. A full rediscovery whose results are then thrown away
 
 Occasionally the app opens with a message saying BluOS lost connection to my
 player, and the normal interface is replaced by a full-screen discovery view.
@@ -222,7 +231,7 @@ there is a long window in which nothing refreshes an entry. Blocking a player's
 HTTP port to force the case, its entry disappears after roughly fifteen
 seconds, well inside that window. That is what observations 2 and 3 — players
 vanishing, and lists that differ by selection — look like from the outside, and
-observation 6 is the same thing across a restart: a screen that has just found
+observation 7 is the same thing across a restart: a screen that has just found
 every player, then a screen showing one.
 
 **Two discovery protocols are in use** — mDNS, and a Lenbrook-specific UDP
