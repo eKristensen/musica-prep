@@ -10,7 +10,7 @@ them are in [`../bluos-api/`](../bluos-api/).
 | file | |
 |---|---|
 | `01-request-sent-2026-09-16.txt` | Opening request. Sent 16 September 2026. |
-| `02-support-response.txt` | Their reply. Asks for location granted, mobile data and VPN off, and player diagnostic logs. |
+| `02-support-response-2026-09-17.txt` | Their reply, 17 September 2026. Asks for location granted, mobile data and VPN off, and player diagnostic logs. |
 | `03-reply-draft.txt` | Draft answer. Not sent yet. |
 
 The logs go through **Send Support Request** inside the app, once per player,

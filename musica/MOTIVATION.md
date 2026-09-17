@@ -110,8 +110,8 @@ each one a trip out of the player list and back in through discovery.
 After removing a player from a group, that player often cannot be selected for
 about ten to twenty seconds. The app behaves as though it is still a group
 member for a short while, even though the player itself has already left the
-group. Ungrouping sometimes makes other players vanish from the list too, and
-they need not have had anything to do with the group I was changing.
+group. Ungrouping sometimes makes other players vanish from the list too,
+including players that were not part of the group I was changing.
 
 **Impact:** grouping and ungrouping players is slower and more frustrating
 than it needs to be.
