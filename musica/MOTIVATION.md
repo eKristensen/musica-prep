@@ -83,8 +83,8 @@ turned up. I gave up expecting all four a long time ago.
 
 A player that is present and playing sometimes vanishes from the list for a
 while and then returns, with no action on my part. Even the currently selected
-player can disappear — while I am still controlling it, with working transport
-and volume, it is simply absent from the list.
+player can disappear — while I am still controlling it, with play, pause and
+volume all working, it is simply absent from the list.
 
 **Impact:** it makes grouping harder than it needs to be. The list reflows as
 players come and go, so the entry under my thumb can change between the moment
