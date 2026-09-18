@@ -507,8 +507,8 @@ and reviewing code.
 
 I would rather not have to fix this myself. If the Android app stopped losing
 players I would most likely leave this project wherever it had got to and go
-back to the official app. Nothing on my wishlist justifies the effort of
-building a new controller on its own.
+back to the official app. What is on my wishlist would be a welcome addition
+to a controller I was already building; it is not a reason to build one.
 
 ---
 
