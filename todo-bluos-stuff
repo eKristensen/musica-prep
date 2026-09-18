@@ -110,16 +110,35 @@ Fold the spec additions into `bluos-api/bluos-http-api.md`. Three documents
 sit beside the spec holding content that belongs inside it, and each one is
 findable only if you already know it exists:
 
-- `SPEC-ADDITIONS-grouping.md` — the mutual master loop from role reversal,
-  what the official apps actually do, and the consequences for a client. It
-  also corrects an earlier claim of mine, so leaving it outside the spec means
-  the spec still carries the wrong version.
+- `SPEC-ADDITIONS-grouping.md` — what the official apps actually do when
+  grouping, and the consequences for a client. Its headline finding, the
+  mutual master loop, is already in §5.3 and in `C-39`; what is left is the
+  rest of the file.
 - `SPEC-ADDITIONS-identity.md` — the `mac` note for §2.1 and two register
   rows. This one has a precondition: see the identity entry above, the claims
   are untested and the vendor sources have not been opened.
 - `SPEC-SECTION-claim-register.md` — a replacement §17 that is append-only
   with permanent claim ids, so a verified claim keeps its row instead of
   vanishing and taking the negative result with it.
+
+`HANDOVER.md` has an "Open work" list that belongs with this, and it is the
+larger half:
+
+- A dozen claims are tested in the hardware `FINDINGS.md` but never written
+  into §17.1 or the body — `C-07` through `C-15`, `C-18`, `C-22`, `C-52`.
+  Mechanical, but real. Feed it `FINDINGS.md` rather than the raw bundle, the
+  way `TEST-PLAN.md` describes.
+- `C-03` (`/audiomodes` as a read) disagrees with itself. §17.1 still says
+  CONFIRMED from the 2026-09-10 pass, the one deleted from this repo for
+  leaking a real MAC. The clean 2026-09-11 re-run, same firmware and schema,
+  came back INCONCLUSIVE: 200 OK with a 9-10 byte body on both players rather
+  than the populated `<audiomode>` the vendor sample shows. Not a merge — find
+  out why the body differs first.
+- §17 carries two claim tables, topic-ordered and id-ordered, and they can
+  drift. One has: the "Resolved on hardware" summary still says role reversal
+  is "Rejected as a cycle; original master reasserts", which §5.3 disproves a
+  few sections above it. Fix that row whether or not the append-only register
+  lands.
 
 Not in this PR — it is long enough. But a proposal nobody merges is a finding
 nobody has.
