@@ -103,3 +103,23 @@ This one matters more than it looks: anything that dedupes players on `id`, or
 on whatever address it reached a player at, turns one player into two the first
 time somebody moves it between wired and wireless, and keeps a stale entry it
 can never reach again.
+
+-----
+
+Fold the spec additions into `bluos-api/bluos-http-api.md`. Three documents
+sit beside the spec holding content that belongs inside it, and each one is
+findable only if you already know it exists:
+
+- `SPEC-ADDITIONS-grouping.md` — the mutual master loop from role reversal,
+  what the official apps actually do, and the consequences for a client. It
+  also corrects an earlier claim of mine, so leaving it outside the spec means
+  the spec still carries the wrong version.
+- `SPEC-ADDITIONS-identity.md` — the `mac` note for §2.1 and two register
+  rows. This one has a precondition: see the identity entry above, the claims
+  are untested and the vendor sources have not been opened.
+- `SPEC-SECTION-claim-register.md` — a replacement §17 that is append-only
+  with permanent claim ids, so a verified claim keeps its row instead of
+  vanishing and taking the negative result with it.
+
+Not in this PR — it is long enough. But a proposal nobody merges is a finding
+nobody has.
