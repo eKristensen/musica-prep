@@ -16,15 +16,16 @@ record of that moment rather than a standing claim.
 
 What the argument still does not close.
 
-1. **Waiting on Bluesound.** `Bluesound-ticket.txt` was sent on 16 September
-   2026. If it comes back with a fix, or a reason, most of this document
-   changes. Nothing else here is worth finishing until there is an answer or a
-   decent interval of silence.
+1. **Waiting on Bluesound.** The support ticket went in on 16 September 2026.
+   If it comes back with a fix, or a reason, most of this document changes.
+   Nothing else here is worth finishing until there is an answer or a decent
+   interval of silence.
 
 2. **Two decisions are promised to `DESIGN_PRINCIPLES.md` and have to actually
    land there:** whether to build on somebody else's project rather than start
-   over, and whether one solution should cover both desktop and phone. Both are
-   now pointed at from here, so a dangling pointer is worse than the gap was.
+   over, and whether one solution should cover both desktop and phone. The
+   first is pointed at from here, so a dangling pointer is worse than the gap
+   was. The second is no longer mentioned in this document at all.
 
 3. **One elimination rests on an assumption rather than on the scope tests.**
    The Home Assistant Core integration is dismissed as "mostly the same" as
@@ -46,17 +47,22 @@ What the argument still does not close.
 
 ## My challenges with the BluOS Controller for Android
 
-The common element of my issues lies in the BluOS player discovery mechanism of the official BluOS Android Controller. The asynchronios distributed multi-protocol discovery mechanism is complicated that proving where the fault lies hard. I know nobody else running Bluesound with Android phones who could tell me whether it is specific to my setup.
+The common element in my problems is the player discovery mechanism in the
+official BluOS Controller for Android. Discovery there is asynchronous,
+distributed and spread across two protocols, which makes it hard to prove
+where the fault lies. I know nobody else running Bluesound with Android
+phones who could tell me whether it is specific to my setup.
 
 ---
 
 ### 1. Discovery is forgetful, slow and unreliable
 
-There is always a delay before any player show up, and usually another wait until all players show up. The app seems to be in
-search mode for a fixed amount of time, and any player that does not answer
-inside that search window never appears at all. On Wi-Fi a lost broadcast or
-multicast frame is common enough for that to happen regularly. Backing out of
-the player list and re-entering is the only way to trigger another attempt.
+There is always a delay before the first player appears, and usually another
+wait before the rest arrive. The app seems to be in search mode for a fixed
+amount of time, and any player that does not answer inside that search window
+never appears at all. On Wi-Fi a lost broadcast or multicast frame is common
+enough for that to happen regularly. Backing out of the player list and
+re-entering is the only way to trigger another attempt.
 
 Worse, the whole process has to be repeated as soon as the app stops running
 actively — after the lock screen, or after using the phone for something else.
@@ -68,27 +74,36 @@ with my players. I often find myself opening the app, putting the phone down
 to do something else, and coming back hoping the players I need this time have
 turned up. I gave up expecting all four a long time ago.
 
-### 2. Player list and tropology is unreliable
+### 2. The player list and the topology are unreliable
 
-**Players sometimes disappear and come back**: A player that is present and playing sometimes vanishes from the list for a
-while and then returns, with no action on my part. Even the currently selected
-player can disappear — while I am still controlling it, with play, pause and
-volume all working, it is simply absent from the list.
+**Players sometimes disappear and come back.** A player that is present and
+playing sometimes vanishes from the list for a while and then returns, with no
+action on my part. Even the currently selected player can disappear — while I
+am still controlling it, with play, pause and volume all working, it is simply
+absent from the list.
 
-**Partial lists that differ depending on what you select**: With several players and groups, selecting one player sometimes shows one
-subset; selecting another shows a different subset.
+**Partial lists that differ depending on what you select.** With several
+players and groups, selecting one player sometimes shows one subset; selecting
+another shows a different subset.
 
-**Ungrouping leaves a player unusable for a while**: After removing a player from a group, that player often cannot be selected for
-about ten to twenty seconds. The app behaves as though it is still a group
-member for a short while, even though the player itself has already left the
-group. Ungrouping sometimes makes other players vanish from the list too,
-including players that were not part of the group I was changing.
+**Ungrouping leaves a player unusable for a while.** After removing a player
+from a group, that player often cannot be selected for about ten to twenty
+seconds. The app behaves as though it is still a group member for a short
+while, even though the player itself has already left the group. Ungrouping
+sometimes makes other players vanish from the list too, including players that
+were not part of the group I was changing.
 
 **Impact:** it makes grouping harder than it needs to be. The list reflows as
 players come and go, so the entry under my thumb can change between the moment
-I decide to tap and the moment the tap registers, resulting in another player group than I intended. Removing the wrong player then locks up the player list often resulting in players disappearing which again means more waiting. When the selected player is the one that vanishes, which happens far too often, grouping becomes awkward for a simpler reason: a player I cannot
-see is a player I cannot group. Recovery means backing out of the player list
-and re-entering, waiting through discovery again and retrying. Controlling a player that does not show up in the app is very hard. With most actions on the player list screen affecting what is shown, using that screen is not fun.
+I decide to tap and the moment the tap registers, and I end up grouping a
+player I did not mean to. Removing the wrong one then locks up the player
+list, which often makes players disappear, which in turn means more waiting.
+When the selected player is the one that vanishes, which happens far too
+often, grouping becomes awkward for a simpler reason: a player I cannot see is
+a player I cannot group. Recovery means backing out of the player list and
+re-entering, waiting through discovery again and retrying. Controlling a
+player the app does not show is hard, and because most actions on the player
+list screen change what that screen shows, it is not a pleasant screen to use.
 
 ### 3. The app refuses to work over VPN, even though the network works
 
@@ -110,7 +125,7 @@ was using when I closed it. Nothing I did changed the selection; it changes on
 its own between one session and the next.
 
 **Impact:** getting back to the player I actually wanted means going through
-the list, so through the slow and unreliable discovery process.
+the list, and so through the slow and unreliable discovery process.
 
 ### 5. A full rediscovery whose results are then thrown away
 
@@ -121,13 +136,15 @@ then the normal interface appeared — showing **only** the player I had selecte
 before closing the app. Everything the previous screen had just found was gone,
 and had to be discovered again from scratch.
 
-**Impact:** it is hard to see what the first discovery accomplished contributing significantly to distrust of the programming that drives the discovery mechanism in the app. It is also the most conspicuous version of the problem, because the app visibly finds all
-the players and then visibly forgets them a second later.
+**Impact:** it is hard to see what the first discovery accomplished, and
+nothing else has done as much to make me distrust the code behind discovery in
+this app. It is also the most conspicuous version of the problem, because the
+app visibly finds all the players and then visibly forgets them a second later.
 
 ### Two discovery protocols
 
-The players are discovered using two protocols: mDNS, and a Lenbrook-specific UDP
-broadcast protocol (LSDP). Lenbrook has been reported as saying they wrote
+The players are discovered using two protocols: mDNS, and a Lenbrook-specific
+UDP broadcast protocol (LSDP). Lenbrook has been reported as saying they wrote
 their own because
 [their customers cannot be relied on to configure their networks](https://content-bluesound-com.s3.amazonaws.com/uploads/BluOS-Custom-Integration-API_v1.7.pdf),
 a statement that goes back
@@ -143,7 +160,9 @@ mechanism can add or remove a player from the list.
 The BluOS controller on an iPhone, on the same network, through the same access
 point, to the same players, shows all four immediately and keeps them.
 Restarting the app, reloading, refreshing, closing it and opening it again from
-the home screen — whatever I do, the list is there and it is complete. I have confirmed with package captures that the iOS app uses both the mDNS and LSDP protocol to discover players.
+the home screen — whatever I do, the list is there and it is complete. I have
+confirmed with packet captures that the iOS app uses both mDNS and LSDP to
+discover players.
 
 What I have tested hardest on iOS is exactly that: cold starts, and whether the
 player list fills. I have also tried grouping and ungrouping there, though only
@@ -188,25 +207,42 @@ response and in many cases it would be correct.
   discovery traffic and resolves the players quickly and consistently over both
   mDNS and LSDP. Wired and wireless players are indistinguishable in response
   time.
-- **Not Android app settings.** With unrestricted background usage and excempt from battery optimisation, and it
-has the requsted location permission granted the OS should not be blamed.
-- **A reliable app exists**: On the same network, the iOS app on iPhone works without any problems, where none of the 4 Andorid devices I tried did. The mix of mDNS and LSDP is not a problem for the iOS app.
+- **Not Android app settings.** The app has unrestricted background usage, is
+  exempt from battery optimisation, and has been granted the location
+  permission it asks for. The usual OS restrictions are not what is in the way.
+- **A reliable app exists.** On the same network the iOS app on an iPhone works
+  without any of this, while none of the four Android devices I tried did. The
+  mix of mDNS and LSDP is not a problem for the iOS app.
 
-Some of my family use Sonos, and discovery on Android is rock solid there. I wonder why the BluOS Controller iOS app is so much more reliable than the Andorid app. I wonder why I cannot get a reliable experience on Android with Bluesound.
+Some of my family use Sonos, and discovery on Android is rock solid there. I
+wonder why the BluOS Controller on iOS is so much more reliable than the one on
+Android, and why I cannot get a reliable experience on Android with Bluesound.
 
 ---
 
 ### BluOS Controller for Android measurements
 
-I tested on three Andorid phones from different manufacers and one virtualized Andorid instance. Both on the same L2 network and another vlan with mDNS/LSDP relay to carry over player infomation. The results vary very little between the the tests and consistenly show these results.
+I measured on three Android phones from different manufacturers and one
+virtualised Android instance, both on the same L2 network as the players and on
+a separate VLAN with an mDNS and LSDP relay carrying the player information
+across. The results vary very little between runs and consistently show the
+same pattern.
 
-The test is meant to simulate how I see the app most often pulled back open after having been closed for a while: 1) Swipe close the Bluos Controller, 2) open the BluOS controller, 3) Press the player list icon, 4) measure time until players show. The test was repeated 5 times for a number of different scenarios and clearly show a general pattern: Time to show the full player list:
+The test is meant to reproduce how I meet the app most often: pulled back open
+after having been closed for a while. 1) Swipe the BluOS Controller closed,
+2) open it again, 3) press the player list icon, 4) measure the time until the
+players show. Each scenario was repeated five times. Time to a full player
+list:
 
-- A wired Andorid device without WiFi or WiFi turned off: Between 1.0 and 1.5 seconds.
-- A wired Andorid device with WiFi turned on but not connected: Between 3 and 5 secons
-- A WiFi connected Android device: Between 3 and 5 seconds
+- A wired Android device without Wi-Fi, or with Wi-Fi turned off: between 1.0
+  and 1.5 seconds.
+- A wired Android device with Wi-Fi turned on but not connected: between 3 and
+  5 seconds.
+- A Wi-Fi connected Android device: between 3 and 5 seconds.
 
-It is interesting that having the wifi turned on increases the wait time even when connected to cabled network. The wait breaks into two parts:
+The interesting part is that having Wi-Fi turned on increases the wait even
+when the device is on a cable and the radio carries none of the traffic. The
+wait breaks into two parts:
 
 - **About a second and a half belongs to the app.** Putting a responder on the
   network that answers discovery queries instantly does not shorten it, so
@@ -227,8 +263,8 @@ looking for alternatives. The full list of alternatives found can be seen in
 
 ### Scope
 
-The ecosystem is large. Before a project is worth measuring against the requirements below, it has to clear two
-much lower bars:
+The ecosystem is large. Before a project is worth measuring against the
+requirements below, it has to clear two much lower bars:
 
 - **Be alive.** There must be activity, or some evidence that the project is
   actively developed. Examples of elimination: more than two years since the
@@ -255,10 +291,11 @@ never drains the battery and never locks up. This one is hard to judge in
 advance, so any crash has to be weighed on its own — but most of them will be
 disqualifying.
 
-**R2: Must work on Android.** It is not relevant to me if I cannot use it on my
-Android phone. If I move to iPhone I would no longer look for an alternative. A browser variant may be acceptable — but not the players' own:
-the web UI on port 80 exposes settings only, with no playback control, so there
-is no vendor-provided way to control a player without an official app.
+**R2: Must work on Android.** An alternative is not relevant to me if I cannot
+use it on my Android phone; if I moved to an iPhone I would not be looking for
+one at all. A browser variant may be acceptable — but not the players' own: the
+web UI on port 80 exposes settings only, with no playback control, so there is
+no vendor-provided way to control a player without an official app.
 
 **R3: A GUI with basic controls.** I want to be able to click on what I want to
 search for, see album covers, and interact with players visually at a glance.
@@ -274,10 +311,11 @@ Tidal playlists to load. I use my favourite songs on Tidal a lot, and being
 able to pick the sorting to get them in the order I added them rather than in
 alphabetical order is essential for me.
 
-**R6: Search.** It must be possible to search Tidal or my music collection in an easy and intuitive
-way.
+**R6: Search.** It must be possible to search Tidal or my own music collection
+in an easy and intuitive way.
 
-**R7: Grouping.** I use grouping fairly often, so that feature must be present and easy to use.
+**R7: Grouping.** I use grouping fairly often, so that feature must be present
+and easy to use.
 
 **R8: Easy player selection.** I switch between players often, so it should be
 easy to change to another player.
@@ -290,10 +328,10 @@ easy to change to another player.
 good candidate. It easily checks off R2, R3 and R4. Browsing is possible but
 not with custom sorting, making it just barely fail R5. Search is hard to find,
 and I managed to make the app crash when I tried to search for something,
-failing R1 and R6. I did not find any way to group players, and switching players
-requires going to the settings, failing R7 and R8. The focus on NAD device
-features that are unusable on Bluesound players, together with the lack of
-features I need, means this app does not work out for me.
+failing R1 and R6. I did not find any way to group players, and switching
+players requires going to the settings, failing R7 and R8. The focus on NAD
+device features that are unusable on Bluesound players, together with the lack
+of features I need, means this app does not work out for me.
 
 **[BlueSound Controller](https://github.com/rdOxalis/bluesoundplayer)**: a GUI
 app that works on Android, ticking off R2 and R3. Manual player entry is not
@@ -358,7 +396,9 @@ Aside from the obvious —
 and a reliable Android app — I have a handful of smaller annoyances and wishes
 that matter much less than my primary motivation for starting this project:
 
-1) Tidal playlist cache. I spend a lot of time waiting for static playlists to load. If I could use some sort of caching to make my Tidal playlists show up faster and also more searchable than before it would be nice.
+1) Tidal playlist cache. I spend a lot of time waiting for static playlists to
+   load. If I could use some sort of caching to make my Tidal playlists show up
+   faster, and make them more searchable than they are now, it would be nice.
 
 2) On one of my players I use HDMI to get audio from my television. When HDMI
    audio plays, the playback queue is cleared, and I have to decide what to
@@ -410,8 +450,6 @@ that matter much less than my primary motivation for starting this project:
 
 ## The unofficial official Linux desktop
 
-I have tried both the official Windows BlueOS Controller on Windows and the Linux repacked version. In my testing and to my eyes the function identially.
-
 There is one more option, and it deserves an answer of its own: if the
 community has already packaged the official desktop app for Linux, why is that
 not enough?
@@ -421,50 +459,63 @@ but as of 2026 there is still no official Linux client. There is a community
 project that takes the official Windows Electron app and repackages it ready to
 use on Linux as an AppImage:
 [bluos-controller-linux](https://gitlab.com/zquestz/bluos-controller-linux). I
-have tried it and it works *fine*. It is much better than the Android app
-without being free of its problems, and these are the ones I still notice:
+have tried both it and the official Windows build, and as far as I can tell
+they behave identically. It works *fine*, and it is much better than the
+Android app without being free of its problems. These are the ones I still
+notice:
 
 - Slow to become usable: five to six seconds from launch, roughly two to three
-  of that after the window is up. The official Windows build times the same, so this is not the repackaging, and the forced
-  wait the Android app has looks like it is present here too. At least the app
-  is not forced out of memory all the time as on Android, so discovery only
-  needs to happen at startup.
+  of that after the window is up. The official Windows build times the same, so
+  this is not the repackaging, and the forced wait the Android app has looks
+  like it is present here too. At least the app is not forced out of memory all
+  the time as on Android, so discovery only needs to happen at startup.
 - Unstable when left open for a long time or after standby, though recovery is
   fast.
 - Using LSDP requires a firewall opening, and keeping a UDP port open just for
-  this app seems like an ugly solution. Still, mDNS works fine, so there is not much need for it.
+  this app seems like an ugly solution. Still, mDNS works fine, so there is not
+  much need for it.
 
-The desktop app got a file for static players, but it does not make the app usable any faster. The discovery mechanism seems to run no matter what, but with the players in the static players txt file they show up even without any LSDP or mDNS response from the players.
+The desktop app can be given a file of static players. It does not make the app
+usable any faster — discovery seems to run no matter what — but players listed
+in that file show up even when they answer neither LSDP nor mDNS.
 
 ---
 
 ## Why I think I can build it
 
-My main advantage is scope. Bluesound has to support every player
-they have ever sold, on every phone, on every network, for every customer. I
-have to support four players, one network, and the features I actually use.
-Almost everything that makes their job hard is something I am allowed to skip.
+My main advantage is scope. Bluesound has to support every player they have
+ever sold, on every phone, on every network, for every customer. I have to
+support four players, one network, and the features I actually use. Almost
+everything that makes their job hard is something I am allowed to skip.
 
-I have a Master of Science degree in Computer Science, and the work I have done and enjoyed
-most is networking, web applications and backend services. I have not yet worked that much with Android. I intend to play to my
-strengths and avoid building things I cannot support or understand.
+I have a Master of Science degree in Computer Science, and the work I have done
+and enjoyed most is networking, web applications and backend services. I have
+not yet worked much with Android. I intend to play to my strengths and avoid
+building things I cannot support or understand.
 
-Every player speaks plain HTTP with XML bodies over the LAN. No TLS, no handshake, no binary framing, no token exchange, no cloud round
-trip. Anything that can make an HTTP request can control a player.
+Every player speaks plain HTTP with XML bodies over the LAN. No TLS, no
+handshake, no binary framing, no token exchange, no cloud round trip. Anything
+that can make an HTTP request can control a player.
 
-AI enable me to program more than I would otherwise be able to in the same time. I expect most of my time spent on this project to be with project descritions and code review.
+AI lets me write more code than I otherwise could in the same amount of time. I
+expect to spend most of my time on this project writing project descriptions
+and reviewing code.
 
 ---
 
 ## I hope Bluesound fixes the Android app
 
-I would rather not do anything to fix my problems. If the Android app stopped losing players I would most likely leave this project wherever it had got to and go back to using the official app. None of the elements on my whichlist justify the effort in building a new controller.
+I would rather not have to fix this myself. If the Android app stopped losing
+players I would most likely leave this project wherever it had got to and go
+back to the official app. Nothing on my wishlist justifies the effort of
+building a new controller on its own.
 
 ---
 
 ## Conclusion
 
-The official app clearly got some problems, but it is unclear exactly what they are. The BluOS ecosystem is wide, and full of different ideas about what interacting with BluOS should look like. With none of the existing Android options matching my needs as they stand, the
-next step is to consider how to build something that meets the requirements.
-
-
+The official app clearly has problems; what is not clear is where they come
+from. The BluOS ecosystem is wide, and full of different ideas about what
+interacting with BluOS should look like. With none of the existing Android
+options matching my needs as they stand, the next step is to consider how to
+build something that meets the requirements.
