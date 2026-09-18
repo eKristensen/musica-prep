@@ -79,3 +79,27 @@ after a swipe away under each battery profile, which should say whether the
 process survives and so explain why relaxing the restrictions makes the
 everyday case worse; and pin down whether that phone's slower initial
 discovery screen really does sometimes keep what it found.
+
+-----
+
+Settle player identity across interfaces. `bluos-api/SPEC-ADDITIONS-identity.md`
+says a player has two interfaces, two MACs and two IPs, only one live at a
+time, and that which one is live changes on its own. Three things are open
+there:
+
+- The test, which answers both open claims in one run: on a player that has
+  run both ways, record `/SyncStatus` `id` and `mac` plus the LSDP `nodeId` on
+  Ethernet, pull the cable, let it join wireless, and repeat. That says whether
+  `mac` follows the live interface and whether `nodeId` is stable.
+- The vendor pages behind the hardware behaviour were read through search
+  result summaries, not opened — support1.bluesound.com is unreachable from
+  the machine that file was written on. Open them and check the wording before
+  any of it is relied on.
+- `C-56-syncstatus-mac-interface` and `C-57-lsdp-nodeid-interface-stable` exist
+  only as proposals in that file; the register in `bluos-http-api.md` still
+  ends at C-55. Fold them in once the test and the sources are done.
+
+This one matters more than it looks: anything that dedupes players on `id`, or
+on whatever address it reached a player at, turns one player into two the first
+time somebody moves it between wired and wireless, and keeps a stale entry it
+can never reach again.
