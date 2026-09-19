@@ -24,7 +24,7 @@ authority:
 | nightvision | Node.js | Dedicated LSDP implementation. Ships **real captured packets** as test fixtures — the source of the worked Announce in §12.1 |
 | lsdp (Rust) | Rust | Second dedicated LSDP implementation; independent confirmation of the wire format, and the IPv6 address case |
 | blucli, bluos-controller | Go, Python | CLI clients. Corroborate the core endpoint set; added nothing new |
-| “Bluesound API decoded” forum thread | Nov 2015 | The original public reverse-engineering post, cited by most third-party projects. Historical corroboration only |
+| [“Bluesound API decoded” forum thread](https://web.archive.org/web/20190723114444/https://helpdesk.bluesound.com/discussions/viewtopic.php?t=2293) | Nov 2015 | The original public reverse-engineering post, cited by most third-party projects. Cited below as **2015 forum**. The helpdesk site is gone; the link is the web archive snapshot. Historical corroboration only |
 | BluShell | PowerShell, schema 25 | Ships **45 sample responses**, several for endpoints never captured locally — `/Alarms`, `/audiomodes`, `/Artwork`, `/Search`, `/RadioPresets` |
 | BluOsNadRemote, bluesoundplayer | C#/MAUI, Dart | Consumer apps. The first wraps Blu4Net; neither added anything. Two endpoints from the second were **rejected** — see below |
 | blutui (Rust) | Rust TUI | Sole source for `/proxyToSlave` and `/diagnostics`, and for POST-with-form setting writes |
@@ -2927,7 +2927,7 @@ deliberately left out.
 | Concurrent long-polls | ≥ 24 held simultaneously, all released on schedule. No low cap. §1.3 |
 | Group nesting | Real. `<master>` and `<slave>` coexist; volume and transport recurse. §14 |
 | `/SetMaster` | Slave-side grouping: bare call leaves, `?master=` joins. §5.1 |
-| Role reversal | Rejected as a cycle; original master reasserts. §5.3 |
+| Role reversal | Not rejected. Pointing a master at its own slave produces a mutual master loop; role is fixed at group formation. §5.3 |
 | `/AddSlave` rejection | Empty `<addSlave></addSlave>`, HTTP 200. §5 |
 | Path case-sensitivity | Exact match. `/upgrade` works, `/Upgrade` 404s. §1.6 |
 | `inputIndex` vs `InputId` | `inputIndex` is correct; `InputId` is ignored. §15.2 |

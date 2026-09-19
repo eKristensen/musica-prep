@@ -42,9 +42,6 @@ Everything else matches. For the record, with what each contributed:
 
 ### CLIs and TUIs
 
-The section header still says "TODO include in protocol research" — that TODO
-is complete for all five marked projects.
-
 | Project | Status | Contribution |
 |---|---|---|
 | blucli | analyzed ✓ | Nothing new; corroborated the core endpoint set |

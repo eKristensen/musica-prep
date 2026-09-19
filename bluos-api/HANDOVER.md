@@ -30,7 +30,7 @@ the top of `bluos-http-api.md`.
 
 1. Only two spots were fixed in this pass, both unambiguous: §5.2 (`/Sync`)
    and §10.0 (`/proxyToSlave`) now say what §17.1 already recorded for `C-05`
-   and `C-04` instead of still saying "untested". A dozen more claims that
+   and `C-04` instead of still saying "untested". Eleven more claims that
    run resolved — `C-07`, `C-08`, `C-09`, `C-10`, `C-11`, `C-12`, `C-13`,
    `C-15`, `C-18`, `C-22`, `C-52` — are tested in `FINDINGS.md` but not yet in
    §17.1 or the body text. Mechanical, but real work; do it as its own task
