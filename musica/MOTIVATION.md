@@ -86,8 +86,9 @@ absent from the list.
 players and groups, selecting one player sometimes shows one subset; selecting
 another shows a different subset.
 
-**A new group is not shown as a group.** Sometimes when creating a player
-group, the player list does not change even though the group did form.
+**A new group is not shown as a group.** Sometimes when I create a player
+group, the player list does not change for several seconds even though the
+group has formed, so I make it again and nothing happens.
 
 **Ungrouping leaves a player unusable for a while.** After removing a player
 from a group, that player often cannot be selected for about ten to twenty
@@ -101,10 +102,11 @@ players come and go, so the entry under my thumb can change between the moment
 I decide to tap and the moment the tap registers, and I end up grouping a
 player I did not mean to. Removing the wrong one then locks up the player
 list, which often makes players disappear, which in turn means more waiting.
-When a group that forms, does not always show up as a group right away, it
-becomes hard to diffentiate rare geniue technical errors from the player list
-becoming out of date. When the selected player is the one that vanishes, which happens far too
-often, grouping becomes awkward for a simpler reason: a player I cannot see is
+And because a group that has formed does not always show up as one right
+away, it is hard to tell a genuine failure to group from a player list that is
+simply out of date. When the selected player is the one that vanishes, which
+happens far too often, grouping becomes awkward for a simpler reason: a player
+I cannot see is
 a player I cannot group. Recovery means backing out of the player list and
 re-entering, waiting through discovery again and retrying. Controlling a
 player the app does not show is hard, and because most actions on the player
@@ -176,7 +178,15 @@ Android, and it was noticeably smoother, but a short session is not daily use.
 I have not lived with the iPhone as my everyday controller, so the rest of the
 problems above are untested there rather than absent.
 
-When a player group is formed on iOS they appear groupped instantly. The Android app is often fast, but not as instant as iOS. On iOS a group can be broken apart without selecting it first, requiring fewer clicks to change player groups, e.g. Let us say we have two groups of two and want to add one player from the other group. On iOS I can break the group without selecting it and add the player I want directly. On Android, changing a group means selecting it which often triggers all kinds of issues as I have mentioned above.
+When a group is formed on iOS, the players appear grouped instantly. The
+Android app is often fast, but never that immediate. On iOS a group can also be
+broken apart without selecting it first, which means fewer steps when
+rearranging groups. Say I have two groups of two and want to move one player
+across: on iOS I can break the group without selecting it and add the player I
+want directly. On Android, changing a group means selecting it first, which
+often triggers the problems described above. It is the first difference I have
+found that is a matter of what the app can do rather than how quickly it does
+it.
 
 ---
 
