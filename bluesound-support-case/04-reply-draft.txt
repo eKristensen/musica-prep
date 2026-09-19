@@ -21,13 +21,15 @@ Ethernet Power Line Adapters: none. Nothing on my network carries Ethernet over
 mains wiring.
 
 How the players and controllers connect: three of the four players are wired,
-the fourth is on Wi-Fi via the EAP772. The controllers are the part I have
-varied deliberately, as in my earlier messages — the Android phones over Wi-Fi,
-over USB Ethernet with the radio still enabled, and over USB Ethernet with the
-radio switched off; the iPhone over Wi-Fi and separately over a cable; two
-laptops over Wi-Fi throughout; and one virtualised Android instance wired. Every
-measurement I quote below was taken with the controller on the players' own
-VLAN, reaching them directly.
+one on each of the three switches, and the fourth is on Wi-Fi via the EAP772.
+The three wired players behave identically despite sitting behind three
+different switches. The controllers are the part I have varied deliberately, as
+in my earlier messages — the Android phones over Wi-Fi, over USB Ethernet with
+the radio still enabled, and over USB Ethernet with the radio switched off; the
+iPhone over Wi-Fi and separately over a cable; two laptops over Wi-Fi
+throughout; and one virtualised Android instance wired. Every measurement I
+quote below was taken with the controller on the players' own VLAN, reaching
+them directly.
 
 Ethernet cable type: Cat 5e throughout, in mostly short runs of a few metres
 — my longest patch cable is 10 m. The exception is the in-wall run between the
