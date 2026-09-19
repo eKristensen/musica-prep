@@ -29,7 +29,13 @@ laptops over Wi-Fi throughout; and one virtualised Android instance wired. Every
 measurement I quote below was taken with the controller on the players' own
 VLAN, reaching them directly.
 
-Ethernet cable type: Cat 5e throughout.
+Ethernet cable type: Cat 5e throughout, in mostly short runs of a few metres
+— my longest patch cable is 10 m. The exception is the in-wall run between the
+EdgeSwitch in the office and the MikroTik in the server closet, which is Cat 6a
+and at most about 12 m. Cabling is one of the things I have unintentionally
+tested hardest: the problem has followed me across many different cables, and
+they were thoroughly reshuffled when I moved house. No cable I have swapped has
+ever made a difference to it.
 
 Wireless distances: the wireless player is about 2.5 m from the EAP772 with one
 wall in between, and its signal is stable. When testing with a phone I stand
