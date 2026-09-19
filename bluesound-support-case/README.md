@@ -12,6 +12,8 @@ them are in [`../bluos-api/`](../bluos-api/).
 | `01-request-sent-2026-09-16.txt` | Opening request. Sent 16 September 2026. |
 | `02-support-response-2026-09-17.txt` | Their reply, 17 September 2026. Asks for location granted, mobile data and VPN off, and player diagnostic logs. |
 | `03-reply-sent-2026-09-17.txt` | Answer. Sent 17 September 2026. |
+| `04-support-response-2026-09-18.txt` | Their reply, 18 September 2026. A network questionnaire: router, switches, access points, powerline adapters, links, cable type, wireless distances. |
+| `04-reply-draft.txt` | Draft answer to it. Not sent. |
 
 The player logs went through **Send Support Request** inside the app, one
 request per player, and each one opened a case of its own: the first player

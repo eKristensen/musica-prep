@@ -1,0 +1,59 @@
+Subject: #560728
+Status: DRAFT — not sent
+
+Hi Charmain,
+
+The network, question by question.
+
+Router: an Orange Pi single-board computer running Ubuntu, doing the routing
+and firewalling. Not a consumer router.
+
+Switches and access points: a Ubiquiti EdgeSwitch and a MikroTik switch, a
+TP-Link access point and a Ubiquiti access point. No bridges. Say the word if
+you want exact models and firmware versions.
+
+Ethernet Power Line Adapters: none. Nothing on my network carries Ethernet
+over mains wiring.
+
+How the players and controllers connect: three of the four players are wired,
+the fourth is on Wi-Fi. The controllers are the part I have varied
+deliberately, as in my earlier messages — the Android phones over Wi-Fi, over
+USB Ethernet with the radio still on, and over USB Ethernet with the radio
+switched off; the iPhone over Wi-Fi and separately over a cable; two laptops
+over Wi-Fi throughout; and one virtualised Android instance wired. Every
+measurement I have quoted was taken with the controller on the players' own
+VLAN, reaching them directly.
+
+Ethernet cable type: Cat 5e throughout.
+
+Wireless distances: the player that is on Wi-Fi is 1-2 m from the TP-Link
+access point, on 2.4 GHz. The phones under test were a few metres from an
+access point.
+
+Two things that may save you time.
+
+First, the network side can be closed out by a control I have already run. An
+iPhone and an Android phone, on the same Wi-Fi, through the same access point,
+on the same VLAN, to the same four players: the iPhone lists all four at once,
+every time, and the Android phone takes 3-5 seconds and comes back short of at
+least one player about one attempt in five. Only the operating system differs.
+Separately, an LSDP discovery query from a wired machine on the players' VLAN
+gets answers from all four players within 0.75 seconds, twenty runs out of
+twenty. So the players and the segment answer promptly even at the moments the
+Android app is showing nothing.
+
+Second, I believe I have found what accounts for the Android numbers, and it is
+in the app rather than on my network. Discovery is delayed by a flat two seconds
+whenever the Wi-Fi radio is enabled, regardless of which interface is actually
+carrying the traffic. The delay sits around acquiring the Wi-Fi multicast lock,
+so it is skipped entirely when the radio is off — which is exactly the split I
+measured: about a second and complete every time with the radio off, against
+3-5 seconds and sometimes incomplete with it on, cable attached or not. I read
+this out of the shipping Android app; the discovery code is byte-identical
+between 4.16.2 and 4.16.3, so it applies to both.
+
+I would be glad to write that up in as much detail as whoever works on the
+Android controller finds useful. Is that something you are able to pass on?
+
+Best regards,
+Emil Kristensen
