@@ -1,0 +1,50 @@
+From: Charmain K., The Bluesound Support Crew
+Received: 17 September 2026
+Case: #560728  (https://support1.bluesound.com/hc/requests/560728)
+
+Hello Emil,
+
+Thank you for contacting The Bluesound Support Crew.
+
+
+Regarding the issue, please try turning off mobile data/VPN/Cellular/mobile
+data OFF. For an Android select Settings<Apps<BluOS to enable Location from
+Apps and select BluOS.  You may choose to Allow only while using the app option
+and let us know if there is an improvement in the players being discovered.
+
+To help us better understand your issue, please provide the Diagnostic Log from
+all of your Players.
+
+To send the log:
+- Using Desktop - In the BluOS Controller App, under the left Navigation
+  Drawer, select Help and Send support request.
+  https://support.bluos.net/hc/en-us/articles/360000205947
+- Using a Mobile device -
+
+  1. In the BluOS Controller app, tap the Home tab > Settings button.
+  2. Under the Help & Support section, tap Send Support Request.
+  3. Enter the required fields and tap Send Request. The diagnostic log of the
+     player is generated and sent along with the support request.
+
+
+Please include the "#560728" in the Subject field to help us identify your log,
+and feel free to provide additional information in the Brief description of
+this request.
+
+The diagnostic log is included (automatically) with the request. Similarly,
+repeat the steps mentioned above to send the diagnostic log of other players in
+the BluOS Controller app.
+
+Notes:
+- Email address - Do NOT include spaces at the beginning or the end of your
+  email address, as iOS devices place spaces automatically after a paste or
+  autofill selection.
+- Phone number - Do NOT include spaces in the phone number field. Type the
+  number as "123456789" and not "123 456 789.
+
+The logs provide us with detailed information to resolve the issue.
+
+Thanks for #LivingHiFi.
+
+Charmain K.
+The Bluesound Support Crew

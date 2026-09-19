@@ -1,0 +1,34 @@
+I have been running Bluesound for almost ten years, starting with a single NODE 2 (N110). I added three more between January and September 2025, so I now have four: 2 × NODE N132, 1 × N130 and 1 × N110, all on firmware 4.16.22.
+
+I control them from Android — app 4.16.3, and previously 4.16.2 on a second phone, with no difference between them — and the player list is unreliable. Every time I put the phone to sleep for a while, or use another app and come back to the BluOS Controller, the app has to rediscover the players. That would be fine if it were fast enough not to notice, but it is not. I would like to know whether this is known, and whether anything can be done about it.
+
+What happens, day to day:
+
+- Opening the player list takes several seconds, and often one or more players never appear at all. Backing out and re-entering is the only way to try again.
+- Players that are online and playing vanish from the list and come back on their own.
+- The player I am currently connected to and controlling is sometimes missing from the list entirely.
+- Selecting different players often shows different subsets of them.
+- After ungrouping, the removed player cannot be selected again for another 10–20 seconds.
+- Because the list keeps changing while it is on screen, I regularly tap one player and hit another that has moved into its place in the moment before the tap registers — which groups the wrong player and starts music in the wrong room.
+
+I had discovery problems even with a single player, but since going from one player to four they have become hard to ignore. I recently asked my family how they deal with it, and they said they had none of the problems I described. They use iPhones and I use Android. I have an iPhone available for testing and I own several Android devices, so I ran some tests. These are the results I think locate the problem:
+
+- An iPhone, on the same Wi-Fi, through the same access point, to the same players, shows all four quickly and keeps them — every time, however often the app is restarted. Only the operating system differs.
+- An Android phone, on the same Wi-Fi as the iPhone, in three configurations. Over Wi-Fi: 3–5 seconds before players show up on the player list, and roughly one attempt in five comes back short of all four. With a USB Ethernet adapter attached but Wi-Fi still switched on: about three seconds, still sometimes incomplete. With a USB Ethernet adapter and Wi-Fi switched off: about one second, complete every single time. The Android results reproduce on my second Android device from a different manufacturer. I performed every test between 5 and 15 times in a row.
+
+I cannot explain from the network side why having the Wi-Fi radio switched on should matter when a cable is attached, but it reproduces every time. On the iPhone, a USB Ethernet adapter with Wi-Fi switched off made no difference — it was reliable no matter what I tried.
+
+Everything I have been able to try points to one common factor: the BluOS Controller for Android. I have changed everything else and the problem persists. I would be glad to be shown otherwise. This is what I have ruled out:
+
+- Not mDNS multicast availability — I published static host and service records and confirmed from a laptop that they resolve immediately. No measurable change on either phone.
+- Not LSDP broadcast availability — I ran an LSDP responder on my own network that answers discovery queries instantly, and the time to a complete list did not change at all.
+- Not the players — they answer direct HTTP requests throughout, including while the app shows them as missing. An LSDP discovery query from a wired machine gets all four answers within about 0.75 seconds, twenty times in a row.
+- Not one access point, switch, router or firmware — the same behaviour across several of each, and across many firmware versions.
+- Not one home or one Wi-Fi network — this has followed me across at least two physical locations. I choose channels deliberately and check what else is in use, and Wi-Fi is reliable here for everything other than this.
+- Not one bad player — the problem moves between them.
+- Not one phone or one Android build — two phones from different vendors, plus a clean Android install with no Google services, all behave the same way.
+- Not the players' own link — three players are wired and one is on Wi-Fi, and there is no measurable difference between them in HTTP or LSDP response times.
+- Not Android power saving — the app has unrestricted power usage on both phones.
+- Not one BluOS version — the problem have persisted for as long as I have used Bluesound.
+
+Is this known? Is there anything I can do about it, or anything you would like me to troubleshoot?
