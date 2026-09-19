@@ -8,6 +8,10 @@ Bluesound? Why not find an alternative with a working Andorid app and be happy?
 TODO:
 - Look at Joplin notes. AI Summary to generate some of the text below removed the essence of my requirements
 - Refer back to motivation.
+- Verify the Roon citations against the live pages before publishing. The
+  roonlabs.com domains were unreachable when the section below was written,
+  so the Roon-official claims come from search summaries of those pages
+  rather than the pages themselves.
 
 #### My first Bluesound Player.
 
@@ -30,13 +34,13 @@ Years later I move to a place with more rooms and I want to build out the system
 
 It turns out it was relativly easy to eleminate alternatives:
 
-- **Roon**: Was my first candidate. Roon run on many types of hardware (not just Bluesound) and provide a beuitiful interface. It requires a server to run, which is hard to understand when you only have one device, but could make more sense with more than one device. There is no ARM build of Roon Server, so it cannot run on the Orange Pi 5 Plus that is already on in my house. Hosting Roon means buying a machine for it, and the cheapest route I can find is a used Mac mini M1 — which will not be flawless either. Extra hardware bought for one piece of software is a real drawback. My existing player would work with it. I tried it and it never felt right; I use Tidal Song/Album/Playlist/Artist radios quite extensively and getting that to play was harder than it should have been. The Roon Server requires mDNS to discover all players dynamically. There is no way to have a list of players you own. Given all the problems I had over the years, and all the effort I have spent trying to make the one Bluesound player I own show up in a more reliable manner, I am especially sensitive to mDNS problems. Not being able to set static players is a unreasonable big downside for me. I read online that Roon accross VLANs is a battle, and it is a batter I do not want to keep fighting in plus Roon is very expensive software. I do not care about the metadata which is one of their main selling points. It just ends up coming short.
-https://community.roonlabs.com/t/roon-across-vlans/262545/4
-https://roon.app/en/partners/14/bluesound
-https://roon.app/en/compatibility/audio: "Zero configuration" is a direct negative
-https://community.roonlabs.com/t/roon-certified-device-not-appearing-as-audio-source-or-allowing-manual-ip-entry-ref-pk6ejo/274492/4
-https://help.roonlabs.com/portal/en/kb/articles/audio-setup-basics#Resync_delay <-- Properly one thing that would make retrying Roon worth it.
-Roon assumes all devices af on the same L2 network. Not something I want. It goes against my policy for IoT device seperation and this is a big negative. Making IoT network setups will always be a battle with Roon.: https://help.roonlabs.com/portal/en/kb/articles/how-do-i-know-my-devices-are-on-the-same-subnet-ip-range#Why_Do_Subnets_Matter
+- **Roon**: the first candidate, and the only one actually run. It is
+  hardware-agnostic, its grouped-zone DSP is better than anything BluOS offers,
+  and it would fix the Android app. It also discovers players by multicast
+  only, cannot be given a player's address, is unsupported across VLANs, has no
+  Linux client, replaces Tidal's radios with its own, and needs a second
+  always-on x86 machine and a subscription. It moves the discovery problem
+  rather than solving it. Examined at length below.
 
 - **Sonos**: 
 
@@ -45,6 +49,262 @@ Roon assumes all devices af on the same L2 network. Not something I want. It goe
 - **Denon HEOS** / **Yamaha MusicCast**: Too much vendor lock in. The multi room system here is to provide added value to existing products, it is not the core product. Bluesound is also vendor lock in for sure, but it is more of a stand alone product than any of these.
 
 
+#### Roon, examined in detail
+
+Roon was the first candidate and the only one taken as far as actually running
+it. It is also the only alternative where the failure is worth writing down at
+length, because it fails for reasons that look like solutions.
+
+The short version: Roon would fix the Android app and keep the discovery
+problem, in a stricter form and with no escape hatch. Two of the five problems
+in [MOTIVATION.md](MOTIVATION.md) reproduce on Roon, and the
+Android-versus-iOS split — the part of the BluOS story that makes the least
+sense — reproduces there too.
+
+##### What Roon does better
+
+These are real and are not disputed here.
+
+- **Grouped zones keep their DSP.** Roon's DSP engine stays active on grouped
+  RAAT zones; it is disabled only for AirPlay, Sonos, Squeezebox, KEF, Devialet
+  AIR and Meridian zones
+  ([Roon KB](https://kb.roonlabs.com/DSP_Engine:_Disabled_During_Zone_Grouping)).
+  With a per-zone resync delay in milliseconds
+  ([Roon KB](https://help.roonlabs.com/portal/en/kb/articles/audio-setup-basics#Resync_delay)),
+  that covers the room-correction-plus-delay requirement directly. Convolution
+  filters, parametric EQ and per-zone delay across a synchronised group is a
+  capability BluOS does not offer in that form. This is the one requirement
+  Roon meets better than Bluesound.
+- **A sleep timer exists**, on any zone from any device, from the moon icon in
+  the zone's volume popup
+  ([Roon 1.7](https://blog.roonlabs.com/roon-1-7-sleep-timer/)). Only Roon ARC
+  lacks one
+  ([open request](https://community.roonlabs.com/t/sleep-timer-in-roon-arc/216705)).
+- **Least lock-in of any candidate.** Roon is hardware-agnostic, and Roon Ready
+  costs manufacturers nothing beyond the integration work and the certification
+  process itself
+  ([certification](https://community.roonlabs.com/t/roon-ready-certification/91655)).
+  Replacing the players later would not mean replacing the controller, and the
+  N110, N130 and N132 are all certified
+  ([Bluesound on Roon](https://roon.app/en/partners/14/bluesound)). On the
+  drop-in-replacement requirement Roon scores better than BluOS.
+- **VPN works.** Roon Remote auto-discovers and streams over Tailscale with
+  no extra configuration
+  ([community](https://community.roonlabs.com/t/success-with-tailscale-vpn/166068)),
+  and Roon documents Tailscale officially as the answer to CG-NAT
+  ([Roon KB](https://help.roonlabs.com/portal/en/kb/articles/arc-and-tailscale-connect-to-roonserver-without-port-forwarding)).
+  The BluOS app's refusal to work over a tunnel that demonstrably carries the
+  traffic has no Roon equivalent.
+
+##### How many of the documented problems repeat
+
+| # | The problem with BluOS on Android, as numbered in `MOTIVATION.md` | On Roon |
+|---|---|---|
+| 1 | Discovery slow, and forgotten after the lock screen | **Repeats.** The Android remote loses its connection to the server when the phone wakes from a dark screen, and when the app has been in the background. Startup delays of 55 seconds are reported, and "waiting for Roon core" is a standing Android complaint |
+| 2 | Players vanish from the list and come back | **Repeats.** Zones disappear intermittently, and after updates. Roon has a standing KB article for it |
+| 3 | Opens with a different player selected | **No clear match.** Zone-switching and zone-persistence complaints exist, but nothing with this signature |
+| 4 | Full rediscovery whose results are discarded | **No match found.** Roon has no equivalent two-stage discovery screen |
+| 5 | Refuses to work over VPN | **Does not repeat.** See above |
+| — | iOS reliable, Android not, same network | **Repeats exactly.** iOS and Windows are reported as trouble-free while Android drops out on the same network |
+
+Sources for the repeats:
+[connection lost on wake](https://community.roonlabs.com/t/roon-remote-android-loses-connection-to-core/127567),
+[daily disconnects](https://community.roonlabs.com/t/android-roon-remote-looses-connection-to-core-daily/61650),
+[laggy to the point of uselessness](https://community.roonlabs.com/t/android-roon-remote-laggy-to-the-point-of-uselessness/256777),
+[waiting for core](https://community.roonlabs.com/t/keep-getting-waiting-for-roon-core-on-android-remote/229002),
+[55-second startup](https://community.roonlabs.com/t/slow-startup-of-roon-app-55-seconds/209073),
+[freeze and hang at startup](https://community.roonlabs.com/t/android-remote-app-freeze-or-start-up-or-hang-issue/153162),
+[zones sometimes disappear](https://community.roonlabs.com/t/zones-sometimes-disappear/120119),
+[zones gone after an update](https://community.roonlabs.com/t/network-zones-disappeared-after-roon-update-ref-l9bl61/291006),
+[Roon's own FAQ for it](https://help.roonlabs.com/portal/en/kb/articles/faq-why-did-all-my-zones-disappear).
+
+**The Android result is the important one.** The obvious reading of the BluOS
+story is that Lenbrook writes a bad Android app. Roon, a different company with
+a different protocol and a paid subscription behind it, produces the same
+asymmetry on the same platform: fine on iOS, unreliable on Android, same
+network. Whatever Android does to long-lived multicast discovery and background
+sockets, it does to both. That does not excuse the BluOS app — the iOS BluOS
+client proves the platform can be handled — but it does mean switching to Roon
+would be switching to a client with the same weakness.
+
+##### Discovery: strictly worse than BluOS
+
+Roon discovers everything by multicast. It is
+[not supported across subnets or VLANs](https://community.roonlabs.com/t/roon-across-vlans/262545/4),
+its own documentation
+[asks you to put everything on one subnet](https://help.roonlabs.com/portal/en/kb/articles/how-do-i-know-my-devices-are-on-the-same-subnet-ip-range),
+and there is
+[no way to add an endpoint by IP address](https://community.roonlabs.com/t/any-way-to-auto-discovery-or-manually-add-audio-endpoints-on-a-different-vlan/121589)
+when discovery fails —
+[including for certified devices](https://community.roonlabs.com/t/roon-certified-device-not-appearing-as-audio-source-or-allowing-manual-ip-entry-ref-pk6ejo/274492/4).
+The marketing calls this
+[zero configuration](https://roon.app/en/compatibility/audio); for a network
+with an IoT VLAN it means zero options.
+
+|  | BluOS | Roon |
+|---|---|---|
+| Discovery | LSDP broadcast + mDNS | mDNS multicast only |
+| Across VLANs | Works with reflection and UDP replication | Not supported |
+| Pin a player by address | `ip:port`, documented HTTP API | No mechanism |
+| Build a better client | Possible — this project | Endpoints cannot be addressed |
+
+Multicast really is the common failure in segmented home networks, and IGMP
+snooping without a querier really does break it for Sonos and Chromecast too
+([background](https://keystoneintegration.us/blog/multicast-mdns-igmp-home-network/)).
+The difference is what happens next: BluOS answers direct HTTP on a static
+address whatever the discovery layer is doing, which is what makes this project
+possible. Roon has no such fallback, which is why so many of those threads end
+with the network being blamed — there is nothing else left to blame.
+
+##### New problems Roon brings
+
+- **No ARM build of Roon Server.** Roon Bridge runs on armv7hf and armv8; the
+  server is x86-64 only on Linux
+  ([standing request](https://community.roonlabs.com/t/roon-server-on-linux-on-arm64-platform-including-but-not-limited-to-raspberry-pi-5/257502)).
+  The Orange Pi 5 Plus that is already on cannot host it, so Roon means buying
+  and running a second always-on machine.
+- **The platform floor moves.** Roon Server moved to .NET 10 on 20 April 2026,
+  raising the Linux minimum to glibc 2.27 and OpenSSL 1.1.1
+  ([announcement](https://community.roonlabs.com/t/understanding-what-will-happen-to-nas-users-after-the-net-10-based-roon-server-20-april-2026/317959)).
+  QNAP QTS 5.x and QuTS hero h5.x do not meet it, because QNAP's glibc has not
+  moved since 2018
+  ([QNAP](https://community.qnap.com/t/new-roon-system-requirments-not-supported-by-qnap-qts-firmware/5696));
+  Synology, ASUSTOR, Unraid and older Macs were caught to varying degrees
+  ([summary](https://stereoguide.com/guides/streaming-en/roon-server-no-longer-running-update-renders-many-macs-qnap-synology-and-high-end-servers-unusable/)).
+  Hardware bought to run Roon can stop being able to.
+- **No Linux client at all.** Roon Server runs headless on Linux, but there is
+  [no native Roon remote for Linux](https://community.roonlabs.com/t/no-proper-roon-remote-available-for-linux-pcs/68684)
+  — Windows, macOS, iOS and Android only. From a Linux desktop the options are
+  Wine or nothing
+  ([one approach](https://florib779.github.io/Roon/articles/roon-wine.html)).
+  A browser-reachable controller is the entire point of the alternative being
+  built here, and Roon is the one candidate that cannot offer one.
+- **Two vendors can break the setup instead of one.** BluOS firmware updates
+  have taken Bluesound devices out of Roon Ready and left them working only as
+  Roon Tested over AirPlay, and a fixed home-theatre group stopped playing from
+  Roon after BluOS 4.8.17
+  ([Roon forum](https://community.roonlabs.com/t/bluesound-update-issues/302665),
+  [Bluesound forum](https://support1.bluesound.com/hc/en-us/community/posts/18441526800919-Roon-still-unreliable-after-upgrading-to-4-0)).
+  Crackling and dropouts that appear only under Roon and not under BluOS are a
+  recurring report
+  ([Roon forum](https://community.roonlabs.com/t/sound-crackling-and-dropping-out-bluesound-node-only-using-roon/202809),
+  [Bluesound forum](https://support1.bluesound.com/hc/en-us/community/posts/8005729095575-Crackling-on-N130-Node-using-Roon-with-USB-out)).
+- **More traffic to each player.** Roon decodes centrally and sends the result
+  to the endpoint, where BluOS has each player fetch and decode its own stream.
+  On Wi-Fi that difference shows up as dropouts and slow starts.
+- **Cost.** $14.99 per month, about $149 per year, or $829.99 once — very
+  roughly 100 DKK per month, 1.000 DKK per year, or 5.500 DKK for the lifetime
+  licence, before any Danish VAT
+  ([pricing](https://getpulsesignal.com/pricing/roon)). Unchanged since Harman,
+  a Samsung subsidiary, bought Roon in November 2023
+  ([announcement](https://news.harman.com/releases/harman-acquires-roon-a-popular-multi-device-multi-room-audio-technology-platform)),
+  and existing lifetime licences are being honoured. The metadata is what that
+  price buys, and the metadata is the part I do not want.
+- **Database corruption is a recurring theme**, with restores that fail from
+  several backup points and a standing request for a repair tool
+  ([corruption on upgrade](https://community.roonlabs.com/t/database-corruption-after-upgrade-restore-attempts-fail-ref-c617vq/320248),
+  [repair request](https://community.roonlabs.com/t/automated-database-corruption-repair/168441)).
+  This one matters less here than to most who report it, because the library is
+  mostly streamed rather than local and curated.
+
+##### Tidal under Roon
+
+Roon does not pass through Tidal's own radios. Roon Radio is Roon's own engine,
+Valence, and it picks tracks from the Tidal catalogue rather than asking Tidal
+what to play
+([Valence](https://blog.roonlabs.com/roon-1-7-valence/),
+[Roon KB](https://help.roonlabs.com/portal/en/kb/articles/valence)). The
+request to use Tidal's track radio instead
+[is open and unimplemented](https://community.roonlabs.com/t/option-to-use-tidals-track-radio-selections-rather-than-roon-radios/99744),
+and Valence's output is reported to vary with which services are connected
+([example](https://community.roonlabs.com/t/roon-radio-with-qobuz-not-as-good-as-with-tidal/129267)).
+
+So the difficulty getting Tidal radios to play under Roon was not a
+misconfiguration. Song, album, playlist and artist radio as Tidal generates
+them are not available through Roon at all, and they are the feature used most
+here.
+
+Separately, Tidal library sync into Roon misfires often enough to have its own
+long-running threads: favourites that do not appear, playlists that do not
+update, partial syncs
+([favourites](https://community.roonlabs.com/t/roon-does-not-sync-correctly-with-tidal-favorites/91616),
+[sync failures](https://community.roonlabs.com/t/tidal-favorites-not-syncing-with-roon-ref-82v4m3/279965)).
+
+Roon does now accept natural-language control through Claude or ChatGPT
+([January 2026](https://community.roonlabs.com/t/ai-assistant-integration-for-roon/314508)),
+and third-party LLM front-ends exist
+([rooAIDJ](https://sellcodes.com/DrCWO/use-ai-to-chat-with-roon)). That is a
+different feature from radio, and it does not restore Tidal's own selections.
+
+##### Which of Roon's claims hold
+
+Worth separating, because Roon sits in a market where a lot does not survive
+contact with a measurement.
+
+- **Bit-perfect delivery over RAAT: true, and unremarkable.** Roon transports
+  audio to the endpoint without alteration
+  ([Roon](https://roon.app/en/sound-quality)). So does BluOS, and so does any
+  competent UPnP path. It is a correctness claim, not an advantage.
+- **Bypassing the OS mixer: true where it applies.** On Windows and macOS the
+  system mixer can resample, and avoiding it is a real improvement. It is
+  irrelevant to a network player like a Node, which never involves a desktop
+  mixer.
+- **"AirPlay for audiophiles": marketing.** RAAT's genuine engineering
+  contribution is clock synchronisation across zones, which is a multi-room
+  problem, not a fidelity one.
+- **DSP and room correction: real.** Convolution, parametric EQ and per-zone
+  delay are ordinary signal processing done competently, and they are the
+  strongest technical argument for Roon.
+- **Nucleus hardware: this is where it goes wrong.** The Nucleus Titan is a
+  standard Intel NUC at $3,699 with the CPU and RAM left off the product page
+  ([Tom's Hardware](https://www.tomshardware.com/desktops/mini-pcs/dollar3699-audiophile-media-server-is-powered-by-a-standard-nuc-with-by-a-mystery-cpu-you-still-have-to-buy-your-own-storage-too)).
+  A server that feeds a bit-perfect network stream cannot influence what comes
+  out of the endpoint's DAC, so there is no mechanism by which it sounds
+  better than a NUC running the same software.
+- **Sound-quality differences between software builds**, argued at length on
+  audiophile forums
+  ([example](https://www.whatsbestforum.com/threads/sound-quality-of-new-roon-versions-builds.34593/)),
+  are not a Roon claim and should not be held against Roon. Roon's own
+  statements on sound quality are the modest, technically correct ones above.
+
+The verdict on snake oil: **the software's claims are mostly accurate and
+mostly mundane; the hardware line is where the audiophile pricing appears.**
+Buying Roon the software is not buying a fidelity claim. Nothing about Roon
+would make the system sound better than a correctly configured BluOS one —
+apart from the DSP, which does real work.
+
+##### Does anyone else report these BluOS problems?
+
+Partly. That players stop appearing in the BluOS Controller is reported often
+enough to have an official support article
+([BluOS](https://support.bluos.net/hc/en-us/articles/360000303528-Players-not-appearing-in-BluOS-Controller-App))
+and long community threads
+([looking for players forever](https://support1.bluesound.com/hc/en-us/community/posts/360034808754-Looking-for-Players-forever)),
+and a discovery timeout was added to the "Looking For Players" screen in
+response.
+
+What is not corroborated anywhere found so far is the Android-versus-iOS
+asymmetry. Public reports describe discovery failing on iOS, Android and the
+desktop controllers alike, without singling Android out. The measurements in
+`MOTIVATION.md` remain the only systematic evidence for that specific claim,
+which is an argument for keeping them rather than a reason to doubt them.
+
+##### Conclusion
+
+Roon fixes the app and keeps the network problem, in a form that cannot be
+worked around: no endpoint by IP, no supported VLAN story, no control API to
+build against. It removes Tidal's radios, which is the feature used most, and
+adds a subscription, a second always-on machine, a moving platform floor, no
+Linux client, and a second vendor who can break the setup. The Android client
+has the same weakness as the one being escaped.
+
+**Revisit if** multi-room room correction becomes the thing that matters most.
+The grouped-zone DSP with per-zone delay is genuine and has no BluOS
+equivalent. That trial would mean one flat L2 segment for the players and a
+machine bought to run the server — which is to say, accepting every cost above
+in exchange for the one capability.
+
+---
 
 In order to understand why other solutions are not a good fit, it makes sense
 to first make a clear list of the requirements that this system is set out to
