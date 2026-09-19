@@ -4,6 +4,12 @@ There is quite a distance between finding motivation based on an less than ideal
 
 This document is meant to be updated if needed, but for the most part it is expected that no updates should be needed. Making a change in this document could start a chain reaction that requires changes to many parts of Musica.
 
+These principles get close to the implementation in places, but this is not the
+implementation plan. What gets built, and in what order, is `PLAN.md`. What has
+to hold however it is built is here.
+
+## How to read this
+
 For each element there is a clear structure:
 
 - **Decision** — what was chosen.
@@ -11,11 +17,22 @@ For each element there is a clear structure:
 - **Consequences** — what follows mechanically.
 - **Revisit if** — the concrete signal that reopens it.
 
-Ask AI: Would it make sense to split the BluOS HTTP api code and the server backend. The idea is to be able to split out the BluOS HTTP api into a seperate repo later if I want to make it easier to reuse just the api integration I build. Or is it better to just build it flat and focus on my own results. Do I gain something by preparing the code to be reusable? If  yes would it maybe even make sense to build the bluos http api lib seperately from the start? I do not know what makes the most sense please advice.
+**A number is an identity, not a position.** `PLAN.md`, `CLAUDE.md` and
+`MOTIVATION.md` all cite elements by number, so an element keeps its number for
+good. The sections below group them by subject, which is why the numbering does
+not run in order.
+
+**An open question is not settled.** It is either an element of its own with
+"open question" in the heading, or a paragraph marked **Open question.** inside
+an element that is otherwise decided. Nothing is built against one.
 
 ---
 
-## D0. The app acts only on user action or to stay in sync
+## What the app is allowed to do
+
+The principle everything else is downstream of.
+
+### D0. The app acts only on user action or to stay in sync
 
 **Decision.** The app does exactly two kinds of thing: what the user asked for,
 and whatever polling is needed to keep its picture of the players current. It
@@ -39,7 +56,11 @@ justifies the server-side architecture in the first place.
 
 ---
 
-## D1. Backend in Rust, safe only
+## The stack
+
+What Musica is built out of, what ships, and what may be added.
+
+### D1. Backend in Rust, safe only
 
 **Decision.** `axum` + `tokio` + `reqwest` + `quick-xml`. One binary.
 `#![forbid(unsafe_code)]` at the crate root. No `unsafe` blocks, no exceptions.
@@ -55,9 +76,7 @@ it, that is a reason to reject the dependency.
 
 **Revisit if.** Never.
 
----
-
-## D2. Frontend is Preact + TypeScript with a three-package toolchain
+### D2. Frontend is Preact + TypeScript with a three-package toolchain
 
 **Decision.** Preact, TypeScript, esbuild. Plain CSS with custom properties. No
 bundler framework, no Tailwind, no component library, no CSS-in-JS.
@@ -99,9 +118,7 @@ case you edit the committed JavaScript directly — unpleasant, but not a rewrit
 which is the point of a bundler with no config surface. Or if three packages
 prove impossible for something genuinely necessary; see D3.
 
----
-
-## D3. Dependencies must earn their place, in every language
+### D3. Dependencies must earn their place, in every language
 
 **Decision.** A dependency is added only when it is clearly better than writing
 the thing ourselves *and* it looks maintainable for a decade. Every addition
@@ -133,25 +150,22 @@ grounds for reconsidering it.
 
 **Revisit if.** Never.
 
----
+### D15. One artifact, generated types
 
-## D4. The core client module is framework-free
+**Decision.** The built frontend is embedded into the Rust binary
+(`rust-embed`). TypeScript types are generated from Rust types and the generated
+files are committed. The built JavaScript bundle is committed too (D2).
 
-**Decision.** The SSE client, the state store and the shared type definitions
-live in a module with zero framework imports. View components import from it; it
-imports nothing from them.
-
-**Because.** This is the insurance behind D2. If the framework ever has to
-change, the migration is a rewrite of a few view components, not of the app.
-
-**Consequences.** No Preact hooks or signals inside the core module. It exposes a
-plain subscribe/snapshot interface.
-
-Ask for AI feedback here: I am not sure whether this is a good decision. If we change front, wont we need to rewrite everything? Would it be more clear/better to make a more stable API between back and frontend? I might be wrong I just want to know what you think.
+**Because.** One deployment artifact means no version skew between API and UI.
+Committing generated output means a rotted toolchain blocks rebuilds, not runs.
 
 ---
 
-## D5. Thick server, thin client
+## Server and client: where the work happens
+
+Which side does which work, and what is allowed to cross between them.
+
+### D5. Thick server, thin client
 
 **Decision.** The browser talks to Musica. The Musica server talks to BluOS devices. Musica is not a proxy server. Complicated BluOS interaction such as master resolution, groupping, batch jobs and cache invalidation must be performed where it can be unit-tested
 
@@ -166,30 +180,41 @@ that is off by default and never called from application code.
 
 **Revisit if** The stack design does not work out.
 
+### D4. The core client module is framework-free
+
+**Decision.** The SSE client, the state store and the shared type definitions
+live in a module with zero framework imports. View components import from it; it
+imports nothing from them.
+
+**Because.** This is the insurance behind D2. If the framework ever has to
+change, the migration is a rewrite of a few view components, not of the app.
+
+**Consequences.** No Preact hooks or signals inside the core module. It exposes a
+plain subscribe/snapshot interface.
+
+**Open question.** I am not sure whether this is a good decision. If we change front, wont we need to rewrite everything? Would it be more clear/better to make a more stable API between back and frontend? I might be wrong I just want to know what you think.
+
+### D10. Optimistic state is client-side only and TTL-bounded
+
+**Decision.** Volume and transport get a local optimistic overlay with a short
+TTL — dropped as soon as a snapshot reflects it, or after ~1 s, whichever comes
+first. The server never holds optimistic state.
+
+**Because.** A slider that waits for a round trip feels broken. Server-side
+optimism would corrupt the invariant that the snapshot is what the players
+actually report, and would make the debug panel lie.
+
+### Open question — one crate or two, BluOS API and server
+
+**Not decided.** Would it make sense to split the BluOS HTTP api code and the server backend. The idea is to be able to split out the BluOS HTTP api into a seperate repo later if I want to make it easier to reuse just the api integration I build. Or is it better to just build it flat and focus on my own results. Do I gain something by preparing the code to be reusable? If  yes would it maybe even make sense to build the bluos http api lib seperately from the start? I do not know what makes the most sense please advice.
+
 ---
 
-## D6. Browse is the deliberate exception: structural pass-through
+## Players: identity, topology and grouping
 
-**Decision.** For browse only, the server is a sanitising pass-through, not a
-domain modeller. It converts XML to structurally equivalent JSON, preserves the
-generic attribute maps intact, and rewrites device URLs and browse keys into
-opaque server-side tokens. It does not decide what an item *means*; the client
-renders generically from `type` and `resultType`.
+How a player is named, how group topology is modelled, and what grouping does.
 
-**Because.** The browse protocol is link-driven on purpose. A server-side domain
-model would have to invent a taxonomy the protocol lacks, and would be wrong
-differently for each service.
-
-**Sorting is not part of this.** Sorting is a device operation, requested via
-the parameter declared in `/Services` (D17). The cache stores each sort order as
-its own node rather than reordering locally.
-
-**Revisit if.** A concrete rendering problem cannot be solved client-side. Then
-add a hint field and record it here.
-
----
-
-## D7. Player identity is `ip:port`
+### D7. Player identity is `ip:port`
 
 **Decision.** Players are keyed by `ip:port`, which is what `SyncStatus@id`
 contains and what the config supplies. MAC is stored and used only as the key
@@ -204,11 +229,9 @@ does not silently orphan its cache.
 
 **Revisit if.** Never.
 
-Question for AI: I am considering to actually change back to MAC again. IP while static could change. I have a LAN and WIFI ip for all my players in static dhcp lease... though it got a different mac for lan and wifi so that does not solve the problem. Do you have any suggestions for a stable index? ip + port is an esy choice and it contains the data needed when working with groups and interacting with the players.
+**Open question.** I am considering to actually change back to MAC again. IP while static could change. I have a LAN and WIFI ip for all my players in static dhcp lease... though it got a different mac for lan and wifi so that does not solve the problem. Do you have any suggestions for a stable index? ip + port is an esy choice and it contains the data needed when working with groups and interacting with the players.
 
----
-
-## D8. Model nesting; prevent it; do not act on it
+### D8. Model nesting; prevent it; do not act on it
 
 **Decision.** Three separate rules.
 
@@ -239,9 +262,7 @@ flatten action from earlier drafts is removed.
 that seeing them is not sufficient. Even then the answer is a clearer display,
 not an automatic action.
 
----
-
-## D9. "Group all" makes the minimum number of changes
+### D9. "Group all" makes the minimum number of changes
 
 **Decision.** Take the currently selected player as the master. Then:
 
@@ -270,75 +291,86 @@ returns an empty body with HTTP 200, so success must be verified, not assumed.
 
 ---
 
-## D10. Optimistic state is client-side only and TTL-bounded
+## Browsing, sorting and caching
 
-**Decision.** Volume and transport get a local optimistic overlay with a short
-TTL — dropped as soon as a snapshot reflects it, or after ~1 s, whichever comes
-first. The server never holds optimistic state.
+Where the browse tree comes from, who sorts it, and what is kept.
 
-**Because.** A slider that waits for a round trip feels broken. Server-side
-optimism would corrupt the invariant that the snapshot is what the players
-actually report, and would make the debug panel lie.
+### D6. Browse is the deliberate exception: structural pass-through
 
----
+**Decision.** For browse only, the server is a sanitising pass-through, not a
+domain modeller. It converts XML to structurally equivalent JSON, preserves the
+generic attribute maps intact, and rewrites device URLs and browse keys into
+opaque server-side tokens. It does not decide what an item *means*; the client
+renders generically from `type` and `resultType`.
 
-## D11. Static configuration now; discovery is a late maybe
+**Because.** The browse protocol is link-driven on purpose. A server-side domain
+model would have to invent a taxonomy the protocol lacks, and would be wrong
+differently for each service.
 
-**Decision.** Players come from a static config file. No LSDP, no mDNS, for all
-of development and the first working version.
+**Sorting is not part of this.** Sorting is a device operation, requested via
+the parameter declared in `/Services` (D17). The cache stores each sort order as
+its own node rather than reordering locally.
 
-**Because.** Unreliable discovery is the problem this project exists to solve,
-and the devices have fixed addresses. Depending on discovery during development
-would reintroduce the exact failure mode being escaped.
+**Revisit if.** A concrete rendering problem cannot be solved client-side. Then
+add a hint field and record it here.
 
-**But design for it.** The player registry takes players from a *source*, and
-config is one implementation of that source. Do not scatter assumptions that the
-player set is fixed at startup or that it came from a file. Adding discovery
-later should mean adding a source, not restructuring the registry.
+### D17. Browse is driven by the `/Services` declaration
 
-If it is ever built, it layers on top of the static entries rather than
-replacing them: seed from config, then look for others. The discovery protocol
-is described in the reference, §12; read it there rather than reasoning about it
-here. Current evidence is that nothing enumerates players outside a group, so
-this may find nothing.
+**Decision.** `/Services` is a first-class persistent object, not a startup
+source list. It declares, per list, the browse path, its fixed parameters, and
+the sort and filter options that list supports. Browse requests are built from
+that declaration.
 
-**Revisit if.** Everything else works and this is the most annoying thing left.
-Not before.
+`/Browse` is used only for a list that has no declaration at all. It is not a
+parallel path kept for convenience: it cannot sort, and the request builder is
+generic, so there is nothing it makes easier.
 
----
+**Because.** Sort options are declared in `/Services`, not advertised in the
+browse response. A list that returns no `<sortMenu>` may still be fully
+sortable — Tidal favourites is exactly that case, and `sort=recent` returns date
+added. A client that treats `/Services` as a one-off source list loses all
+sorting and filtering even though the endpoints support it. That is precisely
+the official app's failure, and R3 exists because of it.
 
-## D12. Firmware upgrade is not implemented
+`/Browse` cannot sort, and its track items concatenate artist and album into
+`text2`, which in-list search needs separated. The earlier decision named
+exactly this revisit condition — `/Browse` being unable to reach content the
+typed path can — and it fired.
 
-**Decision.** Display version and update-available status. No upgrade trigger.
+**This is not hard-coding.** `<browseRequest url>` and `<requestParameter>` are
+followed exactly like any device-supplied URL, just declared once per list
+rather than repeated per response. LocalMusic pointing at `/library/v1/Artists`
+rather than `/Artists` is the proof: constructing the path yourself would be
+wrong, and the declaration is what tells you so.
 
-**Because.** Low value, not high risk — the earlier framing overstated the
-danger. Players manage their own upgrades and the port 80 web UI does the job.
-The official app's upgrade-all is presumably the same call to every player and
-could be added cheaply if it ever mattered.
+**Consequences.**
 
-**Revisit if.** Upgrading players one at a time through the web UI becomes
-irritating. Small feature, not a forbidden one.
+- Fetch `/Services` at startup, keep it, re-fetch on schema change. It is the
+  browse schema.
+- Build requests by concatenating `browseRequest url` + its `requestParameter`
+  children + `service=<name>` + the chosen sort value.
+- Applying a sort **replaces** that parameter rather than appending.
+- Sort selections are remembered per list, keyed by the `browseRequest` url plus
+  its `requestParameter` children. That key is also the cache key.
+- **Sort vocabularies are per service.** Tidal calls alphabetical `name`;
+  LocalMusic and BluOS Playlists call it `alpha`. Never assume a value carries
+  across services. Read them from the declaration.
+- Treat descending as unavailable. `<value reverseName>` is read by the Android
+  client but has not been observed in any response.
+- `resultType` (`Song`, `Album`, `Artist`, `Playlist`, `Info`) tells the client
+  how to render; `grouped` means section-grouped with A–Z headers.
+- Filters use the same shape one level deeper, are inherited by descendants,
+  join selected values with commas, and `<nofilter/>` suppresses an inherited
+  one. `class="alternative"` is single-choice.
 
----
+**A third surface exists and is rejected.** `/ui/Configuration` returns
+server-driven UI screens and is what current Controller apps render. It is
+undocumented with no stability promise. Not used.
 
-## D13. No authentication
+**Revisit if.** A service we care about has no `/Services` declaration for a
+list we need. Then `/Browse` is the fallback for that list specifically.
 
-**Decision.** Authentication is not implemented. No credentials in config, no
-digest or basic handling, no credential cache. A 401 is displayed as an error
-like any other.
-
-**Because.** No way was found to set credentials on a consumer N-series player,
-so the path is unexercised and untestable on the hardware this targets. The
-mechanism is real in other BluOS clients and presumably serves CI hardware, but
-implementing behaviour that cannot be verified means shipping untested code
-paths for a scenario that may never occur.
-
-**Revisit if.** A player on the network actually returns 401. Then it is worth
-doing properly, with real behaviour to test against.
-
----
-
-## D14. Cache complete lists; one cached node per sort order
+### D14. Cache complete lists; one cached node per sort order
 
 **Decision.** SQLite-backed browse cache, stale-while-revalidate, keyed by
 browse node. Cached payloads are the generic parsed form including full open
@@ -369,18 +401,107 @@ device (D17) and the cache followed it. Do not propose local reordering again.
 
 ---
 
-## D15. One artifact, generated types
+## What is deliberately not built
 
-**Decision.** The built frontend is embedded into the Rust binary
-(`rust-embed`). TypeScript types are generated from Rust types and the generated
-files are committed. The built JavaScript bundle is committed too (D2).
+Absent by decision, not by omission.
 
-**Because.** One deployment artifact means no version skew between API and UI.
-Committing generated output means a rotted toolchain blocks rebuilds, not runs.
+### D11. Static configuration now; discovery is a late maybe
+
+**Decision.** Players come from a static config file. No LSDP, no mDNS, for all
+of development and the first working version.
+
+**Because.** Unreliable discovery is the problem this project exists to solve,
+and the devices have fixed addresses. Depending on discovery during development
+would reintroduce the exact failure mode being escaped.
+
+**But design for it.** The player registry takes players from a *source*, and
+config is one implementation of that source. Do not scatter assumptions that the
+player set is fixed at startup or that it came from a file. Adding discovery
+later should mean adding a source, not restructuring the registry.
+
+If it is ever built, it layers on top of the static entries rather than
+replacing them: seed from config, then look for others. The discovery protocol
+is described in the reference, §12; read it there rather than reasoning about it
+here. Current evidence is that nothing enumerates players outside a group, so
+this may find nothing.
+
+**Revisit if.** Everything else works and this is the most annoying thing left.
+Not before.
+
+### D12. Firmware upgrade is not implemented
+
+**Decision.** Display version and update-available status. No upgrade trigger.
+
+**Because.** Low value, not high risk — the earlier framing overstated the
+danger. Players manage their own upgrades and the port 80 web UI does the job.
+The official app's upgrade-all is presumably the same call to every player and
+could be added cheaply if it ever mattered.
+
+**Revisit if.** Upgrading players one at a time through the web UI becomes
+irritating. Small feature, not a forbidden one.
+
+### D13. No authentication
+
+**Decision.** Authentication is not implemented. No credentials in config, no
+digest or basic handling, no credential cache. A 401 is displayed as an error
+like any other.
+
+**Because.** No way was found to set credentials on a consumer N-series player,
+so the path is unexercised and untestable on the hardware this targets. The
+mechanism is real in other BluOS clients and presumably serves CI hardware, but
+implementing behaviour that cannot be verified means shipping untested code
+paths for a scenario that may never occur.
+
+**Revisit if.** A player on the network actually returns 401. Then it is worth
+doing properly, with real behaviour to test against.
+
+### D19. Playback is not moved between players
+
+**Decision.** `/MovePlayback` is not implemented. To listen somewhere else,
+start playback there.
+
+**Because.** Tried on real hardware when the multi-player setup was new, and it
+did not work well enough to keep.
+
+Position is not preserved — playback does not resume where it left off. For an
+ordinary queue that is an annoyance you can correct by skipping or seeking.
+
+For Tidal track radio it is not correctable. Track radio is a generated
+playlist, and moving playback restarts it at the first track rather than
+continuing from the current position. Recovery would mean skipping forward to
+where you were, except track radio offers no way to select a track, and the
+whole point of listening to it is not knowing what is coming — so there is no
+position to skip back to. You lose your place and cannot get it back.
+
+That is the case where moving playback would be most useful, and it is the case
+where it fails worst.
+
+**Consequences.** No move-playback action anywhere in the UI. `canMovePlayback`
+from `/Status` is parsed like any other field but nothing consumes it.
+
+**Revisit if.** Firmware starts preserving position across a move, particularly
+for generated playlists. This is a device behaviour, not a client limitation, so
+the signal is a change on the device side rather than a better implementation
+here.
+
+### D18. Out of scope
+
+Zone and home-theatre pairing, stereo pairs, subwoofer pairing, channel modes,
+speaker distances. Soundbars. Rechargeable and battery players. Anything
+specific to custom-integration or professional hardware. Service authentication
+flows — services are already authenticated on the player. Player setup and Wi-Fi
+provisioning. Firmware upgrade triggering (D12). Discovery, for now (D11).
+Authentication (D13).
+
+The official app stays installed for these.
 
 ---
 
-## D16. Naming, data, and the API Use Policy
+## The project itself
+
+Name, licence, data, and the vendor's API Use Policy.
+
+### D16. Naming, data, and the API Use Policy
 
 **Decision.**
 
@@ -440,102 +561,64 @@ not a drift.
 
 ---
 
-## D17. Browse is driven by the `/Services` declaration
+## Decisions promised to this document but not written
 
-**Decision.** `/Services` is a first-class persistent object, not a startup
-source list. It declares, per list, the browse path, its fixed parameters, and
-the sort and filter options that list supports. Browse requests are built from
-that declaration.
+`MOTIVATION.md` expects both of these to be taken here. Neither is.
 
-`/Browse` is used only for a list that has no declaration at all. It is not a
-parallel path kept for convenience: it cannot sort, and the request builder is
-generic, so there is nothing it makes easier.
+### Build on an existing project, or start over
 
-**Because.** Sort options are declared in `/Services`, not advertised in the
-browse response. A list that returns no `<sortMenu>` may still be fully
-sortable — Tidal favourites is exactly that case, and `sort=recent` returns date
-added. A client that treats `/Services` as a one-off source list loses all
-sorting and filtering even though the endpoints support it. That is precisely
-the official app's failure, and R3 exists because of it.
+`MOTIVATION.md` links here for it: the bluesound_alt integration was forked and
+its group playback fixed before the remaining requirements were judged out of
+reach, and the conclusion that the survey stops there is a decision in its own
+right. Until it is written the link from `MOTIVATION.md` lands on nothing.
 
-`/Browse` cannot sort, and its track items concatenate artist and album into
-`text2`, which in-list search needs separated. The earlier decision named
-exactly this revisit condition — `/Browse` being unable to reach content the
-typed path can — and it fired.
+### One solution for desktop and phone, or two
 
-**This is not hard-coding.** `<browseRequest url>` and `<requestParameter>` are
-followed exactly like any device-supplied URL, just declared once per list
-rather than repeated per response. LocalMusic pointing at `/library/v1/Artists`
-rather than `/Artists` is the proof: constructing the path yourself would be
-wrong, and the declaration is what tells you so.
+`MOTIVATION.md` no longer mentions this at all. `README.md` answers it in
+substance — a web app served from the home server, reachable from anything with
+a browser — but nothing records it as a decision, so the reasoning and the
+revisit condition are missing.
 
-**Consequences.**
-
-- Fetch `/Services` at startup, keep it, re-fetch on schema change. It is the
-  browse schema.
-- Build requests by concatenating `browseRequest url` + its `requestParameter`
-  children + `service=<name>` + the chosen sort value.
-- Applying a sort **replaces** that parameter rather than appending.
-- Sort selections are remembered per list, keyed by the `browseRequest` url plus
-  its `requestParameter` children. That key is also the cache key.
-- **Sort vocabularies are per service.** Tidal calls alphabetical `name`;
-  LocalMusic and BluOS Playlists call it `alpha`. Never assume a value carries
-  across services. Read them from the declaration.
-- Treat descending as unavailable. `<value reverseName>` is read by the Android
-  client but has not been observed in any response.
-- `resultType` (`Song`, `Album`, `Artist`, `Playlist`, `Info`) tells the client
-  how to render; `grouped` means section-grouped with A–Z headers.
-- Filters use the same shape one level deeper, are inherited by descendants,
-  join selected values with commas, and `<nofilter/>` suppresses an inherited
-  one. `class="alternative"` is single-choice.
-
-**A third surface exists and is rejected.** `/ui/Configuration` returns
-server-driven UI screens and is what current Controller apps render. It is
-undocumented with no stability promise. Not used.
-
-**Revisit if.** A service we care about has no `/Services` declaration for a
-list we need. Then `/Browse` is the fallback for that list specifically.
+When both are written, the open end in `MOTIVATION.md` that tracks them goes.
 
 ---
 
-## D18. Out of scope
+## Candidates for the plan, not here
 
-Zone and home-theatre pairing, stereo pairs, subwoofer pairing, channel modes,
-speaker distances. Soundbars. Rechargeable and battery players. Anything
-specific to custom-integration or professional hardware. Service authentication
-flows — services are already authenticated on the player. Player setup and Wi-Fi
-provisioning. Firmware upgrade triggering (D12). Discovery, for now (D11).
-Authentication (D13).
+First-pass notes for the next edit. Nothing below has been moved.
 
-The official app stays installed for these.
+### Passages that read as plan material
 
----
+- **D9, the four numbered steps and both worked examples.** The decision is
+  that a group which is already correct is left alone. The call sequence, the
+  batching and the `/SyncStatus` re-poll are how Tier 2 carries it out.
+- **D10's ~1 s TTL.** The decision is that optimistic state never reaches the
+  server. The number is a tuning value.
+- **D14's Consequences.** Cache key composition, which sort orders are
+  pre-cached, the crawl's node and depth caps, and the fields in-list search
+  matches on.
+- **D17's Consequences.** Request construction, parameter replacement,
+  per-service sort vocabularies, `resultType` rendering and filter semantics.
+  `PLAN.md` already carries most of this under "Browsing, sorting and search —
+  settled".
+- **D6's opaque tokens.** That device URLs and browse keys never reach the
+  browser is a decision; the token mechanism that achieves it is not.
 
-## D19. Playback is not moved between players
+### Elements that overlap each other or another document
 
-**Decision.** `/MovePlayback` is not implemented. To listen somewhere else,
-start playback there.
+- **D5 and D6.** D6 is written as the exception to D5 and only makes sense
+  beside it. One element with an exception clause, or two, but not one of each.
+- **D17 and D14.** Sort ownership and the cache key are stated in both.
+- **D18 against D11, D12, D13 and D19.** D18 is an index of decisions that each
+  already declare their own scope, plus a few lines that are declared nowhere
+  else (zone and home-theatre pairing, soundbars, battery players, service
+  authentication, Wi-Fi provisioning). Only those lines are load-bearing.
+- **D1, D2 and D3 against `CLAUDE.md`.** Its "Non-negotiable constraints"
+  section restates all three and asks in its own heading whether it needs to.
+- **D16's protocol-documentation split against `CLAUDE.md`.** "The two protocol
+  documents" says the same thing at the same length.
 
-**Because.** Tried on real hardware when the multi-player setup was new, and it
-did not work well enough to keep.
+### Elements that do not follow the four-field structure
 
-Position is not preserved — playback does not resume where it left off. For an
-ordinary queue that is an annoyance you can correct by skipping or seeking.
-
-For Tidal track radio it is not correctable. Track radio is a generated
-playlist, and moving playback restarts it at the first track rather than
-continuing from the current position. Recovery would mean skipping forward to
-where you were, except track radio offers no way to select a track, and the
-whole point of listening to it is not knowing what is coming — so there is no
-position to skip back to. You lose your place and cannot get it back.
-
-That is the case where moving playback would be most useful, and it is the case
-where it fails worst.
-
-**Consequences.** No move-playback action anywhere in the UI. `canMovePlayback`
-from `/Status` is parsed like any other field but nothing consumes it.
-
-**Revisit if.** Firmware starts preserving position across a move, particularly
-for generated playlists. This is a device behaviour, not a client limitation, so
-the signal is a change on the device side rather than a better implementation
-here.
+No **Revisit if**: D4, D9, D10, D14, D15. D18 has none of the four fields at
+all — it is a list.
