@@ -88,7 +88,7 @@ another shows a different subset.
 
 **A new group is not shown as a group.** Sometimes when I create a player
 group, the player list does not change for several seconds even though the
-group has formed, so I make it again and nothing happens.
+group has formed.
 
 **Ungrouping leaves a player unusable for a while.** After removing a player
 from a group, that player often cannot be selected for about ten to twenty
@@ -103,8 +103,8 @@ I decide to tap and the moment the tap registers, and I end up grouping a
 player I did not mean to. Removing the wrong one then locks up the player
 list, which often makes players disappear, which in turn means more waiting.
 And because a group that has formed does not always show up as one right
-away, it is hard to tell a genuine failure to group from a player list that is
-simply out of date. When the selected player is the one that vanishes, which
+away, I make it again to no effect, and a genuine failure to group is hard to
+tell apart from a player list that is simply out of date. When the selected player is the one that vanishes, which
 happens far too often, grouping becomes awkward for a simpler reason: a player
 I cannot see is
 a player I cannot group. Recovery means backing out of the player list and
@@ -181,10 +181,11 @@ problems above are untested there rather than absent.
 When a group is formed on iOS, the players appear grouped instantly. The
 Android app is often fast, but never that immediate. On iOS a group can also be
 broken apart without selecting it first, which means fewer steps when
-rearranging groups. Say I have two groups of two and want to move one player
-across: on iOS I can break the group without selecting it and add the player I
-want directly. On Android, changing a group means selecting it first, which
-often triggers the problems described above. It is the first difference I have
+rearranging groups. Say I have two groups of two and want to add a player
+from the other group to the one I am using: on iOS I can break the other group
+apart without selecting it, then add the player directly. On Android, changing
+the other group means selecting it first, which often triggers the problems
+described above. It is the first difference I have
 found that is a matter of what the app can do rather than how quickly it does
 it.
 
