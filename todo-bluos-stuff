@@ -140,9 +140,6 @@ larger half:
   few sections above it. Fix that row whether or not the append-only register
   lands.
 
-Not in this PR — it is long enough. But a proposal nobody merges is a finding
-nobody has.
-
 -----
 
 `C-03` (`/audiomodes` as a read) contradicts itself and has to be resolved

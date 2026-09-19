@@ -86,14 +86,8 @@ absent from the list.
 players and groups, selecting one player sometimes shows one subset; selecting
 another shows a different subset.
 
-**A new group is not shown as a group.** When I create a group, the app often
-goes on showing the players as separate entries for around five seconds. The
-group is already formed and the players are already playing together, but
-nothing on screen says so, so I make it again, which changes nothing. On iOS
-they appear grouped at once. Groups do also genuinely fail to form sometimes,
-and I suspect that one is the players rather than the app — but from the player
-list the two are identical, so there is no way to tell a group that failed from
-a group that has not been drawn yet.
+**A new group is not shown as a group.** Sometimes when creating a player
+group, the player list does not change even though the group did form.
 
 **Ungrouping leaves a player unusable for a while.** After removing a player
 from a group, that player often cannot be selected for about ten to twenty
@@ -107,7 +101,9 @@ players come and go, so the entry under my thumb can change between the moment
 I decide to tap and the moment the tap registers, and I end up grouping a
 player I did not mean to. Removing the wrong one then locks up the player
 list, which often makes players disappear, which in turn means more waiting.
-When the selected player is the one that vanishes, which happens far too
+When a group that forms, does not always show up as a group right away, it
+becomes hard to diffentiate rare geniue technical errors from the player list
+becoming out of date. When the selected player is the one that vanishes, which happens far too
 often, grouping becomes awkward for a simpler reason: a player I cannot see is
 a player I cannot group. Recovery means backing out of the player list and
 re-entering, waiting through discovery again and retrying. Controlling a
@@ -164,7 +160,7 @@ announcements slow and unreliable, which matches what I see years later
 Neither protocol is the bottleneck, but having two of them means more than one
 mechanism can add or remove a player from the list.
 
-### Discovery does not behave this way on iOS
+### The iOS BluOS Controller is faster and more reliable
 
 The BluOS controller on an iPhone, on the same network, through the same access
 point, to the same players, shows all four immediately and keeps them.
@@ -180,12 +176,7 @@ Android, and it was noticeably smoother, but a short session is not daily use.
 I have not lived with the iPhone as my everyday controller, so the rest of the
 problems above are untested there rather than absent.
 
-One difference is a feature rather than a matter of speed: on iOS a group can
-be broken apart without selecting it first. On Android, changing a group means
-selecting it, which means waiting for it to appear in the list — so the
-operation I want most often sits behind the part that works least well. That is
-the first clear functional difference I have found between the two apps, rather
-than the same app behaving better on one of them.
+When a player group is formed on iOS they appear groupped instantly. The Android app is often fast, but not as instant as iOS. On iOS a group can be broken apart without selecting it first, requiring fewer clicks to change player groups, e.g. Let us say we have two groups of two and want to add one player from the other group. On iOS I can break the group without selecting it and add the player I want directly. On Android, changing a group means selecting it which often triggers all kinds of issues as I have mentioned above.
 
 ---
 
