@@ -15,3 +15,17 @@ folder and to nothing outside it.
 Files are numbered in the order the exchange happened, with `-sent-` or
 `-support-response-` and the date. A draft is `NN-reply-draft.txt` with a
 `Status: DRAFT` line under the subject, and loses both when it is sent.
+
+## What may be used as evidence in these emails
+
+**Only measurements taken here, and the vendor's own material.** Nothing from
+third-party open-source BluOS projects: unofficial work carries no weight with
+the company, and citing it invites an argument about the source instead of the
+finding. Nothing read out of a shipping app either — that is against its EULA,
+and they are better placed to find it themselves.
+
+**A measurement supports claims about what was measured, and nothing past it.**
+Timings taken on the wire say what the players did. They say nothing about what
+the controller app does with an answer once it arrives — how long it listens,
+what it waits for, when it subscribes. State the observation and stop; the
+reader can draw the inference.
