@@ -142,3 +142,77 @@ larger half:
 
 Not in this PR — it is long enough. But a proposal nobody merges is a finding
 nobody has.
+
+-----
+
+`C-03` (`/audiomodes` as a read) contradicts itself and has to be resolved
+before anything else in §17 is trusted. §17.1 says CONFIRMED, from the
+2026-09-10 hardware pass — the pass that was deleted from this repo for
+leaking a real MAC address, so the evidence behind the verdict is gone. The
+clean 2026-09-11 re-run of the same claim, same firmware and same schema, came
+back INCONCLUSIVE: 200 OK, but a 9-10 byte body on both players instead of the
+populated `<audiomode>` element the vendor sample shows.
+
+So the spec currently asserts something whose evidence no longer exists, and
+the only evidence that does exist disagrees with it. Find out why the body
+differs — short body as "no audio modes on this model", versus a request shape
+that was wrong in the re-run — before touching the row. Do not quietly merge
+the newer verdict over the older one; a claim that was CONFIRMED from deleted
+evidence is its own finding about how the register was kept.
+
+-----
+
+Consistency sweep of the whole bluos-api corpus, to be done as one task rather
+than in passing. The known inconsistencies are listed below, but the point of
+the task is the sweep, not the list: assume more exist, because every one below
+was found by accident while looking for something else.
+
+Known:
+
+- `C-03`, above.
+- The "Resolved on hardware" summary table says role reversal is "Rejected as
+  a cycle; original master reasserts". §5.3 disproves exactly that, a few
+  sections earlier, with the mutual master loop.
+- §17 carries two claim tables, topic-ordered and id-ordered, maintained by
+  hand. `C-03` and `C-04` already show them drifting.
+- A dozen claims resolved in the hardware `FINDINGS.md` never reached §17.1 or
+  the body: `C-07` through `C-15`, `C-18`, `C-22`, `C-52`.
+- `C-56` and `C-57` exist only in `SPEC-ADDITIONS-identity.md`; the register
+  ends at `C-55`.
+- `PLAN.md` has its own R1-R6 requirement list that is a different set from
+  `MOTIVATION.md`'s R1-R8, and the numbers collide rather than simply
+  disagreeing: PLAN's R3 is sorting, which is MOTIVATION's R5; PLAN's R1 is
+  the GUI, which is MOTIVATION's R3; PLAN's R6 has no counterpart at all.
+  `DESIGN_PRINCIPLES.md` says "R3 exists because of it" about sorting, so
+  following that reference into MOTIVATION lands on the wrong requirement.
+  Known and deliberately left alone so far — it still has to be settled before
+  either document is relied on, and `README.md` is the authority.
+
+How to sweep, rather than eyeballing it:
+
+- Every claim id in §17 and §17.1, against each other and against the
+  `FINDINGS.md` of every run in `test-runs/`. Flag any id whose verdict
+  differs between the two tables, any id tested in a run but absent from the
+  register, and any verdict whose evidence was redacted out of the repo —
+  `REDACTIONS.md` in each run says what left.
+- Every summary table against the section it cites. They are hand-written
+  digests of body text and nothing keeps them in step.
+- `SPEC-ADDITIONS-*.md` and `SPEC-SECTION-*.md` against the spec, to find
+  proposals silently superseded by later edits as well as ones never merged.
+- Cross-document references by symbol: `R<n>`, `C-<n>`, `D<n>`, `§<n>`. Resolve
+  each one and check it points at what the sentence claims. That is what caught
+  the R-numbering collision.
+
+-----
+
+iOS: the app sometimes drops to a "wifi not connected" screen. Seen roughly
+twice in ten sessions while using the iPhone as the everyday controller. The
+whole interface disappears and is replaced by that screen, then recovers in
+under two seconds and possibly under one, and everything works immediately
+once it is gone. Nowhere near enough data for MOTIVATION, and it does not
+resemble the Android problems — recovery is instant and nothing is lost.
+
+Worth knowing what triggers it. If the BluOS IPA becomes available, check what
+puts the app into that state: whether it is a real network event, a failed
+request treated as a lost network, or a foreground/background transition.
+Until then, record the count and the circumstances each time it happens.

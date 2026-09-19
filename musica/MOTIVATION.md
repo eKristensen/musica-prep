@@ -86,6 +86,15 @@ absent from the list.
 players and groups, selecting one player sometimes shows one subset; selecting
 another shows a different subset.
 
+**A new group is not shown as a group.** When I create a group, the app often
+goes on showing the players as separate entries for around five seconds. The
+group is already formed and the players are already playing together, but
+nothing on screen says so, so I make it again, which changes nothing. On iOS
+they appear grouped at once. Groups do also genuinely fail to form sometimes,
+and I suspect that one is the players rather than the app — but from the player
+list the two are identical, so there is no way to tell a group that failed from
+a group that has not been drawn yet.
+
 **Ungrouping leaves a player unusable for a while.** After removing a player
 from a group, that player often cannot be selected for about ten to twenty
 seconds. The app behaves as though it is still a group member for a short
@@ -170,6 +179,13 @@ briefly — I could not provoke any of the trouble I run into regularly on
 Android, and it was noticeably smoother, but a short session is not daily use.
 I have not lived with the iPhone as my everyday controller, so the rest of the
 problems above are untested there rather than absent.
+
+One difference is a feature rather than a matter of speed: on iOS a group can
+be broken apart without selecting it first. On Android, changing a group means
+selecting it, which means waiting for it to appear in the list — so the
+operation I want most often sits behind the part that works least well. That is
+the first clear functional difference I have found between the two apps, rather
+than the same app behaving better on one of them.
 
 ---
 
