@@ -21,15 +21,15 @@ No Ethernet Power Line Adapters.
 
 How the players connect:
 - Stue (N132) to Living Room switch on cable.
-- Køkken (N132) to Main switch on cable via passthrough on Ubiquiti UniFi AP AC Pro
+- Køkken (N132) to Main switch on cable via the passthrough port on the Ubiquiti UniFi AP AC Pro — a wired port on the AP, not a wireless hop. This is a recent change and I have seen no difference in behaviour before or after it.
 - Kontor (N130) to Office switch on cable
 - Soveværelse (N110) on a stable wifi link with about 2.5 meter to the TP-Link EAP772 which connects to the Office switch
 
-I measured LSDP discovery directly, from a wired machine connected to the same network as the players. 20 rounds, each sending the same discovery query a controller sends and recording when each player answered. All four players answered in all 20 rounds. Median time to answer for each of them: 327 ms, 362 ms, 461 ms and 468 ms.
+I measured LSDP discovery directly, from a wired machine connected to the same network as the players. 20 rounds, each sending the same discovery query a controller sends and recording when each player answered. All four players answered in all 20 rounds. Median time to answer for each of them: 327 ms, 362 ms, 461 ms and 468 ms. The four are spread across three switches and one wireless link, and they answer equivalently regardless, so nothing in the measurement points at where any of them is attached.
 
 You cannot tell from the numbers which player is the Wi-Fi connected one. It is not the slowest of them, and nothing in the spread marks it out. Every answer fell inside the random 0-750 ms a BluOS player waits before answering a query. No packet loss. Its wireless link is adding neither delay nor loss, and it is not what the Android app is waiting for.
 
-As for how the BluOS Controller connects: over Wi-Fi in everyday use, and also over USB Ethernet as described in my earlier messages. I have varied the access point deliberately between the two, and the results do not change no matter which access point I use. My Android devices are 1-5 meters away from the access point.
+As for how the BluOS Controller connects: over Wi-Fi. That is how I use it, and it is how every everyday observation in this case was made. The USB Ethernet adapter is a test instrument only, never how I control the players — I described those runs and what they showed in my first message. I have varied the access point deliberately between the two, and the results do not change no matter which one I use. My Android devices are 1-5 meters away from the access point.
 
 Ethernet cable type: Cat 5e throughout, in mostly short runs of a few metres — my longest patch cable is 10 m. The one exception is the in-wall run between the EdgeSwitch in the office and the MikroTik in the server closet, which is Cat 6a and at most about 12 m. Cabling is one of the things I have unintentionally tested hardest: the problem has followed me across many different cables. The cables were thoroughly reshuffled when I moved house. No cable I have swapped has ever made a difference to it.
 
