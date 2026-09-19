@@ -227,9 +227,9 @@ response and in many cases it would be correct.
 - **Not Android app settings.** The app has unrestricted background usage, is
   exempt from battery optimisation, and has been granted the location
   permission it asks for. The usual OS restrictions are not what is in the way.
-- **A reliable app exists.** On the same network the iOS app on an iPhone works
-  without any of this, while none of the four Android devices I tried did. The
-  mix of mDNS and LSDP is not a problem for the iOS app.
+- **A better app exists.** On the same network the iOS app on an iPhone is much
+  more reliable than any of the four Android devices I tried. The mix of mDNS
+  and LSDP is not a problem for the iOS app.
 
 Some of my family use Sonos, and discovery on Android is rock solid there. I
 wonder why the BluOS Controller on iOS is so much more reliable than the one on
