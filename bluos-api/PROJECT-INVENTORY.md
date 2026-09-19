@@ -1,7 +1,9 @@
 # Third-party project inventory — reconciliation
 
-Checking the appendix's "analyzed" markers against what was actually examined
-in the protocol work. Three discrepancies.
+Which of the projects listed in
+[`../musica/ECOSYSTEM.md`](../musica/ECOSYSTEM.md) were examined for the
+protocol work, and what each one contributed. Three were recorded wrongly;
+they come first.
 
 ---
 
@@ -42,9 +44,6 @@ Everything else matches. For the record, with what each contributed:
 
 ### CLIs and TUIs
 
-The section header still says "TODO include in protocol research" — that TODO
-is complete for all five marked projects.
-
 | Project | Status | Contribution |
 |---|---|---|
 | blucli | analyzed ✓ | Nothing new; corroborated the core endpoint set |
@@ -73,7 +72,8 @@ is complete for all five marked projects.
 ### Not analyzed, and correctly unmarked
 
 Web interfaces (kindofblu, great-horn/amp) and the whole
-displays/scrobblers/single-purpose section. The reasoning in the appendix holds:
+displays/scrobblers/single-purpose section. The reasoning in
+[`../musica/ECOSYSTEM.md`](../musica/ECOSYSTEM.md) holds:
 these touch a narrow slice of the API, and every endpoint a scrobbler needs
 (`/Status` polling) is already covered several times over.
 
@@ -86,7 +86,8 @@ care. Low expected value, but the highest of that section.
 
 ## Sources used that are not on the list
 
-The appendix covers third-party projects. The specification also rests on
+[`../musica/ECOSYSTEM.md`](../musica/ECOSYSTEM.md) covers third-party
+projects. The specification also rests on
 material that is not a project at all, and which produced most of its content:
 
 | Source | Contribution |

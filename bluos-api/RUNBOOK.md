@@ -41,6 +41,14 @@ If nothing answers, the machine is probably on a different subnet or VLAN from
 the players, or a host firewall is dropping UDP 11430. Fall back to naming them
 by address; everything below works the same way.
 
+On a firewalld host, opening the port for the duration of the run is enough;
+the timeout closes it again. Substitute the interface that faces the players:
+
+```bash
+ZONE=$(sudo firewall-cmd --get-zone-of-interface=wlp2s0)
+sudo firewall-cmd --zone="$ZONE" --add-port=11430/udp --timeout=5m
+```
+
 To find out *why* discovery is slow or flaky rather than working around it,
 `lsdp-static/` measures it — how long a round takes, and how often a round
 comes back short — and can answer LSDP queries itself from a static player

@@ -1,10 +1,3 @@
-Test tool open firewall:
-
-ZONE=$(sudo firewall-cmd --get-zone-of-interface=wlp2s0)
-sudo firewall-cmd --zone="$ZONE" --add-port=11430/udp --timeout=5m
-
------
-
 I think it makes sense to pre-extract code to make the chat cheaper
 
 -----
@@ -44,18 +37,6 @@ Reconsider Roon.
 - Check it against the current list of requirements.
 - Check whether HDMI playback in Stue works with Roon.
 - Work out what the problem was the last time it was tried.
-
------
-
-The old forum API reference several projects build on: the archived link is
-saved, in musica/ECOSYSTEM.md under Honourable mentions. The live
-helpdesk.bluesound.com thread is gone; the entry already points at the web
-archive snapshot instead.
-
-What is missing is the link where it is actually used. bluos-api cites this
-source as "2015 forum" for several claims (C-10, C-32 among them) without a
-URL, so the reference for those rows lives in a different folder under a
-different name. Worth putting the archive URL next to the source name there.
 
 -----
 
@@ -124,8 +105,9 @@ findable only if you already know it exists:
 `HANDOVER.md` has an "Open work" list that belongs with this, and it is the
 larger half:
 
-- A dozen claims are tested in the hardware `FINDINGS.md` but never written
-  into §17.1 or the body — `C-07` through `C-15`, `C-18`, `C-22`, `C-52`.
+- Eleven claims are tested in the hardware `FINDINGS.md` but never written
+  into §17.1 or the body — `C-07` through `C-13`, `C-15`, `C-18`, `C-22`,
+  `C-52`. (`C-14` is not among them; that run did not exercise it.)
   Mechanical, but real. Feed it `FINDINGS.md` rather than the raw bundle, the
   way `TEST-PLAN.md` describes.
 - `C-03` (`/audiomodes` as a read) disagrees with itself. §17.1 still says
@@ -134,11 +116,9 @@ larger half:
   came back INCONCLUSIVE: 200 OK with a 9-10 byte body on both players rather
   than the populated `<audiomode>` the vendor sample shows. Not a merge — find
   out why the body differs first.
-- §17 carries two claim tables, topic-ordered and id-ordered, and they can
-  drift. One has: the "Resolved on hardware" summary still says role reversal
-  is "Rejected as a cycle; original master reasserts", which §5.3 disproves a
-  few sections above it. Fix that row whether or not the append-only register
-  lands.
+- §17 carries two claim tables, topic-ordered and id-ordered, and they drift:
+  `C-03` and `C-04` differ between them. The append-only register would remove
+  the second table and the drift with it.
 
 -----
 
@@ -167,13 +147,10 @@ was found by accident while looking for something else.
 Known:
 
 - `C-03`, above.
-- The "Resolved on hardware" summary table says role reversal is "Rejected as
-  a cycle; original master reasserts". §5.3 disproves exactly that, a few
-  sections earlier, with the mutual master loop.
 - §17 carries two claim tables, topic-ordered and id-ordered, maintained by
   hand. `C-03` and `C-04` already show them drifting.
-- A dozen claims resolved in the hardware `FINDINGS.md` never reached §17.1 or
-  the body: `C-07` through `C-15`, `C-18`, `C-22`, `C-52`.
+- Eleven claims resolved in the hardware `FINDINGS.md` never reached §17.1 or
+  the body: `C-07` through `C-13`, `C-15`, `C-18`, `C-22`, `C-52`.
 - `C-56` and `C-57` exist only in `SPEC-ADDITIONS-identity.md`; the register
   ends at `C-55`.
 - `PLAN.md` has its own R1-R6 requirement list that is a different set from

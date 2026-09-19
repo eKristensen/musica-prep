@@ -68,6 +68,19 @@ say what it costs to get it wrong. That is not history, it is a finding.
 Everything else about how the work unfolded belongs in the commit
 message, not the document.
 
+## Keep the pull request description current
+
+A branch's PR description is created from the first commit message and
+does not update itself. By the third commit it describes a fraction of
+the branch, and it is what a reviewer reads first.
+
+**After pushing, bring the description up to date with the whole branch.**
+Not a commit-by-commit log — the same thing the branch's final state would
+be described as if it had been written in one go, plus anything a reviewer
+needs in order to decide: what was deliberately left out, and what is
+someone else's call. If a later commit corrects something an earlier one
+claimed, the description carries the correction, not both versions.
+
 ## Otherwise
 
 Standard judgment applies: be accurate, flag real errors, ask when
