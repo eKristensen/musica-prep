@@ -113,20 +113,7 @@ player that the app does not show is hard, and because most actions on the
 player list screen change what that screen shows, it is not a pleasant screen
 to use.
 
-### 3. The app refuses to work over VPN, even though the network works
-
-Over VPN the app sometimes works for a while, and then stops for no apparent
-reason. I can still reach the players' own web interface through the tunnel
-throughout. The restriction appears to be based on connection type rather than
-on whether the players are actually reachable.
-
-**Impact:** if I forget to pause the music before leaving home, my only native
-option is to reboot the player from its web UI, which is hardly elegant. The
-case that bites most often is forgotten Tidal playback, which then blocks Tidal
-on my phone while I am out. It also makes it impossible to build an
-alternative, potentially more stable, path for the discovery packets over VPN.
-
-### 4. The app opens with a different player selected
+### 3. The app opens with a different player selected
 
 Sometimes the app comes back with a different player selected than the one I
 was using when I closed it. Nothing I did changed the selection; it changes on
@@ -135,7 +122,7 @@ its own between one session and the next.
 **Impact:** getting back to the player I actually wanted means going through
 the list, and so through the slow and unreliable discovery process.
 
-### 5. A full rediscovery whose results are then thrown away
+### 4. A full rediscovery whose results are then thrown away
 
 Occasionally the app opens with a message saying BluOS lost connection to my
 player, and the normal interface is replaced by a full-screen discovery view.
@@ -148,6 +135,19 @@ and had to be discovered again from scratch.
 nothing else has done as much to make me distrust the code behind discovery in
 this app. It is also the most conspicuous version of the problem, because the
 app visibly finds all the players and then visibly forgets them a second later.
+
+### 5. The app refuses to work over VPN, even though the network works
+
+Over VPN the app sometimes works for a while, and then stops for no apparent
+reason. I can still reach the players' own web interface through the tunnel
+throughout. The restriction appears to be based on connection type rather than
+on whether the players are actually reachable.
+
+**Impact:** if I forget to pause the music before leaving home, my only native
+option is to reboot the player from its web UI, which is hardly elegant. The
+case that bites most often is forgotten Tidal playback, which then blocks Tidal
+on my phone while I am out. It also makes it impossible to build an
+alternative, potentially more stable, path for the discovery packets over VPN.
 
 ### Two discovery protocols
 
