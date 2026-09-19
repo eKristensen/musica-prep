@@ -12,11 +12,7 @@ folder and to nothing outside it.
 
 ## Conventions
 
-Every message gets its own number, in the order the exchange happened —
-theirs and mine alike, never a shared number for a response and its reply —
-with `-sent-` or `-support-response-` and the date. A draft is `NN-reply-draft.txt` and carries a
-`Status: DRAFT — not sent` line under the subject; on sending it is renamed to
-`NN-reply-sent-<date>.txt` and that line becomes `Sent: <date>`.
+Every message gets its own number, in the order the exchange happened — theirs and mine alike, never a shared number for a response and its reply — with `-sent-` or `-support-response-` and the date. A draft is `NN-reply-draft.txt` and carries a `Status: DRAFT — not sent` line under the subject; on sending it is renamed to `NN-reply-sent-<date>.txt` and that line becomes `Sent: <date>`.
 
 ## What may be used as evidence in these emails
 
