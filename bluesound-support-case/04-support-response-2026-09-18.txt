@@ -1,0 +1,30 @@
+From: Charmain K., The Bluesound Support Crew
+Received: 18 September 2026
+Case: #560728  (https://support1.bluesound.com/hc/requests/560728)
+
+Hello Emil,
+
+Thank you for contacting The Bluesound Support Crew.
+
+To help me understand the specific issue, could you please describe the network
+you're using for your BluOS players?
+
+What is the make and model of the Router?
+Do you have any Switches, Access-points, or Bridges?
+Are any of your devices connected by Ethernet Power Line Adapters?
+How are your BluOS controller devices and player(s) connected to your network?
+(Ethernet or WiFi)
+If you're using Ethernet cables, what type of Ethernet cables are you using?
+(Cat5, 5e, 6, etc.)
+If any of your devices are connected wirelessly, could you provide an estimate
+of the distance between the devices and their respective access points on your
+network?
+
+Thank you in advance for any information you can provide. It will greatly assist
+me in diagnosing and finding a solution to the issue.
+
+Thanks for #LivingHiFi.
+
+Regards,
+Charmain K.
+The Bluesound Support Crew

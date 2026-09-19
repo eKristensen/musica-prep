@@ -1,0 +1,43 @@
+Subject: #560728
+Sent: 19 September 2026
+
+Hi Charmain,
+
+Router: Orange Pi 5 Plus (16 GB) single-board computer running Ubuntu, doing the routing and firewalling.
+
+Access points:
+- TP-Link EAP772, hardware 1.0, firmware 1.1.5
+- Ubiquiti UniFi AP AC Pro
+- No Wi-Fi bridges
+
+I have used the UniFi AP as a comparison during testing. The two APs do not share any SSID so I always know which one any device is connected to.
+
+Switches:
+- Main switch: MikroTik CSS106-5G-1S running SwOS 2.18
+- Office switch: Ubiquiti EdgeSwitch 24 Lite, firmware 1.9.3
+- Living Room switch: HP 1410-8G
+
+No Ethernet Power Line Adapters.
+
+How the players connect:
+- Stue (N132) to Living Room switch on cable.
+- Køkken (N132) to Main switch on cable via the passthrough port on the Ubiquiti UniFi AP AC Pro — a wired port on the AP, not a wireless hop. This is a recent change and I have seen no difference in behaviour before or after it.
+- Kontor (N130) to Office switch on cable
+- Soveværelse (N110) on a stable wifi link with about 2.5 meter to the TP-Link EAP772 which connects to the Office switch
+
+I measured LSDP discovery directly, from a wired machine connected to the same network as the players. 20 rounds, each sending the same discovery query a controller sends and recording when each player answered. All four players answered in all 20 rounds. Median time to answer for each of them: 327 ms, 362 ms, 461 ms and 468 ms. The four are spread across three switches and one wireless link, and they answer equivalently regardless, so nothing in the measurement points at where any of them is attached.
+
+You cannot tell from the numbers which player is the Wi-Fi connected one. It is not the slowest of them, and nothing in the spread marks it out. Every answer arrived within 750 ms of the query, and the spread was even across all four players. No packet loss. Its wireless link is adding neither delay nor loss.
+
+As for how the BluOS Controller connects: over Wi-Fi. That is how I use it, and it is how every everyday observation in this case was made. The USB Ethernet adapter is a test instrument only, never how I control the players — I described those runs and what they showed in my first message. I have varied the access point deliberately between the two, and the results do not change no matter which one I use. My Android devices are 1-5 meters away from the access point.
+
+Ethernet cable type: Cat 5e throughout, in mostly short runs of a few metres — my longest patch cable is 10 m. I have an in-wall extension that runs between the EdgeSwitch in the office and the MikroTik in the server closet, which is Cat 6a and less than 12 m. Cabling is one of the things I have unintentionally tested hardest: the problem has followed me across many different cables. The cables were thoroughly reshuffled when I moved house. No cable I have swapped has ever made a difference to it.
+
+With all of that answered, may I ask where this goes next. Since my first message I have tested on three Android phones from three manufacturers, on Android 11, 12 and 15, and on a clean Android install with no Google services at all. All of them behave the same way. An iPhone on the same Wi-Fi, through the same access point, to the same four players, shows none of it. The players answer a discovery query in well under a second, twenty times out of twenty. Every part of the environment I can vary has now been varied, and the BluOS Controller for Android is the one thing left that I cannot test my way around.
+
+So my question is whether the Android controller itself can be looked at, or whether this case can go to whoever works on it. If anything I sent earlier was unclear, tell me and I will gladly restate it — the controller connection details and the full list of what I had already ruled out are in my first message of 16 September, and I would rather point you back to it than repeat it at length here. And if there is a measurement that would help make the case internally on your end, name it and I will run it.
+
+One other thing: I sent the diagnostic logs for all four players on 17 September, under this case and #560996, #560997 and #560998. Did they show anything useful?
+
+Best regards,
+Emil Kristensen
