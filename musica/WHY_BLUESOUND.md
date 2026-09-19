@@ -56,9 +56,11 @@ Roon was the first candidate and the only one taken as far as actually running
 it. It is also the only alternative where the failure is worth writing down at
 length, because it fails for reasons that look like solutions.
 
-The short version: Roon fails three of the requirements outright, and keeps the
-discovery problem in a stricter form with no escape hatch. Two of the five
-problems in [MOTIVATION.md](MOTIVATION.md) reproduce on it.
+The short version: Roon fails in the living room, where the NODE serves films
+and television as well as music, and it keeps the discovery problem in a
+stricter form with no escape hatch. Two of the five problems in
+[MOTIVATION.md](MOTIVATION.md) reproduce on it. The case for Roon is argued at
+the end of this section rather than left out.
 
 ##### What Roon does better
 
@@ -139,7 +141,7 @@ rate worse. What does not hold is the neat story that Android is the common
 cause. The asymmetry documented in `MOTIVATION.md` remains specific to BluOS,
 and unexplained.
 
-##### Two requirements Roon does not meet at all
+##### The requirements Roon does not meet
 
 **Room correction is not built in.** Roon's DSP engine, MUSE, applies
 convolution filters and parametric EQ, but it does not measure anything. There
@@ -160,11 +162,37 @@ before the internal DAC so an external DAC gets the same benefit
 Dirac measures the room and builds the filter. Roon plays a filter somebody
 else built.
 
-The honest comparison is that Roon's engine is *more capable* and *less
-convenient*: convolution plus per-zone delay across a synchronised group beats
-what BluOS exposes, for someone willing to own a measurement microphone and
-maintain filters by hand. That is a different thing from built-in room
-correction, and it is not what the requirement asked for.
+Roon's engine is *more capable* and *less convenient* than Dirac for anyone
+willing to own a measurement microphone. What it can apply is broad:
+convolution from a zip of impulse responses matched to the source's sample rate
+and channel layout
+([Roon KB](https://kb.roonlabs.com/DSP_Engine:_Convolution)), parametric EQ with
+shelves and low- and high-pass filters, so crossovers and subwoofer integration
+can be built by hand, and Procedural EQ for per-channel curves, channel mixing
+and phase inversion
+([Roon KB](https://help.roonlabs.com/portal/en/kb/articles/dsp-engine-procedural-equalizer)).
+The ceiling is set by the tool that made the filter, not by Roon: REW alone
+produces minimum-phase IIR correction, where changing the magnitude drags the
+phase with it, while Dirac Live is mixed-phase and corrects the time domain as
+well
+([comparison](https://www.minidsp.com/applications/digital-room-correction/dirac-live-vs-rew),
+[how Dirac works](https://www.diymobileaudio.com/threads/how-dirac-live-works-a-mix-phase-filtering-iir-fir-approach-to-room-correction.421271/)).
+Matching Dirac means REW plus rePhase for linear-phase FIR, or Acourate;
+Dirac Live Bass Control and ART have no filter to export and cannot be
+reproduced at all.
+
+**But the decisive limit is not capability, it is scope.** Roon's DSP applies
+to Roon's own playback and to nothing else. Dirac on the player sits in the
+player's output chain, so it corrects every source the player has — Roon
+included, and the television included. In the living room the NODE carries
+films and television as well as music, and correction that stops working the
+moment the source is the TV is not correction. Convolution also cannot be
+applied while keeping DSD
+([Roon KB](https://community.roonlabs.com/t/muse-and-dsd/280817)), and running
+both engines at once would correct twice, so the choice is exclusive.
+
+This is what settles the requirement. Roon's DSP is better at what it covers
+and covers the wrong set of outputs.
 
 **HDMI eARC is not usable as a source.** Roon has no concept of a hardware
 input. It plays a library and streaming services to endpoints; an endpoint's
@@ -186,7 +214,22 @@ that lets a device digitise an external source and distribute it across Roon
 ([Roon Labs](https://blog.roonlabs.com/the-next-evolution-in-roon-technology-roon-ready-relay-expands-your-audio-possibilities/),
 [coverage](https://stereonet.com/news/roon-adds-vinyl-playback-with-roon-ready-relay)).
 It is per-device and the launch device was a Victrola turntable. No Bluesound
-player has it, so it does not help here.
+player has it.
+
+It would not solve this even if one did. The problem is latency, not sync
+between rooms. Relay digitises at the relay device and sends the audio *to the
+server*, which then distributes it to the zones — an extra hop through a server
+on top of RAAT's own buffering, in a transport built for robustness across a
+home network rather than for low latency. Roon claims no lip-sync capability
+anywhere, has no equivalent of A/V mode, and is
+[unaware of hardware latency in its sync calculations](https://forum.wiimhome.com/threads/sync-delay-is-it-used-when-playing-from-roon.5121/);
+multiroom delay under Roon is
+[already a complaint on Bluesound hardware](https://support1.bluesound.com/hc/en-us/community/posts/14905349476759-Multiroom-Delay-using-Roon-since-BluOs-update).
+BluOS holds the group *and* the player driving the TV inside lip-sync tolerance
+of the picture, which is what A/V mode exists to do. Published latency figures
+for RAAT or Relay were not found, so this is architecture and the absence of
+any claim rather than a measurement — but nothing suggests Roon is built for
+audio that has to match a picture.
 
 ##### Discovery: strictly worse than BluOS
 
@@ -343,6 +386,86 @@ Buying Roon the software is not buying a fidelity claim. Nothing about Roon
 would make the system sound better than a correctly configured BluOS one —
 apart from the DSP, which does real work.
 
+##### The case for Roon
+
+An elimination is worth more when the other side has been argued properly. The
+strongest arguments for Roon are not about audio, which is itself the finding.
+Each is given with the answer it gets here.
+
+**"It exists."** Roon is a working controller on four platforms, maintained by
+a company. Musica is a plan. The real comparison is Roon this weekend against
+Musica in a year, maintained by one person forever, and every evening spent
+building is an evening not spent listening.
+
+*Answer: accepted as a cost, and the money is not the obstacle.* Paying for
+something that did the job would be easy. Nothing on offer does the job.
+
+**"Flatten the network and the problem disappears."** Roon needs one L2
+segment. Four music players are not the threat class the IoT VLAN exists to
+contain. Move them, and the mDNS reflection, the LSDP replication and the
+static record service all become unnecessary — for either controller.
+
+*Answer: the separation is not only about threat class.* Separate segments are
+what make the players observable and firewallable; on one L2 segment there is
+nothing to filter between and much less to see. The relays are not pure
+overhead, they are where the control is. Flattening is a real loss, acceptable
+only if everything else pulled hard toward it. It does not.
+
+**"Musica deepens the lock-in it exists to escape."** The requirement list asks
+for as little vendor lock-in as possible and for drop-in replacement. Roon is
+the only candidate that delivers it: over a thousand certified devices,
+certification free to manufacturers, so replacing the players later would not
+mean replacing the controller. A hand-written client for a protocol one vendor
+speaks does the opposite, and every hour invested makes leaving more expensive.
+
+*Answer: true, and it costs less than it looks.* The lock-in is to BluOS, and
+the scenario where it bites is leaving Bluesound — in which case the
+replacement platform would be chosen for not having these problems in the first
+place, and a BluOS client would be discarded along with the hardware it was
+written for. The wasted work is bounded by the hardware's life.
+
+**"The DSP is a tier above, and cheaper."** Convolution, procedural EQ,
+per-channel processing and per-zone delay, configured once and applied across
+every zone. Dirac Live for Bluesound is a licence bought per device; Roon's DSP
+is included and applies to every zone ever added.
+
+*Answer: this is the argument that fails hardest on inspection.* The living
+room NODE plays films and television as well as music, and Dirac matters most
+for the films. Roon's DSP does not touch anything Roon is not playing. Better
+processing over a smaller set of outputs is not an upgrade here.
+
+**"Losing Tidal's radios matters less than it used to."** Valence draws from
+the Tidal catalogue and learns from listening history — history a short trial
+never built. The comparison that condemned it was Valence cold against a habit.
+
+*Answer: conceded, and it moves.* Tidal is used less now than when the
+requirement was written, and recommendations spanning streaming and local music
+together could be better than Tidal's own. This is no longer a reason to
+eliminate Roon. It is not a reason to adopt it either.
+
+**"The server machine is not a Roon expense."** An always-on x86-64 box is
+generally useful and would earn its keep whatever else runs on it.
+
+*Answer: partly.* The Orange Pi is due for replacement anyway, but the
+replacement is unlikely to be x86-64, and there is no x86-64 machine here now
+with the power to run a Roon server. Long-term this is close to neutral. Today
+it is a purchase made for one piece of software.
+
+**"Roon will outlive Musica."** Harman's ownership means a balance sheet behind
+it. A one-person project depends on one person continuing to care.
+
+*Answer: conceded on the comparison, doubted as a guarantee.* A long life so
+far promises nothing, and hardware and platforms have been dropped before. But
+Musica will probably not outlive Roon, and pretending otherwise would be
+dishonest.
+
+**What survives.** Two things. Tidal radio is no longer a reason to reject
+Roon. And Musica's lifespan is a genuine risk with no answer beyond keeping its
+scope small enough that the official app remains a usable fallback for
+everything it does not do (D18).
+
+Neither touches the reasons Roon is not usable here.
+
 ##### Does anyone else report these BluOS problems?
 
 Partly. That players stop appearing in the BluOS Controller is reported often
@@ -361,22 +484,26 @@ which is an argument for keeping them rather than a reason to doubt them.
 
 ##### Conclusion
 
-Roon fails three of the requirements outright: no room correction of its own,
-no way to use the HDMI eARC input as a source, and no Tidal radios. It keeps
-the network problem in a form that cannot be worked around — no endpoint by IP,
-no supported VLAN story, no control API to build against — and adds a
-subscription, a second always-on machine, a moving platform floor, no Linux
-client, and a second vendor who can break the setup. Its own clients rate below
-the BluOS ones on both mobile platforms.
+Roon fails in the living room before the network is even considered. That NODE
+plays films, television and music; correction has to apply to all of it, and
+Roon's DSP applies only to what Roon plays. The HDMI eARC input is invisible to
+Roon, so television audio in other rooms stays a BluOS function. Audio that has
+to match a picture is not what RAAT is built for. Three independent failures in
+the one room that matters most, and none of them is a configuration problem.
 
-What it does better is narrow and real: per-zone delay with DSP that survives
-grouping, and the least lock-in of any candidate.
+The rest follows: the discovery problem kept in a stricter form with no
+endpoint by IP, no supported VLAN story and no control API to build against; a
+subscription; an x86-64 server where none exists here; no Linux client; a
+second vendor able to break the setup; clients that rate below the BluOS ones
+on both mobile platforms.
 
-**Revisit if** hand-built convolution filters across synchronised zones become
-worth owning a measurement microphone for. That is the one capability with no
-BluOS equivalent, and the trial would mean one flat L2 segment for the players,
-a machine bought to run the server, and the BluOS app kept for television
-audio — which is to say, accepting every cost above in exchange for it.
+What Roon does better is real but does not reach: per-zone delay with DSP that
+survives grouping, and the least lock-in of any candidate.
+
+**Revisit if** Roon gains hardware inputs as sources, or endpoints addressable
+by IP. Both are long-standing requests rather than announced work, so this is
+close to never. The trial would still mean one flat L2 segment, a machine
+bought to run the server, and the BluOS app kept for the living room.
 
 ---
 
