@@ -46,22 +46,23 @@ whichever one the phone is on.
 
 Two things that may save you time.
 
-The wireless player is not the bottleneck, and I can show that rather than
-assume it. I measured LSDP discovery directly, from a wired machine on the
-players' VLAN: 20 rounds, each sending the same discovery query a controller
-sends and recording when each player answered. All four players answered in all
-20 rounds. Median time to answer, per player:
+The wireless player is not the bottleneck, and the measurement shows that in the
+most useful way: you cannot tell from the numbers which player it is. I measured
+LSDP discovery directly, from a wired machine on the players' VLAN — 20 rounds,
+each sending the same discovery query a controller sends and recording when each
+player answered. All four players answered in all 20 rounds. Median time to
+answer, one line per player:
 
-  wired player 1     461 ms
-  wired player 2     468 ms
-  wired player 3     327 ms
-  wireless player    362 ms
+  327 ms
+  362 ms
+  461 ms
+  468 ms
 
-Every answer fell inside the random 0-750 ms a BluOS player waits before
-answering a query, and no round needed a repeat query, so nothing was lost. The
-player on Wi-Fi answered faster than two of the three wired ones and never
-missed a round. Its wireless link is not adding delay or loss, and it is not
-what the Android app is waiting for.
+One of those four is the player on Wi-Fi. It is not the slowest of them, and
+nothing in the spread marks it out. Every answer fell inside the random 0-750 ms
+a BluOS player waits before answering a query, and no round needed a repeat
+query, so nothing was lost anywhere. Its wireless link is adding neither delay
+nor loss, and it is not what the Android app is waiting for.
 
 And on where the remaining time goes. The only change that removes the problem
 on Android is switching the Wi-Fi radio off. With a USB Ethernet adapter
