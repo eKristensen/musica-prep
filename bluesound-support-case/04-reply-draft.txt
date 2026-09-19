@@ -5,55 +5,68 @@ Hi Charmain,
 
 The network, question by question.
 
-Router: an Orange Pi single-board computer running Ubuntu, doing the routing
-and firewalling. Not a consumer router.
+Router: an Orange Pi 5 Plus (16 GB) single-board computer running Ubuntu, doing
+the routing and firewalling. Not a consumer router.
 
-Switches and access points: a Ubiquiti EdgeSwitch and a MikroTik switch, a
-TP-Link access point and a Ubiquiti access point. No bridges. Say the word if
-you want exact models and firmware versions.
+Switches: a Ubiquiti EdgeSwitch 24 Lite, firmware 1.9.3, in the office; a
+MikroTik CSS106-5G-1S running SwOS 2.18 in the server closet, which is the main
+switch; and an HP 1410-8G in the media rack. No bridges.
 
-Ethernet Power Line Adapters: none. Nothing on my network carries Ethernet
-over mains wiring.
+Access points: a TP-Link EAP772, hardware 1.0, firmware 1.1.5, in the office —
+this is the one the wireless player uses; and a Ubiquiti UniFi AP AC Pro in the
+server closet, on its own SSID, to extend coverage. I have used the second one
+as a comparison during testing.
+
+Ethernet Power Line Adapters: none. Nothing on my network carries Ethernet over
+mains wiring.
 
 How the players and controllers connect: three of the four players are wired,
-the fourth is on Wi-Fi. The controllers are the part I have varied
-deliberately, as in my earlier messages — the Android phones over Wi-Fi, over
-USB Ethernet with the radio still on, and over USB Ethernet with the radio
-switched off; the iPhone over Wi-Fi and separately over a cable; two laptops
-over Wi-Fi throughout; and one virtualised Android instance wired. Every
-measurement I have quoted was taken with the controller on the players' own
+the fourth is on Wi-Fi via the EAP772. The controllers are the part I have
+varied deliberately, as in my earlier messages — the Android phones over Wi-Fi,
+over USB Ethernet with the radio still enabled, and over USB Ethernet with the
+radio switched off; the iPhone over Wi-Fi and separately over a cable; two
+laptops over Wi-Fi throughout; and one virtualised Android instance wired. Every
+measurement I quote below was taken with the controller on the players' own
 VLAN, reaching them directly.
 
 Ethernet cable type: Cat 5e throughout.
 
-Wireless distances: the player that is on Wi-Fi is 1-2 m from the TP-Link
-access point, on 2.4 GHz. The phones under test were a few metres from an
-access point.
+Wireless distances: the wireless player is about 2.5 m from the EAP772 with one
+wall in between, and its signal is stable. When testing with a phone I stand
+between the two access points, 2-5 m from either, so the distance is comfortable
+whichever one the phone is on.
 
 Two things that may save you time.
 
-First, the network side can be closed out by a control I have already run. An
-iPhone and an Android phone, on the same Wi-Fi, through the same access point,
-on the same VLAN, to the same four players: the iPhone lists all four at once,
-every time, and the Android phone takes 3-5 seconds and comes back short of at
-least one player about one attempt in five. Only the operating system differs.
-Separately, an LSDP discovery query from a wired machine on the players' VLAN
-gets answers from all four players within 0.75 seconds, twenty runs out of
-twenty. So the players and the segment answer promptly even at the moments the
-Android app is showing nothing.
+The wireless player is not the bottleneck, and I can show that rather than
+assume it. I measured LSDP discovery directly, from a wired machine on the
+players' VLAN: 20 rounds, each sending the same discovery query a controller
+sends and recording when each player answered. All four players answered in all
+20 rounds. Median time to answer, per player:
 
-Second, I believe I have found what accounts for the Android numbers, and it is
-in the app rather than on my network. Discovery is delayed by a flat two seconds
-whenever the Wi-Fi radio is enabled, regardless of which interface is actually
-carrying the traffic. The delay sits around acquiring the Wi-Fi multicast lock,
-so it is skipped entirely when the radio is off — which is exactly the split I
-measured: about a second and complete every time with the radio off, against
-3-5 seconds and sometimes incomplete with it on, cable attached or not. I read
-this out of the shipping Android app; the discovery code is byte-identical
-between 4.16.2 and 4.16.3, so it applies to both.
+  wired player 1     461 ms
+  wired player 2     468 ms
+  wired player 3     327 ms
+  wireless player    362 ms
 
-I would be glad to write that up in as much detail as whoever works on the
-Android controller finds useful. Is that something you are able to pass on?
+Every answer fell inside the random 0-750 ms a BluOS player waits before
+answering a query, and no round needed a repeat query, so nothing was lost. The
+player on Wi-Fi answered faster than two of the three wired ones and never
+missed a round. Its wireless link is not adding delay or loss, and it is not
+what the Android app is waiting for.
+
+And on where the remaining time goes. The only change that removes the problem
+on Android is switching the Wi-Fi radio off. With a USB Ethernet adapter
+attached and the radio left enabled, nothing improves: about three seconds, and
+still sometimes short of all four players. The same adapter with the radio
+switched off gives about one second, complete on every single run. Traffic goes
+over the cable in both cases — only the radio's state differs. So whatever is
+costing the time keys on whether the Wi-Fi radio is enabled rather than on which
+interface is carrying discovery traffic, and that points at the controller
+rather than at anything on my network. The iPhone, on the same access point and
+the same VLAN, shows no penalty on either link.
+
+I am glad to run anything else you would like measured.
 
 Best regards,
 Emil Kristensen
