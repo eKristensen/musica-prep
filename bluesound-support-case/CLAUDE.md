@@ -1,18 +1,22 @@
 # CLAUDE.md — bluesound-support-case
 
-## Do not wrap lines in this folder
+## Do not wrap lines in the `.txt` files
 
-The `.txt` files here are the emails as they are sent and received. A draft is
-copied straight into the support portal, so hard-wrapped prose has to be
-un-wrapped by hand before it can go out.
+Those files are the emails as they are sent and received. A draft is copied
+straight into the support portal, so hard-wrapped prose has to be un-wrapped by
+hand before it can go out.
 
 **Keep each paragraph, section or list item on one line, however long.** No
-fills, no reflowing, no 80-column wrapping. This applies to every file in this
-folder and to nothing outside it.
+fills, no reflowing, no 80-column wrapping. The Markdown in this folder is
+ordinary Markdown and wraps as usual; nothing outside the folder is affected.
 
 ## Conventions
 
-Every message gets its own number, in the order the exchange happened — theirs and mine alike, never a shared number for a response and its reply — with `-sent-` or `-support-response-` and the date. A draft is `NN-reply-draft.txt` and carries a `Status: DRAFT — not sent` line under the subject; on sending it is renamed to `NN-reply-sent-<date>.txt` and that line becomes `Sent: <date>`.
+Every message gets its own number, in the order the exchange happened — theirs
+and mine alike, never a shared number for a response and its reply — with
+`-sent-` or `-support-response-` and the date. A draft is `NN-reply-draft.txt`
+and carries a `Status: DRAFT — not sent` line under the subject; on sending it
+is renamed to `NN-reply-sent-<date>.txt` and that line becomes `Sent: <date>`.
 
 ## What may be used as evidence in these emails
 
