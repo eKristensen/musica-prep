@@ -35,12 +35,13 @@ Years later I move to a place with more rooms and I want to build out the system
 It turns out it was relativly easy to eleminate alternatives:
 
 - **Roon**: the first candidate, and the only one actually run. It is
-  hardware-agnostic, its grouped-zone DSP is better than anything BluOS offers,
-  and it would fix the Android app. It also discovers players by multicast
-  only, cannot be given a player's address, is unsupported across VLANs, has no
-  Linux client, replaces Tidal's radios with its own, and needs a second
-  always-on x86 machine and a subscription. It moves the discovery problem
-  rather than solving it. Examined at length below.
+  hardware-agnostic and its per-zone delay survives grouping, which BluOS does
+  not offer. Against that it has no room correction of its own, cannot use the
+  HDMI eARC input as a source, replaces Tidal's radios with its own, discovers
+  players by multicast only, cannot be given a player's address, is unsupported
+  across VLANs, has no Linux client, and needs a second always-on x86 machine
+  and a subscription. It moves the discovery problem rather than solving it.
+  Examined at length below.
 
 - **Sonos**: 
 
@@ -55,26 +56,23 @@ Roon was the first candidate and the only one taken as far as actually running
 it. It is also the only alternative where the failure is worth writing down at
 length, because it fails for reasons that look like solutions.
 
-The short version: Roon would fix the Android app and keep the discovery
-problem, in a stricter form and with no escape hatch. Two of the five problems
-in [MOTIVATION.md](MOTIVATION.md) reproduce on Roon, and the
-Android-versus-iOS split — the part of the BluOS story that makes the least
-sense — reproduces there too.
+The short version: Roon fails three of the requirements outright, and keeps the
+discovery problem in a stricter form with no escape hatch. Two of the five
+problems in [MOTIVATION.md](MOTIVATION.md) reproduce on it.
 
 ##### What Roon does better
 
 These are real and are not disputed here.
 
-- **Grouped zones keep their DSP.** Roon's DSP engine stays active on grouped
-  RAAT zones; it is disabled only for AirPlay, Sonos, Squeezebox, KEF, Devialet
-  AIR and Meridian zones
+- **Grouped zones keep their DSP, and each zone has a delay.** Roon's DSP
+  engine stays active on grouped RAAT zones; it is disabled only for AirPlay,
+  Sonos, Squeezebox, KEF, Devialet AIR and Meridian zones
   ([Roon KB](https://kb.roonlabs.com/DSP_Engine:_Disabled_During_Zone_Grouping)).
   With a per-zone resync delay in milliseconds
   ([Roon KB](https://help.roonlabs.com/portal/en/kb/articles/audio-setup-basics#Resync_delay)),
-  that covers the room-correction-plus-delay requirement directly. Convolution
-  filters, parametric EQ and per-zone delay across a synchronised group is a
-  capability BluOS does not offer in that form. This is the one requirement
-  Roon meets better than Bluesound.
+  that meets the second half of the room-correction requirement — the way to
+  set delays that match an external correction system. It does not meet the
+  first half; see below.
 - **A sleep timer exists**, on any zone from any device, from the moon icon in
   the zone's volume popup
   ([Roon 1.7](https://blog.roonlabs.com/roon-1-7-sleep-timer/)). Only Roon ARC
@@ -105,7 +103,7 @@ These are real and are not disputed here.
 | 3 | Opens with a different player selected | **No clear match.** Zone-switching and zone-persistence complaints exist, but nothing with this signature |
 | 4 | Full rediscovery whose results are discarded | **No match found.** Roon has no equivalent two-stage discovery screen |
 | 5 | Refuses to work over VPN | **Does not repeat.** See above |
-| — | iOS reliable, Android not, same network | **Repeats exactly.** iOS and Windows are reported as trouble-free while Android drops out on the same network |
+| — | iOS reliable, Android not, same network | **Unproven.** Roon's Android and iOS clients both draw heavy complaint; see below |
 
 Sources for the repeats:
 [connection lost on wake](https://community.roonlabs.com/t/roon-remote-android-loses-connection-to-core/127567),
@@ -118,14 +116,77 @@ Sources for the repeats:
 [zones gone after an update](https://community.roonlabs.com/t/network-zones-disappeared-after-roon-update-ref-l9bl61/291006),
 [Roon's own FAQ for it](https://help.roonlabs.com/portal/en/kb/articles/faq-why-did-all-my-zones-disappear).
 
-**The Android result is the important one.** The obvious reading of the BluOS
-story is that Lenbrook writes a bad Android app. Roon, a different company with
-a different protocol and a paid subscription behind it, produces the same
-asymmetry on the same platform: fine on iOS, unreliable on Android, same
-network. Whatever Android does to long-lived multicast discovery and background
-sockets, it does to both. That does not excuse the BluOS app — the iOS BluOS
-client proves the platform can be handled — but it does mean switching to Roon
-would be switching to a client with the same weakness.
+**On whether Roon repeats the Android-versus-iOS asymmetry: it does not, as
+far as this can be shown.** Roon's iOS client draws the same class of
+complaint as its Android one, at the same volume — crashing on launch on both
+iPhone and iPad, crashing on return from another app, losing the server every
+minute or so
+([crashes on launch](https://community.roonlabs.com/t/latest-roon-ios-remote-crashes-immediately-after-opening-on-both-iphone-and-ipad/234531),
+[crashes on iPad, long thread](https://community.roonlabs.com/t/remote-crashes-on-ipad/187943),
+[cannot connect to core](https://community.roonlabs.com/t/roon-remote-app-on-iphone-and-ipad-unable-to-connect-to-roon-core/141819)).
+Roon's clients are unreliable on both platforms rather than on one.
+
+The store ratings point the same way. As of September 2026 the BluOS
+Controller scores 4.0 on Google Play and 4.4 on the App Store; Roon scores 3.4
+and 3.6. Both apps rate lower on Android, but BluOS has the wider gap of the
+two — 0.4 against 0.2 — and BluOS outscores Roon on both platforms. Star
+ratings across two stores are a weak instrument, since the populations and the
+rating cultures differ, but they do not support Roon having a specifically
+Android-shaped weakness.
+
+**What does hold** is that Roon's clients are no better than the BluOS one, and
+rate worse. What does not hold is the neat story that Android is the common
+cause. The asymmetry documented in `MOTIVATION.md` remains specific to BluOS,
+and unexplained.
+
+##### Two requirements Roon does not meet at all
+
+**Room correction is not built in.** Roon's DSP engine, MUSE, applies
+convolution filters and parametric EQ, but it does not measure anything. There
+is no microphone step, no guided setup, no equivalent of Audyssey or Dirac.
+Producing a filter means measuring the room yourself with REW and a calibrated
+microphone, or HouseCurve on an iPhone, or Acourate, or paying a calibration
+service, and then importing the result
+([Roon's own guide](https://blog.roonlabs.com/digital-room-correction/),
+[REW guide](https://community.roonlabs.com/t/a-guide-to-advanced-room-correction-with-rew-and-rephase-using-convolution-filters/90990),
+[HouseCurve](https://housecurve.com/docs/appnotes/roon)). Automatic room
+correction is [an open feature
+request](https://community.roonlabs.com/t/automatic-room-correction/131516).
+
+So on "decent room correction built-in", Roon scores worse than Bluesound, not
+better. The N132 and NODE ICON are Dirac Live Ready, with the filters applied
+before the internal DAC so an external DAC gets the same benefit
+([Bluesound](https://www.bluesound.com/eur/news/dirac-live-ready-now-available-on-select-bluesound-players)).
+Dirac measures the room and builds the filter. Roon plays a filter somebody
+else built.
+
+The honest comparison is that Roon's engine is *more capable* and *less
+convenient*: convolution plus per-zone delay across a synchronised group beats
+what BluOS exposes, for someone willing to own a measurement microphone and
+maintain filters by hand. That is a different thing from built-in room
+correction, and it is not what the requirement asked for.
+
+**HDMI eARC is not usable as a source.** Roon has no concept of a hardware
+input. It plays a library and streaming services to endpoints; an endpoint's
+own analogue, optical or HDMI input is invisible to it. Line-in as a source has
+been [requested since 2015](https://community.roonlabs.com/t/line-in-input-as-source/738)
+and [repeatedly since](https://community.roonlabs.com/t/select-analog-optical-input-to-core/64295).
+
+BluOS does this. A player with the TV connected becomes the primary of a group
+and its input is broadcast to the rest, with an A/V mode that adds a short
+buffer to hold sync against the picture
+([external input to multiple players](https://support.bluos.net/hc/en-us/articles/360035971273-How-do-I-play-external-Input-to-multiple-Players),
+[A/V mode](https://support.bluos.net/hc/en-us/articles/360021056034-Grouping-Players-using-A-V-Mode)).
+Under Roon, the Node's HDMI eARC input still works — but only as a BluOS
+function, controlled from the BluOS app, with Roon unaware of it. Television
+audio in other rooms would mean keeping the BluOS app for that one job.
+
+Roon Ready Relay, announced in 2025, is the intended answer: a certification
+that lets a device digitise an external source and distribute it across Roon
+([Roon Labs](https://blog.roonlabs.com/the-next-evolution-in-roon-technology-roon-ready-relay-expands-your-audio-possibilities/),
+[coverage](https://stereonet.com/news/roon-adds-vinyl-playback-with-roon-ready-relay)).
+It is per-device and the launch device was a Victrola turntable. No Bluesound
+player has it, so it does not help here.
 
 ##### Discovery: strictly worse than BluOS
 
@@ -249,9 +310,18 @@ contact with a measurement.
   system mixer can resample, and avoiding it is a real improvement. It is
   irrelevant to a network player like a Node, which never involves a desktop
   mixer.
-- **"AirPlay for audiophiles": marketing.** RAAT's genuine engineering
-  contribution is clock synchronisation across zones, which is a multi-room
-  problem, not a fidelity one.
+- **"AirPlay for audiophiles" is about RAAT, not AirPlay.** The phrase is
+  Roon's description of its own transport
+  ([Roon KB](https://help.roonlabs.com/portal/en/kb/articles/raat)) — as
+  convenient as AirPlay, without the resolution ceiling. Roon cannot change
+  AirPlay and does not claim to: an AirPlay zone under Roon is still capped at
+  16-bit/44.1 kHz, with Roon downsampling anything higher, and it loses DSP
+  when grouped
+  ([Roon KB](https://help.roonlabs.com/portal/en/kb/articles/airplay-setup)).
+  As a slogan it is fair; as a description of AirPlay it would be false, and
+  Roon does not make that claim. RAAT's genuine engineering contribution is
+  clock synchronisation across zones, which is a multi-room problem rather
+  than a fidelity one.
 - **DSP and room correction: real.** Convolution, parametric EQ and per-zone
   delay are ordinary signal processing done competently, and they are the
   strongest technical argument for Roon.
@@ -291,18 +361,22 @@ which is an argument for keeping them rather than a reason to doubt them.
 
 ##### Conclusion
 
-Roon fixes the app and keeps the network problem, in a form that cannot be
-worked around: no endpoint by IP, no supported VLAN story, no control API to
-build against. It removes Tidal's radios, which is the feature used most, and
-adds a subscription, a second always-on machine, a moving platform floor, no
-Linux client, and a second vendor who can break the setup. The Android client
-has the same weakness as the one being escaped.
+Roon fails three of the requirements outright: no room correction of its own,
+no way to use the HDMI eARC input as a source, and no Tidal radios. It keeps
+the network problem in a form that cannot be worked around — no endpoint by IP,
+no supported VLAN story, no control API to build against — and adds a
+subscription, a second always-on machine, a moving platform floor, no Linux
+client, and a second vendor who can break the setup. Its own clients rate below
+the BluOS ones on both mobile platforms.
 
-**Revisit if** multi-room room correction becomes the thing that matters most.
-The grouped-zone DSP with per-zone delay is genuine and has no BluOS
-equivalent. That trial would mean one flat L2 segment for the players and a
-machine bought to run the server — which is to say, accepting every cost above
-in exchange for the one capability.
+What it does better is narrow and real: per-zone delay with DSP that survives
+grouping, and the least lock-in of any candidate.
+
+**Revisit if** hand-built convolution filters across synchronised zones become
+worth owning a measurement microphone for. That is the one capability with no
+BluOS equivalent, and the trial would mean one flat L2 segment for the players,
+a machine bought to run the server, and the BluOS app kept for television
+audio — which is to say, accepting every cost above in exchange for it.
 
 ---
 
