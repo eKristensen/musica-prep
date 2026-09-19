@@ -3,77 +3,37 @@ Status: DRAFT — not sent
 
 Hi Charmain,
 
-The network, question by question.
+Router: an Orange Pi 5 Plus (16 GB) single-board computer running Ubuntu, doing the routing and firewalling.
 
-Router: an Orange Pi 5 Plus (16 GB) single-board computer running Ubuntu, doing
-the routing and firewalling. Not a consumer router.
+Access points:
+- TP-Link EAP772, hardware 1.0, firmware 1.1.5
+- Ubiquiti UniFi AP AC Pro
+- No WiFI bridges
 
-Switches: a Ubiquiti EdgeSwitch 24 Lite, firmware 1.9.3, in the office; a
-MikroTik CSS106-5G-1S running SwOS 2.18 in the server closet, which is the main
-switch; and an HP 1410-8G in the media rack. No bridges.
+I have used the second one as a comparison during testing. The two AP's do not share any SSID so I always know which one any device is connected to.
 
-Access points: a TP-Link EAP772, hardware 1.0, firmware 1.1.5, in the office —
-this is the one the wireless player uses; and a Ubiquiti UniFi AP AC Pro in the
-server closet, on its own SSID, to extend coverage. I have used the second one
-as a comparison during testing.
+Switches:
+- Main switch: MikroTik CSS106-5G-1S running SwOS 2.18
+- Office switch: Ubiquiti EdgeSwitch 24 Lite, firmware 1.9.3
+- Living Room swich: HP 1410-8G
 
-Ethernet Power Line Adapters: none. Nothing on my network carries Ethernet over
-mains wiring.
+No Ethernet Power Line Adapters.
 
-How the players and controllers connect: three of the four players are wired,
-one on each of the three switches, and the fourth is on Wi-Fi via the EAP772.
-The three wired players behave identically despite sitting behind three
-different switches. The controllers are the part I have varied deliberately, as
-in my earlier messages — the Android phones over Wi-Fi, over USB Ethernet with
-the radio still enabled, and over USB Ethernet with the radio switched off; the
-iPhone over Wi-Fi and separately over a cable; two laptops over Wi-Fi
-throughout; and one virtualised Android instance wired. Every measurement I
-quote below was taken with the controller on the players' own VLAN, reaching
-them directly.
+How the players connect:
+- Stue (N132) to Living Room switch on cable.
+- Køkken (N132) to Main switch on cable via passthrough on Ubiquiti UniFi AP AC Pro
+- Kontor (N130) to Office switch on cable
+- Soveværelse (N110) on a stable wifi link with about 2.5 meter to the TP-Link EAP772 which connects to the Office switch
 
-Ethernet cable type: Cat 5e throughout, in mostly short runs of a few metres
-— my longest patch cable is 10 m. The exception is the in-wall run between the
-EdgeSwitch in the office and the MikroTik in the server closet, which is Cat 6a
-and at most about 12 m. Cabling is one of the things I have unintentionally
-tested hardest: the problem has followed me across many different cables, and
-they were thoroughly reshuffled when I moved house. No cable I have swapped has
-ever made a difference to it.
+I measured LSDP discovery directly, from a wired machine connected to the same network as the players. 20 rounds, each sending the same discovery query a controller sends and recording when each player answered. All four players answered in all 20 rounds. Median time to
+answer for each of them: 327 ms, 362 ms, 461 ms and 468 ms.
 
-Wireless distances: the wireless player is about 2.5 m from the EAP772 with one
-wall in between, and its signal is stable. When testing with a phone I stand
-between the two access points, 2-5 m from either, so the distance is comfortable
-whichever one the phone is on.
-
-Two things that may save you time.
-
-The wireless player is not the bottleneck, and the measurement shows that in the
-most useful way: you cannot tell from the numbers which player it is. I measured
-LSDP discovery directly, from a wired machine on the players' VLAN — 20 rounds,
-each sending the same discovery query a controller sends and recording when each
-player answered. All four players answered in all 20 rounds. Median time to
-answer, one line per player:
-
-  327 ms
-  362 ms
-  461 ms
-  468 ms
-
-One of those four is the player on Wi-Fi. It is not the slowest of them, and
-nothing in the spread marks it out. Every answer fell inside the random 0-750 ms
-a BluOS player waits before answering a query, and no round needed a repeat
-query, so nothing was lost anywhere. Its wireless link is adding neither delay
+You cannot tell from the numbers which player is the Wi-Fi connected one. It is not the slowest of them, and nothing in the spread marks it out. Every answer fell inside the random 0-750 ms. No package loss. Its wireless link is adding neither delay
 nor loss, and it is not what the Android app is waiting for.
 
-And on where the remaining time goes. The only change that removes the problem
-on Android is switching the Wi-Fi radio off. With a USB Ethernet adapter
-attached and the radio left enabled, nothing improves: about three seconds, and
-still sometimes short of all four players. The same adapter with the radio
-switched off gives about one second, complete on every single run. Traffic goes
-over the cable in both cases — only the radio's state differs. So whatever is
-costing the time keys on whether the Wi-Fi radio is enabled rather than on which
-interface is carrying discovery traffic, and that points at the controller
-rather than at anything on my network. The iPhone, on the same access point and
-the same VLAN, shows no penalty on either link.
+As for how the BluOS Contoller connect: I have varied it deliberately between the two access points, but the results does not change no matter which access point I use. My Android devices are 1-5 meters away from the access point.
+
+Ethernet cable type: Cat 5e throughout, in mostly short runs of a few metres — my longest patch cable is 10 m. I have a exception for a in the in-wall run between the EdgeSwitch in the office and the MikroTik in the server closet, which is Cat 6a and at most about 12 m. Cabling is one of the things I have unintentionally tested hardest: the problem has followed me across many different cables.The cables were thoroughly reshuffled when I moved house. No cable I have swapped has ever made a difference to it.
 
 I am glad to run anything else you would like measured.
 
