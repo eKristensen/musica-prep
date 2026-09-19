@@ -56,6 +56,21 @@ Roon was the first candidate and the only one taken as far as actually running
 it. It is also the only alternative where the failure is worth writing down at
 length, because it fails for reasons that look like solutions.
 
+**Roon has been trialled twice and rejected twice.** Both times with a single
+player, and before the living room needed HDMI eARC or multiroom that holds
+sync against a picture. Neither rejection was written down, so each later round
+started from scratch: install, subscribe, configure, discover the same
+objections, cancel. The third evaluation was done on paper instead, which is
+what this section is.
+
+**The conditions have moved against Roon each time, not toward it.** The
+requirement list has grown a television input, a room whose correction must
+cover every source, and four players across VLANs. Every one of those is a test
+Roon did not have to pass before and does not pass now. A fourth trial would
+cost a subscription, an evening of setup, a machine to run the server on, and
+would fail on requirements that can be checked without installing anything.
+Spending it anyway is the mistake this section exists to prevent.
+
 The short version: Roon fails in the living room, where the NODE serves films
 and television as well as music, and it keeps the discovery problem in a
 stricter form with no escape hatch. Two of the five problems in
@@ -418,11 +433,22 @@ certification free to manufacturers, so replacing the players later would not
 mean replacing the controller. A hand-written client for a protocol one vendor
 speaks does the opposite, and every hour invested makes leaving more expensive.
 
-*Answer: true, and it costs less than it looks.* The lock-in is to BluOS, and
-the scenario where it bites is leaving Bluesound — in which case the
-replacement platform would be chosen for not having these problems in the first
-place, and a BluOS client would be discarded along with the hardware it was
-written for. The wasted work is bounded by the hardware's life.
+*Answer: true, and it costs less than it looks, because the work is not only
+a client.* What the investment buys is knowledge of BluOS — the protocol, the
+discovery behaviour, the traps, what the players actually do under load — and
+that knowledge keeps paying for as long as the hardware stays. Switching
+platforms does not avoid that cost, it restarts it: a different ecosystem means
+learning a different one from nothing, whichever controller sits on top. Roon
+does not save the research, it relocates it.
+
+BluOS earns the investment in a way the alternatives do not. The players are
+stable, and the platform permits a custom client at all — a documented control
+API, answering on a fixed address, which is the thing that makes any of this
+possible. The scenario where the lock-in bites is leaving Bluesound, and in
+that case the replacement would be chosen for not having these problems, so a
+BluOS client would be discarded along with the hardware it was written for. The
+wasted work is bounded by the hardware's life, and the knowledge is not wasted
+at all.
 
 **"The DSP is a tier above, and cheaper."** Convolution, procedural EQ,
 per-channel processing and per-zone delay, configured once and applied across
@@ -465,6 +491,12 @@ scope small enough that the official app remains a usable fallback for
 everything it does not do (D18).
 
 Neither touches the reasons Roon is not usable here.
+
+**The proportion is the point.** BluOS does most of what is wanted, a few
+things could be better, and one thing is genuinely infuriating — the Android
+controller, described in `MOTIVATION.md`. Replacing an ecosystem that works to
+fix one client is the wrong size of answer. Replacing the client is the right
+one.
 
 ##### Does anyone else report these BluOS problems?
 
