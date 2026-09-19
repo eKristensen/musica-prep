@@ -13,8 +13,9 @@ folder and to nothing outside it.
 ## Conventions
 
 Files are numbered in the order the exchange happened, with `-sent-` or
-`-support-response-` and the date. A draft is `NN-reply-draft.txt` with a
-`Status: DRAFT` line under the subject, and loses both when it is sent.
+`-support-response-` and the date. A draft is `NN-reply-draft.txt` and carries a
+`Status: DRAFT — not sent` line under the subject; on sending it is renamed to
+`NN-reply-sent-<date>.txt` and that line becomes `Sent: <date>`.
 
 ## What may be used as evidence in these emails
 
