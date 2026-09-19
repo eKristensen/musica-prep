@@ -109,8 +109,9 @@ player is the one that vanishes, which happens far too often, grouping becomes
 awkward for a simpler reason: a player I cannot see is a player I cannot
 group. Recovery means backing out of the player list and
 re-entering, waiting through discovery again and retrying. Controlling a
-player the app does not show is hard, and because most actions on the player
-list screen change what that screen shows, it is not a pleasant screen to use.
+player that the app does not show is hard, and because most actions on the
+player list screen change what that screen shows, it is not a pleasant screen
+to use.
 
 ### 3. The app refuses to work over VPN, even though the network works
 
@@ -185,9 +186,7 @@ rearranging groups. Say I have two groups of two and want to add a player
 from the other group to the one I am using: on iOS I can break the other group
 apart without selecting it, then add the player directly. On Android, changing
 the other group means selecting it first, which often triggers the problems
-described above. It is the first difference I have
-found that is a matter of what the app can do rather than how quickly it does
-it.
+described above.
 
 ---
 
