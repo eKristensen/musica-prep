@@ -104,10 +104,10 @@ player I did not mean to. Removing the wrong one then locks up the player
 list, which often makes players disappear, which in turn means more waiting.
 And because a group that has formed does not always show up as one right
 away, I make it again to no effect, and a genuine failure to group is hard to
-tell apart from a player list that is simply out of date. When the selected player is the one that vanishes, which
-happens far too often, grouping becomes awkward for a simpler reason: a player
-I cannot see is
-a player I cannot group. Recovery means backing out of the player list and
+tell apart from a player list that is simply out of date. When the selected
+player is the one that vanishes, which happens far too often, grouping becomes
+awkward for a simpler reason: a player I cannot see is a player I cannot
+group. Recovery means backing out of the player list and
 re-entering, waiting through discovery again and retrying. Controlling a
 player the app does not show is hard, and because most actions on the player
 list screen change what that screen shows, it is not a pleasant screen to use.
