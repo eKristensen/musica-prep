@@ -27,7 +27,7 @@ How the players connect:
 
 I measured LSDP discovery directly, from a wired machine connected to the same network as the players. 20 rounds, each sending the same discovery query a controller sends and recording when each player answered. All four players answered in all 20 rounds. Median time to answer for each of them: 327 ms, 362 ms, 461 ms and 468 ms. The four are spread across three switches and one wireless link, and they answer equivalently regardless, so nothing in the measurement points at where any of them is attached.
 
-You cannot tell from the numbers which player is the Wi-Fi connected one. It is not the slowest of them, and nothing in the spread marks it out. Every answer fell inside the random 0-750 ms a BluOS player waits before answering a query. No packet loss. Its wireless link is adding neither delay nor loss, and it is not what the Android app is waiting for.
+You cannot tell from the numbers which player is the Wi-Fi connected one. It is not the slowest of them, and nothing in the spread marks it out. Every answer arrived within 750 ms of the query, and the spread was even across all four players. No packet loss. Its wireless link is adding neither delay nor loss, and it is not what the Android app is waiting for.
 
 As for how the BluOS Controller connects: over Wi-Fi. That is how I use it, and it is how every everyday observation in this case was made. The USB Ethernet adapter is a test instrument only, never how I control the players — I described those runs and what they showed in my first message. I have varied the access point deliberately between the two, and the results do not change no matter which one I use. My Android devices are 1-5 meters away from the access point.
 
